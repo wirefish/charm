@@ -17,7 +17,6 @@
              (:file "json")
              (:file "encode")
              (:file "text")
-             (:file "corpus")
 
              (:file "http")
              (:file "websocket")
