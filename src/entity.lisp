@@ -186,4 +186,10 @@
   (begins-quests nil)
   (ends-quests nil))
 
-;;;
+;;; FIXME: move some of the more specific things to their own files.
+
+(defproto vendor (creature)
+  (sells nil))
+
+(defproto trainer (creature)
+  (teaches nil))

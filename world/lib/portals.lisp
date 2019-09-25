@@ -8,6 +8,9 @@
 (defproto gravel-path (path)
   (brief "a gravel path"))
 
+(defproto dirt-path (path)
+  (brief "a dirt path"))
+
 (defproto sandy-path (path)
   (brief "a sandy path"))
 
@@ -27,6 +30,11 @@
 
 (defproto cobbled-road (road)
   (brief "a cobbled road"))
+
+;;;
+
+(defproto alley (portal)
+  (brief "a narrow alley"))
 
 ;;; Doorways have no door to close, but restrict size.
 
