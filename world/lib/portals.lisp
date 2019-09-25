@@ -14,6 +14,20 @@
 (defproto cobbled-lane (path)
   (brief "a cobbled lane"))
 
+;;;
+
+(defproto road (portal)
+  (brief "a road"))
+
+(defproto gravel-road (road)
+  (brief "a gravel road"))
+
+(defproto dirt-road (road)
+  (brief "a dirt road"))
+
+(defproto cobbled-road (road)
+  (brief "a cobbled road"))
+
 ;;; Doorways have no door to close, but restrict size.
 
 (defproto doorway (portal)
