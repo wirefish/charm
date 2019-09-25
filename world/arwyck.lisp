@@ -53,46 +53,50 @@
 (defentity bayside-plaza-5 (bayside-plaza-location)
   (exits ((bayside-plaza-portal :west bayside-plaza-4))))
 
-#|
-
 ;;; harbor-road
 
-(defproto harbor-road-room room
-  [:brief "Harbor Road"
-   :domain :outdoor
-   :surface :dirt])
+(defproto harbor-road-location (location)
+  (brief "Harbor Road")
+  (full "A rutted dirt road runs between the harbor and the village proper.")
+  (domain :outdoor)
+  (surface :dirt))
 
-(defentity harbor-road-1 harbor-road-room
-  [:exits [:north bayside-plaza-3 :south harbor-road-2]])
+(defentity harbor-road-1 (harbor-road-location)
+  (exits ((dirt-road :north bayside-plaza-3 :south harbor-road-2))))
 
-(defentity harbor-road-2 harbor-road-room
-  [:exits [:north harbor-road-1 :south village-square-n]])
+(defentity harbor-road-2 (harbor-road-location)
+  (exits ((dirt-road :north harbor-road-1 :south village-square-n))))
 
 ;;; village-square
 
-(defproto village-square-room room
-  [:brief "Village Square"
-   :full "This cobbled plaza is the heart of the village. Various
-     shops line its perimeter."
-   :domain :outdoor
-   :surface :stone])
+(defproto village-square-location (location)
+  (brief "Village Square")
+  (full "This cobbled plaza is the heart of the village. Various
+     shops line its perimeter.")
+  (domain :outdoor)
+  (surface :stone))
 
-(defentity shaggy-dog npc
-  [:brief "a shaggy white dog"
-   :pose "is nearby."
-   :icon "sniffing-dog.png"
-   :full "The dog is very curious and closely watches anyone who passes by. Its
-     fur is matted and dirty but it seems happy."]
+(defproto village-square-portal (portal)
+  (brief "the square")
+  (pose "continues to the ~a."))
 
-  (do-talk [this actor npc]
-    (show-text actor "The dog's ears perk up and it tilts its head to the side.")))
+(defproto shaggy-dog (creature)
+  (brief "a shaggy white dog")
+  (pose "is nearby.")
+  (icon "sniffing-dog.png")
+  (full "The dog is very curious and closely watches anyone who passes by. Its
+    fur is matted and dirty but it seems happy."))
 
-(defentity village-square-nw village-square-room
-  [:exits [:east village-square-n :south village-square-w
-           :north (exits/entry-doorway armory-training-hall)
-           :west (exits/entry-doorway sword-shop)]
-   :contents [shaggy-dog]])
+(defmethod do-talk (actor (target shaggy-dog) subject)
+  (declare (ignore subject))
+  (show-text actor "The dog's ears perk up and it tilts its head to the side."))
 
+(defentity village-square-nw (village-square-location)
+  (exits ((village-square-portal :east village-square-n :south village-square-w)
+          (entry-doorway :north armory-training-hall :west sword-shop)))
+  (contents (shaggy-dog)))
+
+#| FIXME: random walk through exits of type village-square-portal.
 (defbehavior move-shaggy-dog
   [:actor shaggy-dog
    :location village-square-nw
@@ -121,74 +125,82 @@
     (send (:location this) emote (:actor this)
           "The shaggy dog lies down.")
     (change-state-async this 20 :stretch)))
+|#
 
-(defentity village-square-n village-square-room
-  [:exits [:west village-square-nw :east village-square-ne
-           :south village-square-c :north harbor-road-2]])
+(defentity village-square-n (village-square-location)
+  (exits ((village-square-portal :west village-square-nw :east village-square-ne
+                                 :south village-square-c)
+          (dirt-road :north harbor-road-2))))
 
-(defentity village-square-ne village-square-room
-  [:exits [:west village-square-n :south village-square-e
-           :east (exits/doorway inn-common-room)]])
+(defentity village-square-ne (village-square-location)
+  (exits ((village-square-portal :west village-square-n :south village-square-e)
+          (entry-doorway :east inn-common-room))))
 
-(defentity village-square-w village-square-room
-  [:exits [:north village-square-nw :south village-square-sw :east village-square-c
-           :west (exits/doorway library-main)]])
+(defentity village-square-w (village-square-location)
+  (exits ((village-square-portal :north village-square-nw :south village-square-sw
+                                 :east village-square-c)
+          (entry-doorway :west library-main))))
 
-(defentity podium fixture
-  [:brief "a low podium"
-   :pose "stands in the center of the village square."
-   :full "The podium appears solidly-built. A few steps lead up to its wide
-     platform. When you speak from atop the podium, your words will be heard
-     throughout the village square."])
+(defproto podium (entity)
+  (brief "a low podium")
+  (pose "stands in the center of the village square.")
+  (full "The podium appears solidly-built. A few steps lead up to its wide
+    platform. When you speak from atop the podium, your words will be heard
+    throughout the village square."))
 
-(defentity village-square-c village-square-room
-  [:exits [:west village-square-w :east village-square-e
-           :north village-square-n :south village-square-s]
-   :contents [podium]])
+(defentity village-square-c (village-square-location)
+  (exits ((village-square-portal :west village-square-w :east village-square-e
+                                 :north village-square-n :south village-square-s)))
+  (contents (podium)))
 
-(defentity village-square-e village-square-room
-  [:exits [:north village-square-ne :south village-square-se
-           :west village-square-c :east east-road-1]])
+(defentity village-square-e (village-square-location)
+  (exits ((village-square-portal :north village-square-ne :south village-square-se
+                                 :west village-square-c)
+          (dirt-road :east east-road-1))))
 
-(defentity village-square-sw village-square-room
-  [:exits [:north village-square-w :east village-square-s :west forest-road-1
-           :south (exits/entry-doorway lodge-foyer)]])
+(defentity village-square-sw (village-square-location)
+  (exits ((village-square-portal :north village-square-w :east village-square-s
+                                 :west forest-road-1)
+          (entry-doorway :south lodge-foyer))))
 
-(defentity village-square-s village-square-room
-  [:exits [:west village-square-sw :east village-square-se
-           :north village-square-c :south south-road-1]])
+(defentity village-square-s (village-square-location)
+  (exits ((village-square-portal :west village-square-sw :east village-square-se
+                                 :north village-square-c)
+          (dirt-road :south south-road-1))))
 
-(defentity crone npc
-  [:brief "an old crone"
-   :pose "stands off to the side, watching people pass by."
-   :full "The crone wears a faded gray cloak. Her wavy white hair spills from
-     beneath her hood. Her eyes are bright, and she watches any passersby with
-     great interest."]
+(defproto crone (creature)
+  (brief "an old crone")
+  (pose "stands off to the side, watching people pass by.")
+  (full "The crone wears a faded gray cloak. Her wavy white hair spills from
+    beneath her hood. Her eyes are bright, and she watches any passersby with
+    great interest."))
 
-  (did-enter-room [this (actor :avatar) room entry]
-    (show-text actor "The crone stares at you for a moment, then looks away."))
+(defmethod did-enter-location ((observer crone) (actor avatar) location entry)
+  (show-text actor "The crone stares at you for a moment, then looks away."))
 
-  (do-talk [this actor npc]
-    (show-say actor this "Greetings, stranger. Your new body may be young, but I
-      can sense the age of your spirit. This is not your first time around the
-      block, so to speak. In a past life you were a great hero, but perhaps you
-      have forgotten your deeds. A pity.
+(defmethod do-talk (actor (target crone) subject)
+  (declare (ignore subject))
+  (show-say actor target "Greetings, stranger. Your new body may be young, but I
+    can sense the age of your spirit. This is not your first time around the
+    block, so to speak. In a past life you were a great hero, but perhaps you
+    have forgotten your deeds. A pity.
 
-      Know this: you are here for a reason. This world needs you; I feel it in
-      my bones, I hear it on the wind...but I know not why. What threat could be
-      so grave that, in order to overcome it, we must tear history's heroes away
-      from their peaceful slumber in the Dreamlands?
+    Know this: you are here for a reason. This world needs you; I feel it in my
+    bones, I hear it on the wind...but I know not why. What threat could be so
+    grave that, in order to overcome it, we must tear history's heroes away from
+    their peaceful slumber in the Dreamlands?
 
-      Of course that raises another question: who or what is doing the tearing?
+    Of course that raises another question: who or what is doing the tearing?
 
-      In the village of my birth there is a saying: \"May you live in
-      interesting times.\" Bah. Perhaps I will be lucky, and my days will end
-      before things become too interesting. For you, though, I foresee no such
-      luck.")))
+    In the village of my birth there is a saying: \"May you live in interesting
+    times.\" Bah. Perhaps I will be lucky, and my days will end before things
+    become too interesting. For you, though, I foresee no such luck."))
 
-(defentity village-square-se village-square-room
-  [:exits [:west village-square-s :north village-square-e]
-   :contents [crone]])
+(defentity village-square-se (village-square-location)
+  (exits ((village-square-portal :west village-square-s :north village-square-e)))
+  (contents (crone)))
+
+#|
 
 ;;; sword shop
 
