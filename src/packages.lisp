@@ -5,7 +5,7 @@
    :defentity :defproto :defregion :transform-slot-init-form
    :describe-brief :describe-pose :describe-full
    ;;
-   :opposite-direction :add-exit :remove-exit
+   :opposite-direction :add-exit :remove-exit :traverse-portal
    ;;
    :quest :defquest :offer-quest :advance-quest :quest-available-p
    :quest-active-p :quest-incomplete-p :quest-complete-p :quest-finished-p
@@ -14,9 +14,7 @@
    :show-text :show-say :announce :maybe-show-tutorial
    :update-map-nearby
    :change-race :change-gender :change-name :valid-name-p
-   :with-delay
-   :circular-list :pop-item :first-item :nth-item
-   :format-log
+   :with-delay :format-log
    :run-server))
 
 (in-package :charm)
@@ -31,4 +29,4 @@
 
   (dolist (name *region-packages*)
     (when (not (find-package name))
-      (make-package name :use '(:common-lisp :charm :lib)))))
+      (make-package name :use '(:common-lisp :charm :lib :alexandria)))))
