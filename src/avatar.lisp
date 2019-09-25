@@ -87,6 +87,9 @@
 (defmethod encode-slot ((name (eql 'session)) value)
   nil)
 
+(defmethod encode-slot ((name (eql 'attack-timer)) value)
+  nil)
+
 ;;; Base health, energy, and mana are derived from the avatar's race.
 
 (defmethod base-health ((entity avatar))
