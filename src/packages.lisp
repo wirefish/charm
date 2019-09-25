@@ -26,7 +26,8 @@
     (make-package :lib :use '(:common-lisp :alexandria :charm)))
 
   (defparameter *region-packages*
-    '(:isle-of-dawn))
+    '(:isle-of-dawn
+      :arwyck))
 
   (dolist (name *region-packages*)
     (when (not (find-package name))

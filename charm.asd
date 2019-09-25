@@ -61,4 +61,5 @@
                        (:file "portals")
                        (:file "weapons")
                        (:file "vehicle")))
-             (:file "isle-of-dawn")))))
+             (:file "isle-of-dawn")
+             (:file "arwyck")))))

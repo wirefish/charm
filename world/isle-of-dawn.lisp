@@ -1005,7 +1005,8 @@
   (surface :deep-water)
   (domain :outdoor)
   (contents (sailor))
-  (waypoints ((gangplank :west pier) (gangplank :west guard-station))))
+  (waypoints ((gangplank :west pier)
+              (gangplank :south arwyck::west-dock))))
 
 ;;; dockmaster-shack
 
