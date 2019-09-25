@@ -1,0 +1,205 @@
+TO DO:
+
+- save avatars periodically and when leaving game
+
+- add command to leave game
+
+- add drop command
+
+- combat
+
+- skills
+
+- guilds / guildmasters
+
+- port other regions
+
+- map icons e.g. for ship
+
+- update left pane when entities enter/exit
+
+- update health/spirit/xp bars
+
+- equip items
+
+========================================
+
+COMBAT
+
+Combat is a mode. When an entity enters combat, its allowed set of actions is
+limited until it leaves combat. There are three ways to leave combat: (1) die,
+(2) flee, or (3) all your opponents leave combat.
+
+While in combat, an avatar has the following fields set:
+
+- `attack-target` is the ID of the entity currently being targeted by
+  autoattacks, and the default target for special attacks.
+
+- `assist-target` is nil or the ID of the entity that is the default target for
+  helpful abilities.
+
+- `opponents` is a list of the IDs of all enemies with whom the avatar is in
+  combat.
+
+- `attack-timer` is a non-nil timer event used to perform autoattacks.
+
+While in combat, a mob has the following fields set:
+
+- `opponents` is an alist of pairs (target-id . threat-level), sorted by
+  decreasing threat-level. The mob decides which opponent to target with each
+  attack, by default choosing the one with the highest threat. Every entity with
+  whom the mob is in combat will appear in this list.
+
+- `attack-timer` is a non-nil timer event used to perform attacks. At each tick
+  the mob decides which of its attacks to perform.
+
+- `looters` is a list of the IDs of actors who may loot the mob's corpse after
+  it dies. This includes everyone who has been in combat with the mob since it
+  spawned or reset.
+
+An avatar enters combat using either the `attack` command or the `assist`
+command, or when an aggressive mob attacks on its own.
+
+The `attack` command sets `attack-target`, adds the target to `opponents` if it
+isn't already there, and starts `attack-timer` if it is nil.
+
+The `assist` command sets `assist-target`, sets `attack-target` (if not already
+set) to that of the assisted entity, and merges the assisted entity's
+`opponents` into the avatar's `opponents`. It also starts `attack-timer` if it
+is nil.
+
+When any entity exits combat:
+
+- Its `attack-timer` is canceled and set to nil.
+
+- For each entity in its `opponents` list, it is removed from that entity's
+  `opponents`.
+
+- Its `opponents`, `attack-target`, and `assist-target` are cleared.
+
+When a mob dies, it exits combat as described aboce. If an avatar's `opponents`
+becomes empty, the avatar exits combat as well. Otherwise a new attack target is
+selected from its remaining opponents.
+
+When an avatar goes unconscious (i.e. reaches 0 health), it exits combat as
+described above. It a mob's `opponents` becomes empty, that mob exits combat as
+well.
+
+When an avatar exits the room, every mob in its `opponents` gets a free "attack
+of opportunity" with bonuses (no block, no dodge, increased crit chance?) before
+the avatar exits combat. (Mobs may block the exit attempt entirely.)
+
+Some actions cannot be used in combat:
+
+- NPC interactions like talk, skill, buy, sell, ...
+
+Performing an action (other than help and social actions like say, yell, chat)
+while in combat:
+
+- uses spirit, based on the action
+
+- triggers a GCD, a cooldown before another combat action can be performed.
+
+Many actions are instant, others take time (e.g. a spell with a cast time)
+before they complete. The GCD begins once the action completes.
+
+The GCD is shown using a small pie/clock widget at the right end of the command
+entry box, or maybe a yellow bar above it? Once it expires maybe a message like
+"You are now ready to perform another action."
+
+For an avatar, each tick of `attack-timer` performs basic attacks with each
+equipped weapon. The timer is based on the speed of the main-hand weapon. The
+number of attacks per tick for the off-hand weapon is based on its speed
+relative to the main-hand weapon.
+
+A mob defines a basic attack and a set of special attacks. Each special attack
+has an associated cooldown; after being used it cannot be used again until the
+cooldown expires.
+
+For a mob, each tick of `attack-timer` randomly selects either its basic attack
+or a special attack that is off cooldown. It then performs that attack against a
+selected target, which by default is its highest-threat opponent.
+
+Combat actions can be invoked via skill-specific commands (e.g. kick, punch,
+bash, ...) or, if spells, via the "cast" command, alias "!". Actually maybe
+everything can be used either way, spells might have a command equivalent (e.g.
+"magmis" for "magic missile"). Also, in "cast", normal token matching rules
+occur against your known skills. So you could type any of:
+
+      cast mag mis
+      magmis
+      !magic missile at/on goblin
+
+Skill-specific commands don't know up in the generic "help" output, at least
+until you learn them. But the skills appear in "skill list" and typing "help
+<skill>" works.
+
+The spirit cost of a skill is expressed as a fraction of base spirit. Base
+spirit is calculated based on race and level, without accounting for modifiers
+due to auras or equipment. Efficacy is also scaled by level.
+
+The idea is that spirit is a generic resource for all actions, physical or
+magical. It could be split into, say, energy for physical and mana for magicial.
+But because of the classless, skill-based system that would make it very
+difficult to gear for a hybrid build with a mix of physical and magical skills.
+
+========================================
+
+COMBAT STATS
+
+The overall feel is more toward D&D and less toward WoW. Specifically, the goal
+is to avoid exponential scaling and an overwhelming gear treadmill. Also, keep
+it simple.
+
+Combat relies on three resources:
+
+- health: Hit points. When they hit zero, a mob dies and an avatar goes
+  unconscious. Regenerates slowly in combat, faster out of combat. Computed
+  based on base-health, level, endurance, traits, and auras.
+
+- energy: A resource used to perform physical actions, including movement.
+  Regenerates quickly in or out of combat. Computed based on traits and auras.
+
+- mana: A resource used to cast spells and perform actions. Regenerates slowly
+  in or out of combat. Computed based on base-mana, level, intellect, traits,
+  and auras.
+
+It also relies on a number of modifiers that influence how attacks are resolved:
+
+- armor: Reduces damage from physical and elemental (a subset of magical)
+  attacks. Computed by summing (racial) natural armor and contributions from
+  equipment, traits, and auras.
+
+- strength: Increases physical damage done.
+
+- precision: Increases chance of a critical hit with any physical or magical
+  attack or heal. Defaults to 5%.
+
+- ferocity: Increases multiplier applied to a critical effect. Defaults to 1.5.
+
+- evasion: Increases chance to dodge an attack. Defaults to 5%.
+
+- accuracy: Reduces miss chance. Defaults to 5%.
+
+- resilience: Increases regen rate for health, energy, and mana.
+
+- intellect: Increases elemental and magical damage done.
+
+- piety: Increases healing done.
+
+- resistances: damage reduction against different types of attacks. Each value
+  determines the amount of damage nullified from each attack.
+
+For some modifiers that increase damage done or reduce damage taken, the value
+is computed by just scaling the modifier by some constant. Modifier values
+naturally increase with level, as does damage. Armor, strength, resilience,
+intellect, and piety fall into this group.
+
+Armor is just a convenient synonym for "resistance to physical and elemental
+damage" and is broken out because it is so common on armor, and probably needs a
+different scaling factor.
+
+The magnitude of a modifier's effect depends on its value and the level of the
+entity to be effected. This means that an item which grants 10 intellect might
+increase damage against level 1 creatures by 10%, but against level 10 creatures
+its effect is diminished.

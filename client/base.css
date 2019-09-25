@@ -1,0 +1,53 @@
+* { margin:0; padding:0; outline:0 }
+
+@font-face {
+    font-family:uncial;
+    src:url('fonts/aniron-regular.woff');
+}
+
+@font-face {
+    font-family:artifika;
+    src:url('fonts/artifika-regular.woff');
+}
+
+body {
+    background-color:#18181e;
+    color:#efefef;
+    padding:6px;
+    font:10pt artifika;
+    overflow:hidden;
+}
+
+h1 {
+    font:16pt uncial;
+    text-transform:lowercase;
+    color:#ffffd0;
+}
+
+h2 {
+    font:12pt uncial;
+    text-transform:lowercase;
+}
+
+h3 {
+    font:12pt artifika;
+    font-variant:small-caps;
+}
+
+p {
+    line-height:15pt;
+    margin-bottom:5pt;
+}
+
+a {
+    color:#a0a0f0;
+}
+
+a:link {
+    text-decoration:none;
+}
+
+.link {
+    color:#a0a0f0;
+    cursor: pointer;
+}

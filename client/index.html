@@ -1,0 +1,86 @@
+<?DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Atalea</title>
+    <link rel="stylesheet" type="text/css" href="base.css"/>
+    <link rel="stylesheet" type="text/css" href="index.css"/>
+    <script src="markup.js"></script>
+    <script src="index.js"></script>
+  </head>
+  <body>
+    <div id="header">
+      <div id="loginbar">
+      </div>
+    </div>
+    <div id="frame">
+      <div id="content">
+        <h1>Welcome, Traveler!</h1>
+
+        <p>You have reached the mystical land of Atalea: a sprawling world full of danger, wonder,
+        and adventure.</p>
+
+        <p>Atalea is a multiplayer, text-based adventure game. You play the role
+        of a long-dead hero who has unexpectedly been reborn into the world.
+        What could drive the gods to revive you, pulling you violently from the
+        peaceful rest you have enjoyed for centuries? Start playing now and find
+        out!</p>
+
+        <p>You can play the game right here in your browser. If you haven't
+        already, click the button in the upper-right to create an
+        account&mdash;it takes just a moment and doesn't require any personal
+        information.</p>
+
+        <p>Once you have an account, click the big green button to join the fun!</p>
+
+        <h1>News and Events</h1>
+
+        <p>What's going on in Atalea?</p>
+
+      </div>
+      <div id="sidebar">
+        <div class="actionbox">
+          <input id="action" type="button"/>
+        </div>
+        <div class="sidebox">
+          <h2>Learn More...</h2>
+          <ul>
+            <li>Overview</li>
+            <li>Races</li>
+            <li>Guilds &amp; skills</li>
+            <li>Maps</li>
+          </ul>
+        </div>
+        <div class="sidebox">
+          <h2>Who's Online?</h2>
+          <ul>
+            <li>Ralph</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div id="modalmask" class="overlay"></div>
+    <div id="logindialog" class="popup">
+      <div id="createaccount">
+        <h2>Create A New Account</h2>
+        <p id="cprompt">To get started, choose your username and password.</p>
+        <form id="createform">
+          <input id="cuser" type="text" name="user" placeholder="Username" tabindex="4"/><br/>
+          <input id="cpass1" type="password" name="password" placeholder="Password" tabindex="5"/><br/>
+          <input id="cpass2" type="password" name="password" placeholder="Repeat password" tabindex="6"/><br/>
+          <input type="submit" value="Create Account" tabindex="7"/>
+        </form>
+      </div>
+      <div id="login">
+        <h2>Login</h2>
+        <p id="lprompt">Already signed up? Enter your username and password.</p>
+        <form id="loginform">
+          <input id="luser" type="text" name="user" placeholder="Username" tabindex="1"/><br/>
+          <input id="lpass" type="password" name="password" placeholder="Password" tabindex="2"/><br/>
+          <input type="submit" value="Login" tabindex="3"/>
+        </form>
+      </div>
+      <div class="closebox" onclick="hideLogin()">&#x00d7;</div>
+    </div>
+  </body>
+  </html>

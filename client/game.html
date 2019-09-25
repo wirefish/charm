@@ -1,0 +1,198 @@
+<?DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Atalea</title>
+    <link rel="stylesheet" type="text/css" href="game.css"/>
+    <script src="map.js"></script>
+    <script src="markup.js"></script>
+    <script src="game.js"></script>
+  </head>
+
+  <body>
+    <!-- Player icon, name, title, health/energy/mana/xp bars, auras -->
+    <div class="box" id="vitals">
+      <div class="portrait" id="player_portrait"></div>
+      <div class="name" id="player_name"></div>
+      <div id="player_bars">
+        <div class="statbar healthbar" title="Health" id="player_health">
+          <span>0 / 0</span>
+          <div class="statvalue"></div>
+        </div>
+        <div class="statbar manabar" title="Mana" id="player_mana">
+          <span>0 / 0</span>
+          <div class="statvalue"></div>
+        </div>
+        <div class="statbar xpbar" title="Experience" id="player_xp">
+          <span>0 / 0</span>
+          <div class="statvalue"></div>
+        </div>
+      </div>
+      <div id="player_auras" class="aurabox"></div>
+    </div>
+
+    <!-- NPCs, players, mobs, and items at the current location -->
+    <div class="box" id="contents">
+      <div id="neighbor_prototype" style="display: none">
+        <div class="portrait"></div>
+        <div class="name"></div>
+        <div class="statbar healthbar">
+          <div class="statvalue"></div>
+        </div>
+        <div class="statbar manabar">
+          <div class="statvalue"></div>
+        </div>
+        <div class="aurabox"></div>
+      </div>
+    </div>
+
+    <!-- Main game text -->
+    <div class="box textbox scroll" id="game_text">
+      <div>
+        <img src="images/atalea.png"></img>
+      </div>
+    </div>
+
+    <!-- Map -->
+    <div class="box" id="map">
+      <div id="room_name"></div>
+      <div id="zone_name"></div>
+      <canvas id="map_canvas" width="200" height="200"></canvas>
+    </div>
+
+    <!-- Social text -->
+    <div class="box textbox scroll" id="chat_text">
+      <div id="pane_title">
+        <span onclick="handler.showNextPane(-1);">&#9668;</span>
+        <span>Attributes</span>
+        <span onclick="handler.showNextPane(1);">&#9658;</span>
+      </div>
+      <div id="statbox">
+        <div><div>Strength</div><div>123</div><div>+55%</div></div>
+        <div><div>Agility</div><div>1234</div><div>+555%</div></div>
+        <div><div>Vitality</div><div>12</div><div>+3%</div></div>
+        <div><div>Intellect</div><div>12</div><div>+3%</div></div>
+        <div><div>Willpower</div><div>12</div><div>+3%</div></div>
+      </div>
+      <div id="modbox">
+        <div><div>Attack</div><div></div><div>Defense</div></div>
+        <hr/>
+        <div><div>-3%</div><div>Physical</div><div>+3%</div></div>
+        <div><div>-3%</div><div>Magical</div><div>+3%</div></div>
+        <hr/>
+        <div><div>-3%</div><div>Slashing</div><div>+3%</div></div>
+        <div><div>-3%</div><div>Piercing</div><div>+3%</div></div>
+        <div><div>-3%</div><div>Crushing</div><div>+3%</div></div>
+        <hr/>
+        <div><div>-33%</div><div>Fire</div><div>+344%</div></div>
+        <div><div>-33%</div><div>Cold</div><div>+344%</div></div>
+        <div><div>-33%</div><div>Electricity</div><div>+344%</div></div>
+        <div><div>-33%</div><div>Arcane</div><div>+344%</div></div>
+        <div><div>-33%</div><div>Shadow</div><div>+344%</div></div>
+      </div>
+      <div id="profbox">
+        <h3>Weapons</h3>
+        <div><div>Daggers</div><div>50%</div></div>
+        <div><div>Axes</div><div>100%</div></div>
+        <div><div>Swords</div><div>125%</div></div>
+        <h3>Armor</h3>
+        <div><div>Light armor</div><div>100%</div></div>
+      </div>
+      <div id="guildbox">
+        <div><div>Unspent karma points:</div><div>0</div></div>
+        <h3>Brotherhood of Foo (rank 12 crybaby)</h3>
+        <div><div>wall of madness</div><div>(rank 1)</div></div>
+      </div>
+      <div id="equipbox">
+        <h3>Weapons</h3>
+        <h3>Armor</h3>
+        <div>
+          <div>Head</div>
+          <div><div></div><div>silver helmet of farsight</div></div>
+        </div>
+        <div>
+          <div>Chest</div>
+          <div><div></div><div>hauberk of vile tendencies and naughty secrets</div></div>
+        </div>
+        <div>
+          <div>Back</div>
+          <div><div></div><div>cloak of shadows</div></div>
+        </div>
+        <div>
+          <div>Hands</div>
+          <div><div></div><div>soft wool mittens</div></div>
+        </div>
+        <div>
+          <div>Waist</div>
+          <div><div></div><div>torn leather belt</div></div>
+        </div>
+        <div>
+          <div>Legs</div>
+          <div><div></div><div>comfortable jeans</div></div>
+        </div>
+        <div>
+          <div>Feet</div>
+          <div><div></div><div>fine leather sandals</div></div>
+        </div>
+        <h3>Jewelry</h3>
+        <div>
+          <div>Ear</div>
+          <div><div></div><div>jade earring</div></div>
+        </div>
+        <div>
+          <div>Neck</div>
+          <div><div></div><div>pendant of last year's brunch</div></div>
+        </div>
+        <div>
+          <div>Wrist</div>
+          <div><div></div><div>bracelet of blue fire</div></div>
+        </div>
+        <div>
+          <div>Finger</div>
+          <div><div></div><div>ring of infallibility</div></div>
+        </div>
+        <div>
+          <div>Relic</div>
+          <div><div></div><div>brooch of the elder grandmas</div></div>
+        </div>
+      </div>
+      <div id="invbox">
+        <h3>Quest Items</h3>
+        <div><div></div><div>6 tubs of lard</div></div>
+        <div><div></div><div>mud brick of destiny</div></div>
+      </div>
+    </div>
+
+    <!-- Buttons for settings, help, etc. -->
+    <div class="buttonbox" id="buttons">
+      <div>
+        <div id="quit" style="background-image: url('icons/exit-door.png')"></div>
+        <div id="settings" style="background-image: url('icons/cog.png')"></div>
+        <div id="help" style="background-image: url('icons/help.png')"></div>
+      </div>
+    </div>
+
+    <!-- Command input -->
+    <div class="box" id="input">
+      <input type="text" id="command" autocomplete="off" maxlength=200
+             placeholder="Type a command or 'help' for help."/>
+    </div>
+
+    <!-- Buttons for macros -->
+    <div class="buttonbox" id="macros">
+      <div>
+        <div id="macro_1">1</div>
+        <div id="macro_2">2</div>
+        <div id="macro_3">3</div>
+        <div id="macro_4">4</div>
+        <div id="macro_5">5</div>
+        <div id="macro_6">6</div>
+        <div id="macro_7">7</div>
+        <div id="macro_8">8</div>
+        <div id="macro_9">9</div>
+        <div id="macro_0">0</div>
+      </div>
+    </div>
+
+  </body>
+</html>
