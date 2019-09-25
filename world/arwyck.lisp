@@ -851,6 +851,8 @@
 
 (defentity forest-gate (location)
   (brief "Forest Gate")
+  (full "A stout wooden stockade separates Arwyck from the forest to the west. A
+    narrow gate allows access to the wilderness beyond.")
   (domain :outdoor)
   (surface :dirt)
   (exits ((dirt-road :east forest-road-3))) ;  :west silverwood/forest-6-3
