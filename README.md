@@ -1,4 +1,4 @@
-# CHarm
+# Charm
 
 Charm is a framework for creating text-based multiplayer role-playing games. You
 could say it is an updated take on a MUD. Charm is designed to be played in a
@@ -6,7 +6,7 @@ modern browser and includes an integrated HTML5 client.
 
 ## Installation
 
-Jade is written in [Common Lisp](https://common-lisp.net). Specifically it is
+Charm is written in [Common Lisp](https://common-lisp.net). Specifically it is
 developed using the [SBCL](http://sbcl.org) implementation of the language. If
 you're not familiar with Common Lisp,
 [this page](https://lisp-lang.org/learn/getting-started/) provides a good guide
