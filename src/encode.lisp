@@ -31,10 +31,14 @@
       (write nil :stream stream)
       (progn
         (write-char #\( stream)
-        (encode-object (first object) stream)
-        (dolist (value (rest object))
-          (write-char #\Space stream)
-          (encode-object value stream))
+        (loop for cons on object
+              for i from 0
+              do
+                 (when (> i 0) (write-char #\Space stream))
+                 (encode-object (car cons) stream)
+                 (when (and (cdr cons) (not (consp (cdr cons))))
+                   (write-string " . " stream)
+                   (encode-object (cdr cons) stream)))
         (write-char #\) stream)))
   object)
 
