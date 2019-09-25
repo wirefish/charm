@@ -42,6 +42,9 @@
         (write-char #\) stream)))
   object)
 
+(defmethod encode-object ((object string) stream)
+  (write object :stream stream))
+
 (defmethod encode-object ((object vector) stream)
   (write-string "#(" stream)
   (loop for value across object
