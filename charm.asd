@@ -50,6 +50,7 @@
              (:file "talk")
              (:file "combat")
              (:file "status")
+             (:file "admin")
 
              (:file "database")
              (:file "server")))

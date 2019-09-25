@@ -268,11 +268,3 @@
   the item is placed into any equipped container with sufficient space."
   ;; FIXME
   nil)
-
-;;; FIXME: move this
-
-(defcommand (actor "dump" :word slot)
-  (show-raw actor
-            (encode (if slot
-                        (slot-value actor (find-symbol (string-upcase slot)))
-                        actor))))
