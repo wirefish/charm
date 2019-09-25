@@ -158,7 +158,7 @@
   (stack-size 1 :instance))
 
 (defproto quest-item (item)
-  (quest nil)
+  (quest nil) ; key of associated quest
   (bound t))
 
 (defproto equipment (item)

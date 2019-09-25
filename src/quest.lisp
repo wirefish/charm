@@ -1,6 +1,7 @@
 (in-package :charm)
 
-"A quest represents a task set for the player by an inhabitant of the game world.
+#|
+A quest represents a task set for the player by an inhabitant of the game world.
 
 Four events occur during the lifetime of a quest:
 
@@ -18,49 +19,54 @@ Four events occur during the lifetime of a quest:
 - `finish-quest` occurs when the player interacts with an entity that ends a
   quest for which the player has completed all objectives. It provides any
   rewards earned by completing the quest."
+|#
 
-;;; Each quest is represented as a subclass of `quest`.
+;;; Each quest is represented as an instance of class `quest`.
 
 (defclass quest ()
-  ((name :allocation :class :reader name)
-   (summary :allocation :class :reader summary)
-   (details :allocation :class :reader details)
-   (level :initform 0 :allocation :class :reader level)
-   (required-quests :initform nil :allocation :class :reader required-quests)))
+  ((key :initarg :key :reader key)
+   (name :initform "An Unnamed Quest" :initarg :name :reader name)
+   (summary :initform nil :initarg :summary :reader summary)
+   (details :initform nil :initarg :details :reader details)
+   (level :initform 0 :initarg :level :reader level)
+   (required-quests :initform nil :initarg :required-quests :reader required-quests)))
 
-;;; The `defquest` macro creates a subclass of `quest` along with an instance of
-;;; that class, much like `defentity` does for entity subclasses.
+;;; The `defquest` macro creates an instance of class `quest`.
 
 (defmacro defquest (name &body slots)
-  (let ((slots (loop for (name init-form) in slots
-                     collect `(,name :initform ,init-form :allocation :class))))
-    `(progn
-       (defclass ,name (quest) ,slots)
-       (defparameter ,name (make-instance ',name)))))
+  (let ((args (loop for (name init-form) in slots
+                     append `(,(make-keyword name) ,init-form))))
+    `(defparameter ,name (make-instance 'quest :key ',name ,@args))))
 
 (defun quest-xp-reward (quest)
   "Computes the amount of experience awarded upon finishing `quest`."
   (+ 200 (* (level quest) 100)))
 
+(defun find-quest (quest-key)
+  (symbol-value quest-key))
+
+(defun remove-quest-items (avatar quest &key npc (message "~a is destroyed."))
+  "Removes all items associated with `quest` from the inventory of `avatar`. If
+  `npc` is not nil, makes it appear that items are given to `npc`; otherwise,
+  `message` is used to construct feedback to the player."
+  (let ((items (remove-items-if avatar
+                                #'(lambda (item)
+                                    (and (typep item 'quest-item)
+                                         (eq (quest item) (key quest)))))))
+    (dolist (item items)
+      (if npc
+          (show-text avatar "You give ~a to ~a."
+                     (describe-brief item)
+                     (describe-brief npc :article :definite))
+          (show-text avatar message
+                     (describe-brief item :capitalize t :article :definite))))))
+
 (defun remove-active-quest (actor quest)
   "Removes `quest` from the set of active quests for `actor`."
-  ;; TODO: also remove any quest items associated with quest.
-  (let ((key (type-of quest)))
+  (with-slots (key) quest
     (setf (active-quests actor)
           (delete-if #'(lambda (q) (eq (car q) key))
                      (active-quests actor)))))
-
-(defun remove-quest-items (avatar quest &optional npc)
-  (remove-items-if avatar
-                   #'(lambda (item)
-                       (when (and (typep item 'quest-item) (eq (quest item) (type-of quest)))
-                         (if npc
-                             (show-text avatar "You give ~a to ~a."
-                                        (describe-brief item)
-                                        (describe-brief npc :article :definite))
-                             (show-text avatar "~a is consumed."
-                                        (describe-brief item :capitalize t :article :definite)))
-                         item))))
 
 ;;; An event that triggers when `actor` is offered `quest` by interacting with
 ;;; `npc`.
@@ -82,7 +88,7 @@ Four events occur during the lifetime of a quest:
 (defevent accept-quest (actor quest npc))
 
 (defmethod do-accept-quest :around (avatar quest npc)
-  (push (cons (type-of quest) 0) (active-quests avatar))
+  (push (cons (key quest) 0) (active-quests avatar))
   (show-notice avatar "You have accepted the quest ~s." (name quest))
   (call-next-method))
 
@@ -98,10 +104,10 @@ Four events occur during the lifetime of a quest:
 
 (defmethod do-finish-quest :around (actor quest npc)
   (remove-active-quest actor quest)
-  (remove-quest-items actor quest)
+  (remove-quest-items actor quest :npc npc)
   (call-next-method)
   (show-notice actor "You have finished the quest ~s." (name quest))
-  (setf (gethash (type-of quest) (finished-quests actor)) (get-universal-time))
+  (setf (gethash (key quest) (finished-quests actor)) (get-universal-time))
   (gain-xp actor (quest-xp-reward quest)))
 
 (defmethod do-finish-quest :before (actor quest npc)
@@ -114,7 +120,7 @@ Four events occur during the lifetime of a quest:
 
 (defun quest-active-p (avatar quest)
   "Returns t if `avatar` has accepted but not yet finished (turned-in) `quest`."
-  (assoc (type-of quest) (active-quests avatar)))
+  (assoc (key quest) (active-quests avatar)))
 
 (defun quest-incomplete-p (avatar quest)
   "Returns t if `avatar` has accepted but not yet completed the objectives for
@@ -131,7 +137,7 @@ Four events occur during the lifetime of a quest:
 (defun quest-finished-p (avatar quest)
   "Returns the timestamp at which `avatar` last turned in `quest`, or nil if the
   quest has never been finished."
-  (gethash (type-of quest) (finished-quests avatar)))
+  (gethash (key quest) (finished-quests avatar)))
 
 ;;; The `quest-available-p` generic function is a predicate that returns t if
 ;;; `avatar` can currently accept `quest`.
@@ -145,20 +151,20 @@ Four events occur during the lifetime of a quest:
        (every #'(lambda (x) (gethash x (finished-quests avatar))) (required-quests quest))))
 
 (defun find-available-quest (avatar npc)
-  (some #'(lambda (x)
-            (let ((quest (symbol-value x)))
+  (some #'(lambda (key)
+            (let ((quest (find-quest key)))
               (when (quest-available-p avatar quest) quest)))
         (begins-quests npc)))
 
 (defun find-incomplete-quest (avatar npc)
-  (some #'(lambda (x)
-            (let ((quest (symbol-value x)))
+  (some #'(lambda (key)
+            (let ((quest (find-quest key)))
               (when (quest-incomplete-p avatar quest) quest)))
         (begins-quests npc)))
 
 (defun find-complete-quest (avatar npc)
-  (some #'(lambda (x)
-            (let ((quest (symbol-value x)))
+  (some #'(lambda (key)
+            (let ((quest (find-quest key)))
               (when (quest-complete-p avatar quest) quest)))
         (ends-quests npc)))
 
@@ -173,7 +179,7 @@ Four events occur during the lifetime of a quest:
 
 (defun summarize-quest-state (quest-state)
   (destructuring-bind (key . progress) quest-state
-    (let ((quest (symbol-value key)))
+    (let ((quest (find-quest key)))
       (format nil "~a (level ~d, ~d% complete)~a"
               (name quest)
               (level quest)
@@ -181,9 +187,9 @@ Four events occur during the lifetime of a quest:
               (if (>= progress 1) "&emsp;&#10004;" "")))))
 
 (defun match-active-quests (avatar tokens)
-  (loop for quest-state in (active-quests avatar)
-        if (match-tokens tokens (symbol-value (car quest-state)))
-          collect (cons (symbol-value (car quest-state)) (cdr quest-state))))
+  (loop for (key . progress) in (active-quests avatar)
+        if (match-tokens tokens (find-quest key))
+          collect (cons (find-quest key) progress)))
 
 (defcommand (actor ("quest" "qu") :word subcommand :rest quest-name)
   "Display information about your active quests. This command has several

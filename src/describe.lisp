@@ -12,8 +12,7 @@
   (not (hidden subject)))
 
 (defmethod is-visible-p ((subject quest-item) (observer avatar))
-  (print (list subject observer))
-  (quest-incomplete-p observer (quest subject)))
+  (quest-incomplete-p observer (find-quest (quest subject))))
 
 ;;; The generic function `describe-brief` returns a string containing a short
 ;;; phrase describing `target`. The string contains an article if appropriate.

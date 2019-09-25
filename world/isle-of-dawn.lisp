@@ -86,19 +86,19 @@
   (summary "Choose your physical form by meditating at one of the racial shrines
     on the Isle of Dawn."))
 
-(defmethod do-offer-quest (avatar (quest choose-a-race) npc)
+(defmethod do-offer-quest (avatar (quest (eql choose-a-race)) npc)
   (show-say avatar npc "Hello, friend! As you may have noticed, your current
     body is just a ghostly manifestation of your spirit. To fix that you'll need
     to select a race and take on a physical form. It just so happens I can help
     you do exactly that!"))
 
-(defmethod do-offer-quest :after (avatar (quest choose-a-race) npc)
+(defmethod do-offer-quest :after (avatar (quest (eql choose-a-race)) npc)
   (maybe-show-tutorial avatar 'offer-quest "The kobold is offering you a quest!
     Quests are tasks set for you by the denizens of the world. Completing them
     can provide you with many kinds of rewards. Type `help quests` for more
     information."))
 
-(defmethod do-accept-quest (avatar (quest choose-a-race) npc)
+(defmethod do-accept-quest (avatar (quest (eql choose-a-race)) npc)
   (show-say avatar npc "Excellent! To the west you will find several shrines,
     each dedicated to a different race. Talk to the caretaker at each shrine to
     learn more about his or her people.
@@ -111,12 +111,12 @@
     see the quests you've accepted and track your progress toward their
     completion."))
 
-(defmethod do-advise-quest (avatar (quest choose-a-race) npc)
+(defmethod do-advise-quest (avatar (quest (eql choose-a-race)) npc)
   (show-say avatar npc "Have you selected a race yet? The caretakers to the west
     will be more than happy to describe their races and help you make the right
     decision."))
 
-(defmethod do-finish-quest (avatar (quest choose-a-race) npc)
+(defmethod do-finish-quest (avatar (quest (eql choose-a-race)) npc)
   (show-say avatar npc "A fine choice! Indeed I had no doubt you would choose to
     become ~a. I am something of an expert in these matters, after all.
 
@@ -508,25 +508,24 @@
 (defquest get-some-clothes
   (name "Cover Up")
   (summary "Pick a white tulip for Dhalia, then exchange it for a set of clothes.")
-  (required-quests '(choose-a-race))
-  (rewards '(simple-shirt simple-pants leather-shoes small-backpack)))
+  (required-quests '(choose-a-race)))
 
-(defmethod do-offer-quest (avatar (quest get-some-clothes) npc)
+(defmethod do-offer-quest (avatar (quest (eql get-some-clothes)) npc)
   (show-say avatar npc "Greetings! Did our mutual kobold friend send you my way?
     It certainly seems you have need of my wares. I will happily provide you
     with an outfit that should serve your needs, but I must ask a favor in
     return."))
 
-(defmethod do-accept-quest (avatar (quest get-some-clothes) npc)
+(defmethod do-accept-quest (avatar (quest (eql get-some-clothes)) npc)
   (show-say avatar npc "Wonderful! You see, I am very fond of white tulips, but
     my work here prevents me from taking the time to gather them. Would you head
     to the east and get one for me?"))
 
-(defmethod do-advise-quest (avatar (quest get-some-clothes) npc)
+(defmethod do-advise-quest (avatar (quest (eql get-some-clothes)) npc)
   (show-say avatar npc "Have you found a white tulip for me? They're just to the
     east."))
 
-(defmethod do-finish-quest (avatar (quest get-some-clothes) npc)
+(defmethod do-finish-quest (avatar (quest (eql get-some-clothes)) npc)
   (show-say avatar npc "Why thank you, this tulip is lovely! Your timing is
     perfect; I have just finished selecting an outfit for you.")
   (dolist (item '(simple-shirt simple-pants leather-shoes small-backpack))
@@ -626,21 +625,21 @@
     Fountain Plaza.")
   (required-quests '(get-some-clothes)))
 
-(defmethod do-offer-quest (avatar (quest choose-a-gender) npc)
+(defmethod do-offer-quest (avatar (quest (eql choose-a-gender)) npc)
   (show-say avatar npc "Another new arrival! Good to see you. We're certain to
     need more heroes of your caliber before long. Right now, though, it's high
     time you chose a gender. I assume you remember the difference between males
     and females from your previous life?"))
 
-(defmethod do-accept-quest (avatar (quest choose-a-gender) npc)
+(defmethod do-accept-quest (avatar (quest (eql choose-a-gender)) npc)
   (show-say avatar npc "To the east and west you will find statues that
     symbolize the two sexes. Simply `meditate` near the statue that represents
     your preferred gender. Come back to me when you're done."))
 
-(defmethod do-advise-quest (avatar (quest choose-a-gender) npc)
+(defmethod do-advise-quest (avatar (quest (eql choose-a-gender)) npc)
   (show-say avatar npc "Did you find the statues? They're hard to miss!"))
 
-(defmethod do-finish-quest (avatar (quest choose-a-gender) npc)
+(defmethod do-finish-quest (avatar (quest (eql choose-a-gender)) npc)
   (show-say avatar npc "You did it! I must admit I'm somewhat surprised by
     your choice. No matter; I'm sure I'll get used to it. Eventually."))
 
@@ -732,14 +731,14 @@
   (summary "Choose your name by saying it in the presence of the orb of naming.")
   (required-quests '(get-some-clothes)))
 
-(defmethod do-offer-quest (avatar (quest choose-a-name) npc)
+(defmethod do-offer-quest (avatar (quest (eql choose-a-name)) npc)
   (show-say avatar npc "Oh, hello. I didn't see you standing there. I hope you
     haven't been waiting long. How can I help you?
 
     Ah! You need a name, don't you. You've come to the right place; I'd be happy
     to help you out."))
 
-(defmethod do-accept-quest (avatar (quest choose-a-name) npc)
+(defmethod do-accept-quest (avatar (quest (eql choose-a-name)) npc)
   (show-say avatar npc "Just to the east you'll see a magical orb. Find it
     and say the word. Literally! Stand next to the orb and `say` the word you
     want to have as your name. The orb's power is truly remarkable.
@@ -748,11 +747,11 @@
     name on the trunk of this tree with the names of all the other heroes who
     have passed this way."))
 
-(defmethod do-advise-quest (avatar (quest choose-a-name) npc)
+(defmethod do-advise-quest (avatar (quest (eql choose-a-name)) npc)
   (show-say avatar npc "Still going incognito? You'll find the orb of naming
     just to the east."))
 
-(defmethod do-finish-quest (avatar (quest choose-a-name) npc)
+(defmethod do-finish-quest (avatar (quest (eql choose-a-name)) npc)
   (show-say avatar npc "Yes, what is it? Of course, you've chosen your name!
     Let me see, where is my pen? Ah, there it is. And now to write your
     name...how did you spell it, again? Just a few strokes of the pen,
@@ -838,13 +837,13 @@
     Whatever.")
   (required-quests '(choose-a-name)))
 
-(defmethod do-offer-quest (avatar (quest kill-some-plants) npc)
+(defmethod do-offer-quest (avatar (quest (eql kill-some-plants)) npc)
   (show-say avatar npc "Greetings, ~a. It seems you're nearly ready to leave
     this place, but I have my doubts. Before I allow you to venture further, I'm
     going to teach you how to fight! You'll need to be able to handle a weapon
     if you want to survive in the real world." (name avatar)))
 
-(defmethod do-accept-quest (avatar (quest kill-some-plants) npc)
+(defmethod do-accept-quest (avatar (quest (eql kill-some-plants)) npc)
   (show-say avatar npc "West of here you'll find some...plants. Not normal
     plants, but vicious killers! Vinelings, I think they're called. Or maybe
     lashleaves? Whatever. The name's not important.
@@ -855,11 +854,11 @@
   (dolist (item '(worn-dagger scratched-buckler))
     (give-item npc (make-instance item) avatar)))
 
-(defmethod do-advise-quest (avatar (quest kill-some-plants) npc)
+(defmethod do-advise-quest (avatar (quest (eql kill-some-plants)) npc)
   (show-say avatar npc "Any progress so far? Kill one of those plant things and
     we'll talk."))
 
-(defmethod do-finish-quest (avatar (quest kill-some-plants) npc)
+(defmethod do-finish-quest (avatar (quest (eql kill-some-plants)) npc)
   (show-say avatar npc "Great job! I'll confess, those things give me the heebie
     jeebies. Plants shouldn't writhe around like that. Please, feel free to head
     south whenever you like."))
