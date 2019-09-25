@@ -34,6 +34,8 @@
                    (mapcar pred (contents container))))))
 
 (defun remove-items-if (avatar pred)
+  "Removes all items from the inventory of `avatar` for which `pred` evaluates
+  to t, and returns a list of all removed items."
   (loop for slot in *inventory-slot-order*
         nconc (let ((container (gethash slot (equipment avatar))))
                 (when container
