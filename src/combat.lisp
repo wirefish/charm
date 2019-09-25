@@ -114,7 +114,7 @@
                      (verb-singular (attack-verb attack)))
                  (if (eq observer target) "you" (describe-brief target))
                  (describe-brief attack)
-                 (if (eq observer target) "miss" "misses")))))
+                 (if (eq observer attacker) "miss" "misses")))))
 
 (defun announce-evade (attacker target attack)
   (dolist (observer (contents (location attacker)))
