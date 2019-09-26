@@ -135,6 +135,7 @@
   (brief "a portal")
   (pose "leads ~a.")
   (size :gigantic)
+  (message nil)
   (exit-message "~a heads ~a.")
   (enter-message "~a enters from ~a.")
   (direction nil :instance)
@@ -147,6 +148,7 @@
   (domain :outdoor) ; or :indoor, :underground, :astral, etc.
   (surface :dirt) ; any anything else, really
   (tutorial nil)
+  (z-offset 0)
   (exits () :instance))
 
 (defproto item (entity)

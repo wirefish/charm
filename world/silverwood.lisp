@@ -253,151 +253,162 @@
   (exits ((dirt-path :west forest-5-3 :east arwyck::forest-gate)
           (forest-portal :north forest-6-2 :south forest-6-4))))
 
-#|
-
 (defentity forest-0-4 (forest)
-  [:exits [:east forest-1-4 :north forest-0-3]
-   :contents [(giant-spider)]])
+  (exits ((forest-portal :east forest-1-4 :north forest-0-3)))
+  (contents (giant-spider)))
 
 (defentity forest-1-4 (forest)
-  [:exits [:east forest-2-4 :north forest-1-3 :south forest-1-5 :west forest-0-4]
-   :contents [(large-spiderweb)]])
+  (exits ((forest-portal :east forest-2-4 :north forest-1-3
+                         :south forest-1-5 :west forest-0-4)))
+  (contents (large-spiderweb)))
 
 (defentity forest-2-4 (forest)
-  [:exits [:west forest-1-4 :east forest-3-4 :north forest-2-3 :south forest-2-5]])
+  (exits ((forest-portal :west forest-1-4 :east forest-3-4
+                         :north forest-2-3 :south forest-2-5))))
 
 (defentity forest-3-4 (forest)
-  [:exits [:west forest-2-4 :east forest-4-4 :north forest-3-3 :south forest-3-5]])
+  (exits ((forest-portal :west forest-2-4 :east forest-4-4
+                         :north forest-3-3 :south forest-3-5))))
 
-(defentity forest-4-4 forest-path
-  [:exits [:west forest-3-4 :east forest-5-4 :north forest-4-3 :south forest-4-5]])
+(defentity forest-4-4 (forest-path)
+  (exits ((forest-portal :west forest-3-4 :east forest-5-4)
+          (dirt-path :north forest-4-3 :south forest-4-5))))
 
-(defentity forest-5-4 stream-room
-  [:exits [:west forest-4-4 :east forest-6-4 :north under-the-bridge :south forest-5-5]])
+(defentity forest-5-4 (forest-stream)
+  (exits ((forest-portal :west forest-4-4 :east forest-6-4)
+          (stream-portal :north under-the-bridge :south forest-5-5))))
 
 (defentity forest-6-4 (forest)
-  [:exits [:west forest-5-4 :north forest-6-3 :south forest-6-5]
-   :contents [(giant-spider)]])
+  (exits ((forest-portal :west forest-5-4 :north forest-6-3 :south forest-6-5)))
+  (contents (giant-spider)))
 
 (defentity forest-1-5 (forest)
-  [:exits [:east forest-2-5 :north forest-1-4 :south forest-1-6]])
+  (exits ((forest-portal :east forest-2-5 :north forest-1-4 :south forest-1-6))))
 
-(defentity forest-2-5 forest-path
-  [:exits [:west forest-1-5 :east forest-3-5 :north forest-2-4 :south forest-2-6]])
+(defentity forest-2-5 (forest-path)
+  (exits ((forest-portal :west forest-1-5 :north forest-2-4)
+          (dirt-path :east forest-3-5 :south forest-2-6))))
 
-(defentity forest-3-5 forest-path
-  [:exits [:west forest-2-5 :east forest-4-5 :north forest-3-4 :south forest-3-6]])
+(defentity forest-3-5 (forest-path)
+  (exits ((dirt-path :west forest-2-5 :east forest-4-5)
+          (forest-portal :north forest-3-4 :south forest-3-6))))
 
-(defentity forest-4-5 forest-path
-  [:exits [:west forest-3-5 :east forest-5-5 :north forest-4-4 :south forest-4-6]])
+(defentity forest-4-5 (forest-path)
+  (exits ((dirt-path :west forest-3-5 :north forest-4-4)
+          (forest-portal :east forest-5-5 :south forest-4-6))))
 
-(defentity forest-5-5 stream-room
-  [:exits [:west forest-4-5 :east forest-6-5 :north forest-5-4 :south forest-5-6]])
+(defentity forest-5-5 (forest-stream)
+  (exits ((forest-portal :west forest-4-5 :east forest-6-5)
+          (stream-portal :north forest-5-4 :south forest-5-6))))
 
 (defentity forest-6-5 (forest)
-  [:exits [:west forest-5-5 :east forest-7-5 :north forest-6-4 :south forest-6-6]
-   :contents [(large-spiderweb)]])
+  (exits ((forest-portal :west forest-5-5 :east forest-7-5
+                         :north forest-6-4 :south forest-6-6)))
+  (contents (large-spiderweb)))
 
-(defentity forest-7-5 room
-  [:brief "Granite Outcrop"
-   :full "You are at the base of an enormous granite spire that juts high above
-     the forest canopy. Climbing it would require the proper gear and skill."
-   :domain :outdoor
-   :surface :forest
-   :exits [:west forest-6-5 :south forest-7-6 :up outcrop-top]])
+(defentity forest-7-5 (location)
+  (brief "Granite Outcrop")
+  (full "You are at the base of an enormous granite spire that juts high above
+    the forest canopy. Climbing it would require the proper gear and skill.")
+  (domain :outdoor)
+  (surface :forest)
+  (exits ((forest-portal :west forest-6-5 :south forest-7-6)
+          (portal :up outcrop-top)))) ; FIXME:
 
-(defentity outcrop-top room
-  [:brief "Atop a Granite Outcrop"
-   :full "You are precariously perched atop a high granite spire. The view is
-     breathtaking: you can see the village of Arwyck to the northeast, and
-     beyond it the waters of Emerald Bay. A small island is barely visible on
-     the horizon."
-   :domain :outdoor
-   :surface :stone
-   :exits [:down forest-7-5]])
+(defentity outcrop-top (location)
+  (brief "Atop a Granite Outcrop")
+  (full "You are precariously perched atop a high granite spire. The view is
+    breathtaking: you can see the village of Arwyck to the northeast, and beyond
+    it the waters of Emerald Bay. A small island is barely visible on the
+    horizon.")
+  (domain :outdoor)
+  (surface :stone)
+  (exits ((portal :down forest-7-5)))) ; FIXME:
 
 (defentity forest-1-6 (forest)
-  [:exits [:east forest-2-6 :north forest-1-5 :south forest-1-7]
-   :contents [(large-spiderweb)]])
+  (exits ((forest-portal :east forest-2-6 :north forest-1-5 :south forest-1-7)))
+  (contents (large-spiderweb)))
 
-(defentity forest-2-6 forest-path
-  [:exits [:west forest-1-6 :east forest-3-6
-           :north (forest-path-exit forest-2-5) :south (forest-path-exit forest-2-7)]])
+(defentity forest-2-6 (forest-path)
+  (exits ((forest-portal :west forest-1-6 :east forest-3-6)
+          (dirt-path :north forest-2-5 :south forest-2-7))))
 
-(defentity ranger npc
-  [:brief "Nina Niyana"
-   :pose "sits on a stump as she sharpens a knife."
-   :full "Nina is an elven woman dressed in the practical garb of a hunter. She
-     wears her silver hair in a long braid."
-   :icon "female-elf-silver.jpg"]
+(defproto ranger (creature)
+  (brief "Nina Niyana")
+  (pose "sits on a stump as she sharpens a knife.")
+  (full "Nina is an elven woman dressed in the practical garb of a hunter. She
+    wears her silver hair in a long braid.")
+  (icon "female-elf-silver.jpg"))
 
-  (did-enter-room [this (actor :avatar) room entry]
-    (show-text actor "Nina smiles in welcome as you approach.")))
+(defmethod did-enter-room ((observer ranger) (actor avatar) location entry)
+  (show-text actor "Nina smiles in welcome as you approach."))
 
-(defentity rhody npc
-  [:brief "Rhody Mathers"
-   :pose "sits in the grass near the firepit."
-   :full "Rhody is a young boy, perhaps eight years old. He looks a bit tired.
-     His face is smeared with berry juice."
-   :icon "human-boy.jpg"])
+(defproto rhody (creature)
+  (brief "Rhody Mathers")
+  (pose "sits in the grass near the firepit.")
+  (full "Rhody is a young boy, perhaps eight years old. He looks a bit tired.
+    His face is smeared with berry juice.")
+  (icon "human-boy.jpg"))
 
 (defentity forest-3-6 (forest)
-  [:brief "Rangers' Camp"
-   :full "Several stained canvas tents have been erected around a tidy firepit
-     in this small clearing."
-   :surface :grass
-   :exits [:west forest-2-6 :east forest-4-6 :north forest-3-5 :south forest-3-7]
-   :contents [ranger rhody]])
+  (brief "Rangers' Camp")
+  (full "Several stained canvas tents have been erected around a tidy firepit
+    in this small clearing.")
+  (surface :grass)
+  (exits ((forest-portal :west forest-2-6 :east forest-4-6
+                         :north forest-3-5 :south forest-3-7)))
+  (contents (ranger rhody)))
 
 (defentity forest-4-6 (forest)
-  [:exits [:west forest-3-6 :east forest-5-6 :north forest-4-5]
-   :contents [(large-spiderweb) (giant-spider)]])
+  (exits ((forest-portal :west forest-3-6 :east forest-5-6 :north forest-4-5)))
+  (contents (large-spiderweb giant-spider)))
 
-(defentity forest-5-6 stream-room
-  [:exits [:west forest-4-6 :east forest-6-6 :north forest-5-5 :south canyon-stream-1]])
+(defentity forest-5-6 (forest-stream)
+  (exits ((forest-portal :west forest-4-6 :east forest-6-6)
+          (stream-portal :north forest-5-5 :south canyon-stream-1))))
 
 (defentity forest-6-6 (forest)
-  [:exits [:west forest-5-6 :east forest-7-6 :north forest-6-5]
-   :contents [(giant-spider)]])
+  (exits ((forest-portal :west forest-5-6 :east forest-7-6 :north forest-6-5)))
+  (contents (giant-spider)))
 
 (defentity forest-7-6 (forest)
-  [:exits [:west forest-6-6 :north forest-7-5]])
+  (exits ((forest-portal :west forest-6-6 :north forest-7-5))))
 
 (defentity forest-1-7 (forest)
-  [:exits [:east forest-2-7 :north forest-1-6]
-   :contents [(giant-spider)]])
+  (exits ((forest-portal :east forest-2-7 :north forest-1-6)))
+  (contents (giant-spider)))
 
-(defentity forest-2-7 forest-path
-  [:exits [:west forest-1-7 :east forest-3-7 :north (forest-path-exit forest-2-6)]])
+(defentity forest-2-7 (forest-path)
+  (exits ((forest-portal :west forest-1-7 :east forest-3-7)
+          (dirt-path :north forest-2-6))))
 
 (defentity forest-3-7 (forest)
-  [:exits [:west forest-2-7 :north forest-3-6]])
+  (exits ((forest-portal :west forest-2-7 :north forest-3-6))))
 
 ;;; canyon-stream
 
-(defproto canyon-stream room
-  [:brief "Canyon Stream"
-   :full "A swirling stream of cold water runs north to south through a narrow,
-     steep-walled canyon."
-   :domain :outdoor
-   :surface :shallow-water])
+(defproto canyon-stream (location)
+  (brief "Canyon Stream")
+  (full "A swirling stream of cold water runs north to south through a narrow,
+    steep-walled canyon.")
+  (domain :outdoor)
+  (surface :shallow-water))
 
-(defentity canyon-stream-1 canyon-stream
-  [:exits [:north forest-5-6 :south canyon-stream-2]])
+(defentity canyon-stream-1 (canyon-stream)
+  (exits ((stream-portal :north forest-5-6 :south canyon-stream-2))))
 
-(defentity canyon-stream-2 canyon-stream
-  [:exits [:north canyon-stream-1 :south canyon-end]])
+(defentity canyon-stream-2 (canyon-stream)
+  (exits ((stream-portal :north canyon-stream-1 :south canyon-end))))
 
-(defentity canyon-end canyon-stream
-  [:brief "Canyon's End"
-   :full "The narrow canyon comes to an abrupt end, enclosed on three sides by
-     steep walls. The waters of the stream froth and churn amongst numerous huge
-     boulders before disappearing into a crevice in the south wall."
-   :exits [:north canyon-stream-2
-           :south (exit world.dripping-caverns/entrance
-                        :brief "a narrow crevice"
-                        :pose "leads into the cliff face."
-                        :message "You carefully follow a narrow ledge alongside
-                          the turbulent water.")]])
+(defproto crevice (portal)
+  (brief "a narrow crevice")
+  (pose "leads into the cliff face.")
+  (message "You carefully follow a narrow ledge alongside the turbulent water."))
 
-|#
+(defentity canyon-end (canyon-stream)
+  (brief "Canyon's End")
+  (full "The narrow canyon comes to an abrupt end, enclosed on three sides by
+    steep walls. The waters of the stream froth and churn amongst numerous huge
+    boulders before disappearing into a crevice in the south wall.")
+  (exits ((stream-portal :north canyon-stream-2))))
+;; FIXME: (crevice :south dripping-caverns::entrance))))
