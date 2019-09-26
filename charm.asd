@@ -61,6 +61,7 @@
                        (:file "portals")
                        (:file "weapons")
                        (:file "vehicle")))
-             (:file "isle-of-dawn")
              (:file "arwyck")
+             (:file "copper-mine")
+             (:file "isle-of-dawn")
              (:file "silverwood")))))

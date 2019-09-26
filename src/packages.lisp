@@ -24,8 +24,9 @@
     (make-package :lib :use '(:common-lisp :alexandria :charm)))
 
   (defparameter *region-packages*
-    '(:isle-of-dawn
-      :arwyck
+    '(:arwyck
+      :copper-mine
+      :isle-of-dawn
       :silverwood))
 
   (dolist (name *region-packages*)

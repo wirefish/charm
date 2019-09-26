@@ -140,8 +140,8 @@
   (contents (large-spiderweb)))
 
 (defentity forest-3-1 (forest)
-  (exits ((forest-portal :west forest-2-1 :east forest-4-1 :south forest-3-2)))
-  ;; FIXME: (dirt-path :north copper-mine::entry
+  (exits ((forest-portal :west forest-2-1 :east forest-4-1 :south forest-3-2)
+          (dirt-path :north copper-mine::entry)))
   (contents (giant-spider)))
 
 (defentity forest-4-1 (forest)
