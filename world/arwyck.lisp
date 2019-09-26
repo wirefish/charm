@@ -508,6 +508,8 @@
 
 (defproto east-road (location)
   (brief "East Road")
+  (full "This broad dirt road connects the center of Arwyck to the village's
+    eastern gate.")
   (domain :outdoor)
   (surface :dirt))
 
@@ -598,6 +600,8 @@
 
 (defentity east-gate (location)
   (brief "East Gate")
+  (full "A squat stone gatehouse stands at the village's entrance. To the east,
+    a road winds through marshes that stretch along the coast of Emerald Bay.")
   (domain :outdoor)
   (surface :stone)
   (exits ((dirt-road :west east-road-3))))
