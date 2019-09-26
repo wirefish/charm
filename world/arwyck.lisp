@@ -855,5 +855,5 @@
     narrow gate allows access to the wilderness beyond.")
   (domain :outdoor)
   (surface :dirt)
-  (exits ((dirt-road :east forest-road-3))) ;  :west silverwood/forest-6-3
+  (exits ((dirt-road :east forest-road-3 :west silverwood::forest-6-3)))
   (contents (miranda)))

@@ -25,7 +25,8 @@
 
   (defparameter *region-packages*
     '(:isle-of-dawn
-      :arwyck))
+      :arwyck
+      :silverwood))
 
   (dolist (name *region-packages*)
     (when (not (find-package name))

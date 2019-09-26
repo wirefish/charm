@@ -62,4 +62,5 @@
                        (:file "weapons")
                        (:file "vehicle")))
              (:file "isle-of-dawn")
-             (:file "arwyck")))))
+             (:file "arwyck")
+             (:file "silverwood")))))
