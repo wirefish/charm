@@ -18,7 +18,7 @@
   (direction nil :instance)
   (destination nil :instance))
 
-(defproto location (entity container)
+(defproto location (container entity)
   (brief "Unnamed Location")
   (visible nil) ; things to look at that aren't proper entities
   (size :gigantic)
@@ -27,6 +27,11 @@
   (tutorial nil)
   (z-offset 0)
   (exits () :instance))
+
+(defmethod add-to-contents ((location location) entity)
+  (prog1
+      (call-next-method)
+      (setf (location entity) location)))
 
 ;;;
 

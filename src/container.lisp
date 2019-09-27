@@ -59,7 +59,9 @@
        (or (< (length (contents container)) (capacity container))
            (find-stack-in-container container item))))
 
-(defun add-to-contents (container entity)
+(defgeneric add-to-contents (container entity))
+
+(defmethod add-to-contents ((container container) entity)
   "Adds `entity` to the contents of `container`. Returns `entity` or the stack
   into which `entity` was merged."
   (with-slots (capacity contents) container
@@ -70,7 +72,7 @@
         ((or (null capacity)
              (< (length contents) capacity))
          (push entity contents)
-         (setf (location entity) container)
+         (setf (location entity) nil)
          entity)))))
 
 ;;;
