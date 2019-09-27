@@ -158,7 +158,7 @@
                                  :north village-square-c)
           (dirt-road :south south-road-1))))
 
-(defproto crone (creature)
+(defproto crone (npc)
   (brief "an old crone")
   (pose "stands off to the side, watching people pass by.")
   (full "The crone wears a faded gray cloak. Her wavy white hair spills from
@@ -369,7 +369,7 @@
   (exits ((doorway :north lodge-foyer :west lodge-workshop)))
   (contents (stuffed-gorilla)))
 
-(defproto lord-olmquist (creature)
+(defproto lord-olmquist (npc)
   (brief "Lord Olmquist")
   (pose "sits in a chair, smoking a pipe.")
   (full "Olmquist is a rather stout, red-cheeked fellow with a bushy white beard
@@ -551,7 +551,7 @@
 
 ;;; temple
 
-(defproto old-priest (creature)
+(defproto old-priest (npc)
   (brief "an aged priest")
   (pose "kneels before the altar.")
   (full "The priest is unkempt and dirty. His robes are in desperate need of
@@ -829,7 +829,7 @@
     berries in the Silverwood.")
   (level 1))
 
-(defproto miranda (creature)
+(defproto miranda (npc)
   (brief "Miranda Mathers")
   (full "Miranda is a stout middle-aged woman. She wears practical clothing
     that has seen numerous repairs over the years.")

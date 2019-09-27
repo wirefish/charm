@@ -11,7 +11,7 @@
   (attack-verb "bites")
   (attack-delay 2))
 
-(defproto giant-spider (creature)
+(defproto giant-spider (monster)
   (brief "a giant forest spider")
   (pose "hangs from a nearby branch.")
   (full "This enormous webspinner has luminous eyes and long, hairy legs. Its
@@ -93,7 +93,7 @@
   (with-delay (30)
     (do-enter-location (make-instance 'large-spiderweb) origin nil)))
 
-(defproto hermit (creature)
+(defproto hermit (npc)
   (brief "an old hermit")
   (pose "whistles as she mends a shirt.")
   (full "The hermit is an elderly woman, her skin deeply wrinkled from many
@@ -333,7 +333,7 @@
   (exits ((forest-portal :west forest-1-6 :east forest-3-6)
           (dirt-path :north forest-2-5 :south forest-2-7))))
 
-(defproto ranger (creature)
+(defproto ranger (npc)
   (brief "Nina Niyana")
   (pose "sits on a stump as she sharpens a knife.")
   (full "Nina is an elven woman dressed in the practical garb of a hunter. She
@@ -343,7 +343,7 @@
 (defmethod did-enter-room ((observer ranger) (actor avatar) location entry)
   (show-text actor "Nina smiles in welcome as you approach."))
 
-(defproto rhody (creature)
+(defproto rhody (npc)
   (brief "Rhody Mathers")
   (pose "sits in the grass near the firepit.")
   (full "Rhody is a young boy, perhaps eight years old. He looks a bit tired.
@@ -410,5 +410,5 @@
   (full "The narrow canyon comes to an abrupt end, enclosed on three sides by
     steep walls. The waters of the stream froth and churn amongst numerous huge
     boulders before disappearing into a crevice in the south wall.")
-  (exits ((stream-portal :north canyon-stream-2))))
-;; FIXME: (crevice :south dripping-caverns::entrance))))
+  (exits ((stream-portal :north canyon-stream-2)
+          (crevice :south dripping-caverns::entrance))))

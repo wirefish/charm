@@ -40,7 +40,7 @@
 
 ;;; pavilion
 
-(defproto spirit-warden (creature)
+(defproto spirit-warden (npc)
   (brief "the spirit warden")
   (pose "stands nearby, smiling amiably.")
   (full "The spirit warden is an elderly human man, standing well over six feet
@@ -125,7 +125,7 @@
     the seamstress; talk to her and she will make sure you go forth in
     style." (describe-brief (race avatar))))
 
-(defproto officious-kobold (creature)
+(defproto officious-kobold (npc)
   (brief "an officious kobold")
   (pose "sits at a low table in the shade of a large umbrella.")
   (full "The kobold is a tiny humanoid with reptilian features, sparse wiry
@@ -159,7 +159,7 @@
 
 ;;; human-shrine
 
-(defproto human-caretaker (creature)
+(defproto human-caretaker (npc)
   (brief "the human caretaker")
   (pose "stands nearby with a welcoming expression.")
   (full "The caretaker is a tall, athletic woman wearing a practical leather
@@ -219,7 +219,7 @@
     along its sides. Atop the sculpture rests a shallow bowl made of green
     glass. The bowl contains clear, cold water."))
 
-(defproto elven-caretaker (creature)
+(defproto elven-caretaker (npc)
   (brief "the elven caretaker")
   (pose "kneels beside one of the trees, her eyes closed.")
   (full "The elven caretaker is a graceful young woman with striking emerald
@@ -273,7 +273,7 @@
 
 ;;; sidhe-shrine
 
-(defproto sidhe-caretaker (creature)
+(defproto sidhe-caretaker (npc)
   (brief "the sidhe caretaker")
   (pose "stands nearby, lost in thought.")
   (full "The sidhe caretaker is a tall, gaunt man with a stern look. His long
@@ -336,7 +336,7 @@
 
 ;;; dwarven-shrine
 
-(defproto dwarven-caretaker (creature)
+(defproto dwarven-caretaker (npc)
   (brief "the dwarven caretaker")
   (pose "stands proudly amid the statues.")
   (full "The dwarven caretaker stands about four feet tall, with shoulders
@@ -391,7 +391,7 @@
     and garishly-painted rendition of a creature who looks much like the
     caretaker. The pieces are so realistic they seem almost alive."))
 
-(defproto goblin-caretaker (creature)
+(defproto goblin-caretaker (npc)
   (brief "the goblin caretaker")
   (pose "stands beside the chessboard, apparently pondering his next move.")
   (icon :goblin)
@@ -444,7 +444,7 @@
 
 ;;; ogre-shrine
 
-(defproto ogre-caretaker (creature)
+(defproto ogre-caretaker (npc)
   (brief "the ogre caretaker")
   (pose "is here, casually pulverizing rocks with his hammer.")
   (icon :ogre)
@@ -558,7 +558,7 @@
   (with-delay (5)
     (do-enter-location (make-instance 'white-tulip) origin nil)))
 
-(defproto seamstress (creature)
+(defproto seamstress (npc)
   (brief "Dhalia")
   (pose "stands in the stall, organizing her wares.")
   (full "Dhalia is a human woman of indeterminate age. She wears silver-rimmed
@@ -643,7 +643,7 @@
   (show-say avatar npc "You did it! I must admit I'm somewhat surprised by
     your choice. No matter; I'm sure I'll get used to it. Eventually."))
 
-(defproto cherub (creature)
+(defproto cherub (npc)
   (brief "a cherub")
   (pose "hovers nearby, its wings flapping madly.")
   (full "The cherub is a small, chubby creature with white feathered wings.
@@ -759,7 +759,7 @@
 
     ~a is a fine name. Wear it proudly." (describe-brief avatar)))
 
-(defproto mistress-of-names (creature)
+(defproto mistress-of-names (npc)
   (brief "the mistress of names")
   (pose "stands beneath the tree.")
   (full "The mistress of names is a short, slender woman of indeterminate age.
@@ -865,7 +865,7 @@
 
 ;; TODO: give basic-melee-combat skill
 
-(defproto guard (creature)
+(defproto guard (npc)
   (brief "a burly guard")
   (pose "stands nearby.")
   (begins-quests '(kill-some-plants))
@@ -909,7 +909,7 @@
   (full "Tangled vines and weeds make it difficult to move through this area.")
   (surface :weeds))
 
-(defproto lashling (creature combatant)
+(defproto lashling (monster)
   (brief "a lashling")
   (pose "flails its tendrils in a menacing display.")
   (full "The lashling is a small mass of writhing vines and weeds that has
@@ -921,13 +921,18 @@
 (defmethod do-kill :after ((actor avatar) (target lashling))
   (advance-quest actor kill-some-plants))
 
-;; TODO: when killed, advance the quest
-
 (defentity overgrown-field-sw (overgrown-field)
   (exits ((overgrown-field-portal :east overgrown-field-se :north overgrown-field-nw)))
   (contents (lashling)))
 
 (defentity overgrown-field-se (overgrown-field)
+  (tutorial "To begin attacking a lashling, type `attack lashling`. You will
+    automatically perform basic attacks with the weapon in your main hand.
+    Combat ends when you or your opponent is dead!
+
+    Depending on the skills you choose to learn as you explore the world, you
+    will gain access to a variety of special attacks and defenses that you can
+    use during combat.")
   (exits ((overgrown-field-portal :west overgrown-field-sw :north overgrown-field-ne)
           (gravel-path :east guard-station)))
   (contents (lashling)))
@@ -984,7 +989,7 @@
 
 ;;; the-siren
 
-(defproto sailor (creature)
+(defproto sailor (npc)
   (brief "a grizzled sailor")
   (full "The sailor has a short, salt-and-pepper beard and wears a faded
     uniform."))
@@ -1009,7 +1014,7 @@
 
 ;;; dockmaster-shack
 
-(defproto dockmaster (creature)
+(defproto dockmaster (npc)
   (brief "the dockmaster")
   (pose "sits behind the desk.")
   (full "The dockmaster is a grizzled man with a short salt-and-pepper beard.
