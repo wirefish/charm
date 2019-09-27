@@ -151,10 +151,7 @@ function look(s)
 function setIcon(element, icon)
 {
     if (icon) {
-        var [icon_name, icon_color] = icon;
-        element.style.backgroundImage = "url('icons/{0}')".format(icon_name);
-        element.style.backgroundColor = icon_color;
-        element.style.backgroundBlendMode = 'multiply';
+        element.style.backgroundImage = "url('icons/{0}.png')".format(icon);
     }
 }
 
