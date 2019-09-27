@@ -22,24 +22,6 @@
                         (mapcar #'first init-form))
               ',(mapcar #'second init-form)))
 
-  (defmethod transform-slot-init-form (def-name (slot-name (eql 'exits)) init-form)
-    `(list ,@(loop for (class . dirs) in init-form
-                   append (loop for (dir dest) on dirs by #'cddr
-                                collect `(make-instance ',class :direction ,dir :destination ',dest)))))
-
-  (defmethod transform-slot-init-form (def-name (slot-name (eql 'contents)) init-form)
-    `(list ,@(mapcar #'(lambda (spec)
-                         (if (listp spec)
-                             `(make-instance ',(car spec) ,@(cdr spec))
-                             `(make-instance ',spec)))
-                     init-form)))
-
-  (defmethod transform-slot-init-form (def-name (slot-name (eql 'attack-verb)) init-form)
-    `(parse-verb ,init-form))
-
-  (defmethod transform-slot-init-form (def-name (slot-name (eql 'base-damage)) init-form)
-    `(list ,@init-form))
-
   (defun transform-slot (def-name slot)
     (destructuring-bind (name init-form &optional instance) slot
       `(,name
@@ -112,86 +94,19 @@
   (print-unreadable-object (object stream :type t :identity t)
     (write (id object) :stream stream)))
 
+;;; Don't encode an entity's unique ID, and instead assign it a new one when it
+;;; is decoded.
+
 (defmethod encode-slot ((name (eql 'id)) value)
   nil)
 
 (defmethod decode-slot ((name (eql 'id)) value)
   (incf *next-entity-id*))
 
+;;; Entities can have or impart modifiers, depending on context. A modifier is
+;;; an integer value that adjusts some attribute, and defaults to zero.
+
 (defgeneric get-modifier (modifier entity))
 
 (defmethod get-modifier (modifier (entity entity))
   0)
-
-;;; Entity subclasses.
-
-(defproto container ()
-  (capacity nil)
-  (empty-pose "is empty.")
-  (nonempty-pose "contains ~a.")
-  (contents () :instance))
-
-(defproto portal (entity)
-  (brief "a portal")
-  (pose "leads ~a.")
-  (size :gigantic)
-  (message nil)
-  (exit-message "~a heads ~a.")
-  (enter-message "~a enters from ~a.")
-  (direction nil :instance)
-  (destination nil :instance))
-
-(defproto location (entity container)
-  (brief "Unnamed Location")
-  (visible nil) ; things to look at that aren't proper entities
-  (size :gigantic)
-  (domain :outdoor) ; or :indoor, :underground, :astral, etc.
-  (surface :dirt) ; any anything else, really
-  (tutorial nil)
-  (z-offset 0)
-  (exits () :instance))
-
-(defproto item (entity)
-  (brief "an item")
-  (unique nil) ;; or max number carried
-  (bound nil) ;; if t, cannot be dropped or given
-  (weight 1)
-  (stack-limit 1)
-  (stack-size 1 :instance))
-
-(defproto quest-item (item)
-  (quest nil) ; key of associated quest
-  (bound t))
-
-(defproto equipment (item)
-  (level 0)
-  (slot nil)
-  (proficiency nil)
-  (allow-nonproficient-use nil)
-  (mastery nil)
-  (modifiers nil)
-  (quality nil :instance)
-  (affixes nil :instance)
-  (inscription nil :instance))
-
-(defmethod get-modifier (modifier (entity equipment))
-  (getf (modifiers entity) modifier 0))
-
-(defproto weapon (equipment)
-  (damage-type :crushing)
-  (base-damage (1 4))
-  (attack-verb "hits")
-  (attack-delay 3))
-
-(defproto creature (entity)
-  (attitude :neutral)
-  (begins-quests nil)
-  (ends-quests nil))
-
-;;; FIXME: move some of the more specific things to their own files.
-
-(defproto vendor (creature)
-  (sells nil))
-
-(defproto trainer (creature)
-  (teaches nil))

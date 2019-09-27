@@ -38,6 +38,14 @@ Four events occur during the lifetime of a quest:
                      append `(,(make-keyword name) ,init-form))))
     `(defparameter ,name (make-instance 'quest :key ',name ,@args))))
 
+;;; A `quest-item` is an item that exists only as part of completing a quest.
+
+(defproto quest-item (item)
+  (quest nil) ; key of associated quest
+  (bound t))
+
+;;;
+
 (defun quest-xp-reward (quest)
   "Computes the amount of experience awarded upon finishing `quest`."
   (+ 200 (* (level quest) 100)))

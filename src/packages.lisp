@@ -25,6 +25,7 @@
 
   (defparameter *region-packages*
     '(:arwyck
+      :dripping-caverns
       :copper-mine
       :isle-of-dawn
       :silverwood))

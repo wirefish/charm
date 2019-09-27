@@ -1,5 +1,35 @@
 (in-package :charm)
 
+;;;
+
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmethod transform-slot-init-form (def-name (slot-name (eql 'exits)) init-form)
+    `(list ,@(loop for (class . dirs) in init-form
+                   append (loop for (dir dest) on dirs by #'cddr
+                                collect `(make-instance ',class :direction ,dir :destination ',dest))))))
+
+(defproto portal (entity)
+  (brief "a portal")
+  (pose "leads ~a.")
+  (size :gigantic)
+  (message nil)
+  (exit-message "~a heads ~a.")
+  (enter-message "~a enters from ~a.")
+  (direction nil :instance)
+  (destination nil :instance))
+
+(defproto location (entity container)
+  (brief "Unnamed Location")
+  (visible nil) ; things to look at that aren't proper entities
+  (size :gigantic)
+  (domain :outdoor) ; or :indoor, :underground, :astral, etc.
+  (surface :dirt) ; any anything else, really
+  (tutorial nil)
+  (z-offset 0)
+  (exits () :instance))
+
+;;;
+
 (defun opposite-direction (dir)
   (case dir
     (:north :south)
