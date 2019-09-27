@@ -9,7 +9,10 @@
    ;;
    :quest :defquest :offer-quest :advance-quest :quest-available-p
    :quest-active-p :quest-incomplete-p :quest-complete-p :quest-finished-p
-   :name :summary :details :level :required-quests
+   :key :name :summary :details :level :required-quests
+   ;;
+   :skill :defskill
+   :required-race :required-skills :exclusive-skills :cost :max-rank
    ;;
    :show-text :show-say :announce :maybe-show-tutorial
    :update-map-nearby

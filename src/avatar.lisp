@@ -55,6 +55,7 @@
   (gender nil :instance)
   (session nil :instance)
   (equipment (make-initial-equipment) :instance)
+  (skills (make-hash-table) :instance)
 
   (level 0 :instance)
   (xp 0 :instance)
