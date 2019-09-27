@@ -203,3 +203,21 @@ The magnitude of a modifier's effect depends on its value and the level of the
 entity to be effected. This means that an item which grants 10 intellect might
 increase damage against level 1 creatures by 10%, but against level 10 creatures
 its effect is diminished.
+
+-----
+
+- respawn timer instead of manually doing an event handler, triggers on
+  did-take-item for items or did-kill for creatures.
+
+- monster = creature + combatant
+
+- npc = creature + friendly?
+
+- remove defentity, use deflocation, defrace, defskill? there won't be many of
+  these and at least defskill is not an entity anyway.
+
+- clean up slot transforms so they are grouped more naturally with the slot they
+  transform
+
+- as above for describe-*. basically split entity subclasses and their core
+  behavior into separate files
