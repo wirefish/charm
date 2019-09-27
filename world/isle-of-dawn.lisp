@@ -827,9 +827,15 @@
   (brief "a worn copper dagger")
   (full "The dagger has a slender blade and a smooth wooden handle."))
 
-(defproto scratched-buckler (lib::shield)
+(defproto scratched-buckler (lib::small-shield)
   (brief "a scratched wooden buckler")
   (full "The buckler is lightweight but provides minimal protection."))
+
+(defskill basic-melee-combat
+  (name "basic melee combat")
+  (summary "Improves your effectiveness when wielding simple weapons (clubs,
+    daggers, and staves) and small shields.")
+  (modifiers '(:basic-weapon-proficiency 1 :small-shield-proficiency 1)))
 
 (defquest kill-some-plants
   (name "Weed Control")
@@ -861,9 +867,8 @@
 (defmethod do-finish-quest (avatar (quest (eql kill-some-plants)) npc)
   (show-say avatar npc "Great job! I'll confess, those things give me the heebie
     jeebies. Plants shouldn't writhe around like that. Please, feel free to head
-    south whenever you like."))
-
-;; TODO: give basic-melee-combat skill
+    south whenever you like.")
+  (learn-skill avatar basic-melee-combat npc))
 
 (defproto guard (npc)
   (brief "a burly guard")

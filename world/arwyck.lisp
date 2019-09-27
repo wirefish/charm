@@ -457,23 +457,28 @@
 ;; everyday-magic prerequisite skill that teaches a number of spells like light,
 ;; etc?
 
-#| FIXME: skills!
-(defentity magic-missile skill
-  [:brief "magic missile"
-   :full "Gathers pure energy into an arrow-like missile that shoots from your
-     outstretched fingertips, striking your target for arcane damage."
-   :karma 5
+(defskill magic-missile
+  (name "magic missile")
+  (summary "Gathers pure energy into an arrow-like missile that shoots from your
+    outstretched fingertips, striking your target for arcane damage.")
+  (level 1)
+  (cost '(:karma 5)))
+
+#| FIXME: this is part of an ability conferred by the skill, not of the skill itself.
+
    :damage-type :arcane
    :base-damage 4
    :energy-cost 6])
-
-(defentity heavy-limbs skill
-  [:brief "heavy limbs"
-   :full "Magically burdens the limbs of your target, slowing their actions for
-     the next 15 seconds."
-   :karma 5
-   :energy-cost 4])
 |#
+
+(defskill heavy-limbs
+  (name "heavy limbs")
+  (summary "Magically burdens the limbs of your target, slowing their actions
+    for the next 15 seconds.")
+  (level 1)
+  (cost '(:karma 5)))
+
+;; FIXME: as above :energy-cost 4])
 
 (defproto mage-guildmaster (trainer)
   (brief "Milena Landeris")

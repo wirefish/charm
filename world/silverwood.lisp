@@ -17,7 +17,7 @@
   (full "This enormous webspinner has luminous eyes and long, hairy legs. Its
     kind prefer to lurk in the forest canopy, awaiting the opportunity to drop
     down upon unsuspecting prey.")
-  (icon "long-legged-spider.png")
+  (icon 'long-legged-spider)
   (level 1)
   (attacks '(giant-spider-bite))
   (entry-pose "drops down from the branches above."))
@@ -63,7 +63,7 @@
 (defproto old-sword (entity)
   (brief "a single-edged sword")
   (pose "hangs above the hearth.")
-  (icon "katana.png")
+  (icon 'katana)
   (full "Although clearly old and in need of sharpening, the sword appears to be
     of excellent craftsmanship. Its long hilt is wrapped with dark cord and its
     small circular guard is ornately carved.
@@ -82,7 +82,7 @@
 (defproto large-spiderweb (quest-item)
   (brief "a large spiderweb")
   (pose "is visible in the branches of a nearby tree.")
-  (icon "spider-web.png")
+  (icon 'spider-web)
   (full "The strands of this web are especially strong and thick.")
   (alts ("large web"))
   (unique 5)
@@ -207,7 +207,7 @@
 (defproto cabin-exterior (entity)
   (brief "a tiny cabin")
   (pose "stands in the middle of the clearing.")
-  (icon "house.png")
+  (icon 'house)
   (full "The cabin's exterior is painted in bright colors. Smoke rises from a
     stone chimney."))
 
@@ -338,7 +338,7 @@
   (pose "sits on a stump as she sharpens a knife.")
   (full "Nina is an elven woman dressed in the practical garb of a hunter. She
     wears her silver hair in a long braid.")
-  (icon "female-elf-silver.jpg"))
+  (icon 'female-elf-silver))
 
 (defmethod did-enter-room ((observer ranger) (actor avatar) location entry)
   (show-text actor "Nina smiles in welcome as you approach."))
@@ -348,7 +348,7 @@
   (pose "sits in the grass near the firepit.")
   (full "Rhody is a young boy, perhaps eight years old. He looks a bit tired.
     His face is smeared with berry juice.")
-  (icon "human-boy.jpg"))
+  (icon 'human-boy))
 
 (defentity forest-3-6 (forest)
   (brief "Rangers' Camp")
