@@ -147,6 +147,11 @@
 (defentity forest-4-1 (forest)
   (exits ((forest-portal :west forest-3-1 :east forest-5-1 :south forest-4-2))))
 
+(defproto waterfall-portal (portal)
+  (brief "a waterfall")
+  (pose "cascades down the rocky cliff.")
+  (hidden t))
+
 (defentity forest-5-1 (location)
   (brief "Shallow Pool")
   (full "A shallow pool has formed at the base of a small waterfall to the
@@ -155,8 +160,12 @@
   (domain :outdoor)
   (surface :shallow-water)
   (exits ((forest-portal :west forest-4-1 :east forest-6-1 :south forest-5-2)
-          ;; FIXME: hidden
-          (portal :north behind-the-waterfall))))
+          (waterfall-portal :north behind-the-waterfall))))
+
+(defproto behind-waterfall-portal (portal)
+  (brief "a waterfall")
+  (pose "cascades down a rocky cliff, concealing this area from the wilderness
+    outside."))
 
 (defentity behind-the-waterfall (location)
   (brief "Behind the Waterfall")
@@ -166,7 +175,7 @@
     cold water.")
   (domain :underground)
   (surface :shallow-water)
-  (exits ((portal :south forest-5-1))))
+  (exits ((behind-waterfall-portal :south forest-5-1))))
 
 (defentity forest-6-1 (forest)
   (exits ((forest-portal :west forest-5-1 :south forest-6-2)))
