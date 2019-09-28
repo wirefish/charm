@@ -87,3 +87,13 @@
 (defun add-exit (location portal)
   (with-slots (exits) location
     (push portal exits)))
+
+(defun find-destination (location direction)
+  (when-let ((exit (find-exit location direction)))
+    (and (boundp (destination exit))
+         (symbol-value (destination exit)))))
+
+(defmethod describe-icon ((subject location))
+  (or (and (not (find-exit subject :out)) (icon subject))
+      (when-let ((in-dest (find-destination subject :in)))
+        (icon in-dest))))

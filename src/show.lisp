@@ -77,7 +77,7 @@
   client."
   (plist-hash-table (list :key (id entity)
                           :brief (describe-brief entity :article nil)
-                          :icon (icon entity))))
+                          :icon (describe-icon entity))))
 
 (defun set-neighbors (avatar)
   (when-let ((session (session avatar)))

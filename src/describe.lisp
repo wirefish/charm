@@ -29,3 +29,7 @@
   (:documentation "Returns a string containing one or more sentences that
     provide a full description of `subject`, such as could be obtained by an
     observer who carefully looks at `subject` for a few moments."))
+
+(defgeneric describe-icon (subject)
+  (:documentation "Returns a symbol denoting the icon to display for
+    `subject`."))

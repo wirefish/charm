@@ -37,7 +37,7 @@
                  (destructuring-bind (x y location) info
                    (list x y
                          (describe-brief location)
-                         :false ; icon
+                         (describe-icon location)
                          :false ; (quest-state avatar location)
                          :false ; (npc-state location)
                          (mapcar #'direction

@@ -81,7 +81,7 @@
   (brief "an entity")
   (pose "is here.")
   (full nil)
-  (icon 'cube)
+  (icon nil)
   (alts ())
   (size :medium)
   (entry-pose nil)
@@ -126,6 +126,9 @@
       (concatenate 'string
                    (describe-brief subject :capitalize t :article :definite)
                    " is unremarkable.")))
+
+(defmethod describe-icon ((subject entity))
+  (or (icon subject) 'cube))
 
 ;;; Define how entities are matched against user input.
 
