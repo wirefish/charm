@@ -220,15 +220,17 @@
   (full "The cabin's exterior is painted in bright colors. Smoke rises from a
     stone chimney."))
 
+(defproto cabin-door (portal)
+  (brief "a gaily painted door")
+  (pose "leads into the cabin."))
+
 (defentity forest-2-3 (forest)
   (brief "Clearing")
   (full "You are in a small meadow of wildflowers surrounded by trees.")
   (surface :grass)
   (exits ((forest-portal :west forest-1-3 :east forest-3-3 :north forest-2-2 :south forest-2-4)
-          (entry-doorway :in cabin)))
+          (cabin-door :in cabin)))
   (contents (cabin-exterior)))
-
-;; FIXME (exit cabin :brief "a gaily-painted door" :pose "leads into the cabin.")
 
 (defentity forest-3-3 (forest)
   (exits ((forest-portal :west forest-2-3 :east forest-4-3 :north forest-3-2 :south forest-3-4))))
