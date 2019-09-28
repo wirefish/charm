@@ -35,24 +35,29 @@
 
 ;;;
 
-(defun opposite-direction (dir)
-  (case dir
-    (:north :south)
-    (:northeast :southwest)
-    (:east :west)
-    (:southeast :northwest)
-    (:south :north)
-    (:southwest :northeast)
-    (:west :east)
-    (:northwest :southeast)
-    (:up :down)
-    (:down :up)
-    (:in :out)
-    (:out :in)
-    (otherwise dir)))
+(defparameter *directions*
+  (plist-hash-table
+   '(:north #("north" "n" :south)
+     :northeast #("northeast" "ne" :southwest)
+     :east #("east" "e" :west)
+     :southeast #("southeast" "se" :northwest)
+     :south #("south" "s" :north)
+     :southwest #("southwest" "sw" :northeast)
+     :west #("west" "w" :east)
+     :northwest #("northwest" "nw" :southeast)
+     :up #("up" "u" :down)
+     :down #("down" "d" :up)
+     :in #("in" nil :out)
+     :out #("out" nil :in))))
 
 (defun direction-name (dir)
-  (string-downcase (symbol-name dir)))
+  (elt (gethash dir *directions*) 0))
+
+(defun direction-abbrev (dir)
+  (elt (gethash dir *directions*) 1))
+
+(defun opposite-direction (dir)
+  (elt (gethash dir *directions*) 2))
 
 (defun find-exit (location direction)
   (find-if #'(lambda (x) (eq (direction x) direction)) (exits location)))
