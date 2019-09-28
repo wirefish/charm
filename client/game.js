@@ -94,8 +94,9 @@ function load()
 
     map = new Map(document.getElementById("map_canvas"));
     map.config([
-        ["sailboat.png", "icons/sailboat.png"],
-        ["hearts.png", "icons/hearts.png"],
+        ["ship", "icons/sailboat.png"],
+        ["house", "icons/transparent_house.png"],
+        ["hearts", "icons/hearts.png"],
     ]);
     map.render();
 

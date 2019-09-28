@@ -251,8 +251,7 @@ Map.prototype.render = function()
 
         // Draw an icon if one is defined.
         if (icon) {
-            var [icon_name, icon_color] = icon;
-            var image = this.images.images[icon_name];
+            var image = this.images.images[icon];
             context.drawImage(image, inset + 2, inset + 2, room_size - 4, room_size - 4);
         }
 
