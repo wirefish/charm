@@ -259,30 +259,34 @@ Map.prototype.render = function()
         // Draw the room border and lines for exits.
         context.beginPath();
         context.rect(inset, inset, room_size, room_size);
-        for (var i = 0; i < exits.length; ++i) {
-            var line = exit_lines[exits[i]];
-            if (line) {
-                var [lx, ly] = line;
-                var sx = cell_size / 2 + room_size / 2 * lx;
-                var sy = cell_size / 2 + room_size / 2 * ly;
-                var ex = cell_size / 2 * (1 + lx);
-                var ey = cell_size / 2 * (1 + ly);
-                context.moveTo(sx, sy);
-                context.lineTo(ex, ey);
+        if (exits) {
+            for (var i = 0; i < exits.length; ++i) {
+                var line = exit_lines[exits[i]];
+                if (line) {
+                    var [lx, ly] = line;
+                    var sx = cell_size / 2 + room_size / 2 * lx;
+                    var sy = cell_size / 2 + room_size / 2 * ly;
+                    var ex = cell_size / 2 * (1 + lx);
+                    var ey = cell_size / 2 * (1 + ly);
+                    context.moveTo(sx, sy);
+                    context.lineTo(ex, ey);
+                }
             }
         }
         context.stroke();
 
         // Draw the up and down indicators if needed.
-        if (exits.indexOf('up') != -1) {
-            this.drawUpDown(context, inset, room_size);
-        }
-        if (exits.indexOf('down') != -1) {
-            context.save();
-            context.translate(cell_size, cell_size);
-            context.scale(-1, -1);
-            this.drawUpDown(context, inset, room_size);
-            context.restore();
+        if (exits) {
+            if (exits.indexOf('up') != -1) {
+                this.drawUpDown(context, inset, room_size);
+            }
+            if (exits.indexOf('down') != -1) {
+                context.save();
+                context.translate(cell_size, cell_size);
+                context.scale(-1, -1);
+                this.drawUpDown(context, inset, room_size);
+                context.restore();
+            }
         }
 
         // Draw a symbol to denote quest state.
