@@ -145,13 +145,13 @@ the reward at the end of this story.
   (exits ((narrow-passage :northeast north-guardroom :south undergnome-camp-s)))
   (contents (undergnome-laborer)))
 
-(defentity makeshift-table (entity)
+(defproto makeshift-table (entity)
   (brief "a makeshift table")
   (pose "stands in the center of the chamber.")
   (full "The table consists of a warped wooden plank balanced on two
     equally-sized boulders."))
 
-(defentity makeshift-chairs (entity)
+(defproto makeshift-chairs (entity)
   (brief "several makeshift chairs")
   (pose "are strewn about.")
   (full "Each chair consists of...a small boulder."))
@@ -200,51 +200,49 @@ the reward at the end of this story.
   (exits ((narrow-passage :north undergnome-camp-s)))
   (contents (undergnome-commander)))
 
-#|
-
 ;; south guardroom
 
-(defentity south-guardroom cavern-room
-  [:brief "Guardroom"
-   :exits [:southeast (barricade south-barricade)
-           :west undergnome-camp-s]
-   :contents [(undergnome-guard)]])
+(defentity south-guardroom (cavern)
+  (brief "Guardroom")
+  (exits ((barricade :southeast south-barricade)
+          (narrow-passage :west undergnome-camp-s)))
+  (contents (undergnome-guard)))
 
 ;; south barricade
 
-(defentity south-barricade cavern-room
-  [:brief "Tilted Chamber"
-   :full "The floor of this long cavern tilts sharply down to the southeast."
-   :exits [:northwest (barricade south-guardroom)
-           :southeast rockeater-den-nw]])
+(defentity south-barricade (cavern)
+  (brief "Tilted Chamber")
+  (full "The floor of this long cavern tilts sharply down to the southeast.")
+  (exits ((barricade :northwest south-guardroom)
+          (narrow-passage :southeast rockeater-den-nw))))
 
 ;;; artifact room
 
-(defentity ancient-artifact fixture
-  [:brief "a circular bronze dais"
-   :pose "stands in the middle of the room."
-   :full "An intricate map is carved into the top surface of the dais, but the
-     lands it depicts are unfamiliar. Four small hemispherical sockets are
-     located around the map's edge, each corresponding to a cardinal compass
-     direction.
+(defproto ancient-artifact (entity)
+  (brief "a circular bronze dais")
+  (pose "stands in the middle of the room.")
+  (full "An intricate map is carved into the top surface of the dais, but the
+    lands it depicts are unfamiliar. Four small hemispherical sockets are
+    located around the map's edge, each corresponding to a cardinal compass
+    direction.
 
-     Around the sides of the dais you find an inscription:
+    Around the sides of the dais you find an inscription:
 
-     > Devouring flames leap from the north; raging floods rush from the south.
-     The west wind crashes against the bulwark of the eastern mountains. When
-     these forces meet, the world shall spin and the guardian shall arise to
-     protect what is ours."])
+    > Devouring flames leap from the north; raging floods rush from the south.
+    The west wind crashes against the bulwark of the eastern mountains. When
+    these forces meet, the world shall spin and the guardian shall arise to
+    protect what is ours."))
 
 ;; TODO: rotate the artifact room to connect to the guardian's hall when the
 ;; artifact is activated.
 
-(defentity artifact-room cavern-room
-  [:brief "Artifact Chamber"
-   :full "This circular chamber has smooth stone walls, a domed ceiling, and a
-     mosaic tile floor."
-   :surface :tile
-   :exits [:east undergnome-camp-w]
-   :contents [ancient-artifact]])
+(defentity artifact-room (cavern)
+  (brief "Artifact Chamber")
+  (full "This circular chamber has smooth stone walls, a domed ceiling, and a
+    mosaic tile floor.")
+  (surface :tile)
+  (exits ((narrow-passage :east undergnome-camp-w)))
+  (contents (ancient-artifact)))
 
 ;;; guardian's hall
 
@@ -253,168 +251,172 @@ the reward at the end of this story.
 ;; reform for some amount of time. Maybe it drops a heart that is needed to open
 ;; the west door.
 
-(defentity rubble-pile fixture
-  [:brief "a large pile of rubble"
-   :pose "stands in the middle of the chamber."])
+(defproto rubble-pile (entity)
+  (brief "a large pile of rubble")
+  (pose "stands in the middle of the chamber."))
 
-(defentity guardian-hall cavern-room
-  [:brief "Hall of the Guardian"
-   :surface :tile
-   :exits [:west treasure-room]
-   :contents [rubble-pile]])
+(defentity guardian-hall (cavern)
+  (brief "Hall of the Guardian")
+  (surface :tile)
+  (exits ((narrow-passage :west treasure-room)))
+  (contents (rubble-pile)))
 
 ;;; treasure room
 
-(defentity treasure-room cavern-room
-  [:brief "Treasure Room"
-   :full "Who doesn't like treasure?"
-   :surface :tile
-   :exits [:east guardian-hall]])
+(defentity treasure-room (cavern)
+  (brief "Treasure Room")
+  (full "Who doesn't like treasure?")
+  (surface :tile)
+  (exits ((narrow-passage :east guardian-hall))))
 
 ;;; rockeater den
 
-(defproto rockeater mob
-  [:brief "a rockeater"
-   :full "The rockeater is a pony-sized creature with bulbous yellow eyes and a
-     wide mouth filled with enormous, flat teeth. Numerous stalagmite-like
-     spines grow from its stony hide. It moves about slowly on six stubby
-     legs."
-   :respawn 30])
+(defproto rockeater (monster)
+  (brief "a rockeater")
+  (full "The rockeater is a pony-sized creature with bulbous yellow eyes and a
+    wide mouth filled with enormous, flat teeth. Numerous stalagmite-like spines
+    grow from its stony hide. It moves about slowly on six stubby legs.")
+  (respawn 30))
 
-(defproto rockeater-den cavern-room
-  [:brief "Rockeater Den"
-   :full "The stone walls and floor of this cavern bear numerous marks, scrapes,
-     and gouges. Little piles of gray dust are littered about."])
+(defproto rockeater-den (cavern)
+  (brief "Rockeater Den")
+  (full "The stone walls and floor of this cavern bear numerous marks, scrapes,
+    and gouges. Little piles of gray dust are littered about."))
 
-(defentity rockeater-den-nw rockeater-den
-  [:exits [:northwest south-barricade :south rockeater-den-w :east rockeater-den-n]])
+(defentity rockeater-den-nw (rockeater-den)
+  (exits ((narrow-passage :northwest south-barricade :south rockeater-den-w
+                          :east rockeater-den-n))))
 
-(defentity rockeater-den-n rockeater-den
-  [:exits [:west rockeater-den-nw :east rockeater-den-ne]])
+(defentity rockeater-den-n (rockeater-den)
+  (exits ((narrow-passage :west rockeater-den-nw :east rockeater-den-ne))))
 
-(defentity rockeater-den-ne rockeater-den
-  [:exits [:west rockeater-den-n :south rockeater-den-e]])
+(defentity rockeater-den-ne (rockeater-den)
+  (exits ((narrow-passage :west rockeater-den-n :south rockeater-den-e))))
 
-(defentity rockeater-den-w rockeater-den
-  [:exits [:north rockeater-den-nw :south rockeater-den-sw]])
+(defentity rockeater-den-w (rockeater-den)
+  (exits ((narrow-passage :north rockeater-den-nw :south rockeater-den-sw))))
 
-(defentity rockeater-sanctum rockeater-den
-  [:exits [:east rockeater-den-e]])
+(defentity rockeater-sanctum (rockeater-den)
+  (exits ((narrow-passage :east rockeater-den-e))))
 
-(defentity rockeater-den-e rockeater-den
-  [:exits [:west rockeater-sanctum :north rockeater-den-ne :south rockeater-den-se]])
+(defentity rockeater-den-e (rockeater-den)
+  (exits ((narrow-passage :west rockeater-sanctum :north rockeater-den-ne
+                          :south rockeater-den-se))))
 
-(defentity rockeater-den-sw rockeater-den
-  [:exits [:north rockeater-den-w :east rockeater-den-s]])
+(defentity rockeater-den-sw (rockeater-den)
+  (exits ((narrow-passage :north rockeater-den-w :east rockeater-den-s))))
 
-(defentity rockeater-den-s rockeater-den
-  [:exits [:west rockeater-den-sw :east rockeater-den-se]])
+(defentity rockeater-den-s (rockeater-den)
+  (exits ((narrow-passage :west rockeater-den-sw :east rockeater-den-se))))
 
-(defentity rockeater-den-se rockeater-den
-  [:exits [:west rockeater-den-s :north rockeater-den-e]])
+(defentity rockeater-den-se (rockeater-den)
+  (exits ((narrow-passage :west rockeater-den-s :north rockeater-den-e))))
 
 ;;; slanted passage
 
-(defproto slanted-passage cavern-room
-  [:brief "Slanted Passage"])
+(defproto slanted-passage (cavern)
+  (brief "Slanted Passage"))
 
-(defentity slanted-passage-top slanted-passage
-  [:full "This is the top of a narrow passage that slants steeply down to the
-     east."
-   :exits [:northwest entrance :east slanted-passage-mid]])
+(defentity slanted-passage-top (slanted-passage)
+  (full "This is the top of a narrow passage that slants steeply down to the
+    east.")
+  (exits ((narrow-passage :northwest entrance :east slanted-passage-mid))))
 
-(defentity slanted-passage-mid slanted-passage
-  [:full "This is part of a narrow passage that slants steeply down to the
-     east."
-   :exits [:west slanted-passage-top :east slanted-passage-bot]])
+(defentity slanted-passage-mid (slanted-passage)
+  (full "This is part of a narrow passage that slants steeply down to the
+    east.")
+  (exits ((narrow-passage :west slanted-passage-top :east slanted-passage-bot))))
 
-(defentity slanted-passage-bot slanted-passage
-  [:full "This is the bottom of a wide tunnel that slants steeply up to the
-     west."
-   :exits [:west slanted-passage-mid :northeast ceiling-waterfall]])
+(defentity slanted-passage-bot (slanted-passage)
+  (full "This is the bottom of a wide tunnel that slants steeply up to the
+    west.")
+  (exits ((narrow-passage :west slanted-passage-mid :northeast ceiling-waterfall))))
 
 ;; lower stream and pools
 
-(defentity ceiling-waterfall cavern-room
-  [:brief "Waterfalls"
-   :full "A deluge of cold water rushes in from several openings in the high
-     ceiling, creating a number of waterfalls that feed a wide pool. The pool,
-     in turn, feeds a sluggish stream that meanders away to the east."
-   :surface :shallow-water
-   :exits [:southwest slanted-passage-bot :east lower-stream-1]])
+(defentity ceiling-waterfall (cavern)
+  (brief "Waterfalls")
+  (full "A deluge of cold water rushes in from several openings in the high
+    ceiling, creating a number of waterfalls that feed a wide pool. The pool, in
+    turn, feeds a sluggish stream that meanders away to the east.")
+  (surface :shallow-water)
+  (exits ((narrow-passage :southwest slanted-passage-bot :east lower-stream-1))))
 
-(defentity lower-stream-1 cavern-room
-  [:brief "Sluggish Stream"
-   :full "A slow-moving stream flows eastward through this large chamber."
-   :surface :shallow-water
-   :exits [:west ceiling-waterfall :east lower-stream-2]])
+(defentity lower-stream-1 (cavern)
+  (brief "Sluggish Stream")
+  (full "A slow-moving stream flows eastward through this large chamber.")
+  (surface :shallow-water)
+  (exits ((narrow-passage :west ceiling-waterfall :east lower-stream-2))))
 
-(defentity lower-stream-2 cavern-room
-  [:brief "Sluggish Stream"
-   :full "A slow-moving stream flows eastward through this large chamber."
-   :surface :shallow-water
-   :exits [:west lower-stream-1 :east lower-pool-w :south myconid-camp-ne]])
+(defentity lower-stream-2 (cavern)
+  (brief "Sluggish Stream")
+  (full "A slow-moving stream flows eastward through this large chamber.")
+  (surface :shallow-water)
+  (exits ((narrow-passage :west lower-stream-1 :east lower-pool-w
+                          :south myconid-camp-ne))))
 
-(defentity lower-pool-w cavern-room
-  [:brief "Wide Pool"
-   :full "A sluggish stream enters from the west and forms a pool of cold water
-     that fills most of this large chamber."
-   :surface :shallow-water
-   :exits [:west lower-stream-2
-           :down (exit underwater-passage-w :hidden true)]])
+(defproto underwater-portal (portal)
+  (brief "an underwater passage")
+  (hidden t))
 
-(defproto underwater-passage room
-  [:brief "Underwater Passage"
-   :full "This is a wide, water-filled cavern."
-   :domain :underground
-   :surface :shallow-water])
+(defentity lower-pool-w (cavern)
+  (brief "Wide Pool")
+  (full "A sluggish stream enters from the west and forms a pool of cold water
+    that fills most of this large chamber.")
+  (surface :shallow-water)
+  (exits ((narrow-passage :west lower-stream-2)
+          (underwater-portal :down underwater-passage-w))))
 
-(defentity underwater-passage-w underwater-passage
-  [:exits [:up lower-pool-w :east underwater-passage-e]])
+(defproto underwater-passage (location)
+  (brief "Underwater Passage")
+  (full "This is a wide, water-filled cavern.")
+  (domain :underground)
+  (surface :shallow-water))
 
-(defentity underwater-passage-e underwater-passage
-  [:exits [:up lower-pool-e :west underwater-passage-w]])
+(defentity underwater-passage-w (underwater-passage)
+  (exits ((narrow-passage :up lower-pool-w :east underwater-passage-e))))
 
-(defentity lower-pool-e cavern-room
-  [:brief "Wide Pool"
-   :full "A still pool of cold water fills the western half of this chamber. The
-     sound of dripping water echoes around you. The pool drains to the east
-     though a narrow channel."
-   :surface :shallow-water
-   :exits [:down (exit underwater-passage-e :hidden true)
-           :east cockatrice-lair]])
+(defentity underwater-passage-e (underwater-passage)
+  (exits ((narrow-passage :up lower-pool-e :west underwater-passage-w))))
+
+(defentity lower-pool-e (cavern)
+  (brief "Wide Pool")
+  (full "A still pool of cold water fills the western half of this chamber. The
+    sound of dripping water echoes around you. The pool drains to the east
+    though a narrow channel.")
+  (surface :shallow-water)
+  (exits ((underwater-portal :down underwater-passage-e)
+          (narrow-passage :east cockatrice-lair))))
 
 ;;; myconid camp
 
-(defproto myconid-camp-exit exit
-  [:brief "the cavern"
-   :pose "continues to the ~a."])
+(defproto cavern-portal (portal)
+  (brief "the cavern")
+  (pose "continues to the ~a."))
 
-(defproto myconid-camp cavern-room
-  [:brief "Myconid Camp"
-   :full "This large cavern has a musty, earthy odor."
-   :surface :dirt
-   :exit-proto myconid-camp-exit])
+(defproto myconid-camp (cavern)
+  (brief "Myconid Camp")
+  (full "This large cavern has a musty, earthy odor.")
+  (surface :dirt))
 
-(defentity myconid-camp-ne myconid-camp
-  [:exits [:north (narrow-passage lower-stream-2)
-           :west myconid-camp-nw :south myconid-camp-se]])
+(defentity myconid-camp-ne (myconid-camp)
+  (exits ((narrow-passage :north lower-stream-2)
+          (cavern-portal :west myconid-camp-nw :south myconid-camp-se))))
 
-(defentity myconid-camp-nw myconid-camp
-  [:exits [:east myconid-camp-ne :south myconid-camp-sw]])
+(defentity myconid-camp-nw (myconid-camp)
+  (exits ((cavern-portal :east myconid-camp-ne :south myconid-camp-sw))))
 
-(defentity myconid-camp-se myconid-camp
-  [:exits [:north myconid-camp-ne :west myconid-camp-sw]])
+(defentity myconid-camp-se (myconid-camp)
+  (exits ((cavern-portal :north myconid-camp-ne :west myconid-camp-sw))))
 
-(defentity myconid-camp-sw myconid-camp
-  [:exits [:north myconid-camp-nw :east myconid-camp-se]])
+(defentity myconid-camp-sw (myconid-camp)
+  (exits ((cavern-portal :north myconid-camp-nw :east myconid-camp-se))))
 
 ;;; cockatrice lair
 
-(defentity cockatrice-lair cavern-room
-  [:brief "Cockatrice's Lair"
-   :full "A narrow stream winds its way through the many stalagmites that dot
-     the floor of large chamber."
-   :exits [:west lower-pool-e :east world.perenvale/cliff-cave]])
-
-|#
+(defentity cockatrice-lair (cavern)
+  (brief "Cockatrice's Lair")
+  (full "A narrow stream winds its way through the many stalagmites that dot
+    the floor of large chamber.")
+  (exits ((narrow-passage :west lower-pool-e))))
+;; FIXME: add :east perenvale::cliff-cave
