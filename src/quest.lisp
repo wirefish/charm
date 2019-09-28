@@ -217,13 +217,26 @@ Four events occur during the lifetime of a quest:
            (show-text actor "You are currently on the following quests:~%~%~{- ~a~%~%~}"
                       (mapcar #'summarize-quest-state active-quests)))))
     ((string= subcommand "info")
-     (let ((quests (match-active-quests actor quest-name)))
-       (if (null quests)
-           (show-text actor "You do not have any active quests matching that description.")
-           (show-text actor "~{- ~a: ~a (level ~d, ~d% complete)~%~%~}"
-                      (loop for (quest . progress) in quests
-                            append (list (name quest) (summary quest) (level quest) progress))))))
+     (if quest-name
+         (let ((quests (match-active-quests actor quest-name)))
+           (if (null quests)
+               (show-text actor "You do not have any active quests matching that description.")
+               (show-text actor "~{- ~a: ~a (level ~d, ~d% complete)~%~%~}"
+                          (loop for (quest . progress) in quests
+                                append (list (name quest) (summary quest) (level quest) progress)))))
+         (show-text actor "For which quest do you want to see more information?")))
     ((string= subcommand "drop")
-     (show-text actor "TBD"))
+     (if quest-name
+         (let ((quests (match-active-quests actor quest-name)))
+           (case (length quests)
+             (0 (show-text actor "You do not have any active quests matching that description."))
+             (1
+              (destructuring-bind (quest . progress) (first quests)
+                (remove-active-quest actor quest)
+                (remove-quest-items actor quest)
+                (show-notice actor "You are no longer on the quest ~s." (name quest))))
+             (t (show-text actor "Which quest do you want to drop: ~a?"
+                           (format-list (mapcar #'car quests) :conjunction "or")))))
+         (show-text actor "Which quest do you want to drop?")))
     (t
      (show-text actor "Unknown subcommand. Type `help quest` for help."))))
