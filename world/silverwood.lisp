@@ -125,6 +125,7 @@
 (defentity cabin (location)
   (brief "Cabin in the Woods")
   (full "This one-room cabin is tiny but well maintained.")
+  (icon 'house)
   (domain :indoor)
   (surface :wood)
   (exits ((exit-doorway :out forest-2-3)))
