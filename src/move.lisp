@@ -102,7 +102,7 @@
 (defmethod did-enter-location ((observer avatar) actor location entry)
   ;; TODO: handle entry-specific messages.
   (when (and (not (eq observer actor))
-             (is-visible-p actor observer))
+             (visible-p actor observer))
     (show-text observer "~a ~a"
                (describe-brief actor :capitalize t)
                (or (entry-pose actor)
@@ -120,8 +120,8 @@
 (defcommand (actor "go" direction)
   "Move in a specified direction; for example, `go north`. See `help:movement`
   for more information."
-  (let ((matches (match-objects actor direction
-                                (contents (location actor))
+  (let ((matches (match-objects direction
+                                (keep-visible actor (contents (location actor)))
                                 (exits (location actor)))))
     (case (length matches)
       (0 (show-text actor "You can't move in that direction."))

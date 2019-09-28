@@ -8,6 +8,9 @@
   (stack-limit 1)
   (stack-size 1 :instance))
 
+(defmethod describe-pose ((subject item))
+  (format-verb (pose subject) :count (stack-size subject)))
+
 (defmethod stackable-p ((stack item) (item item))
   (and (eq (type-of stack) (type-of item))
        (<= (+ (stack-size stack) (stack-size item)) (stack-limit stack))))

@@ -17,9 +17,12 @@
              (:file "json")
              (:file "encode")
              (:file "text")
-
              (:file "http")
              (:file "websocket")
+
+             (:file "describe")
+             (:file "match")
+
              (:file "session")
              (:file "show")
              (:file "command")
@@ -44,8 +47,6 @@
              (:file "tutorial")
              (:file "accept")
              (:file "quest")
-             (:file "describe")
-             (:file "match")
              (:file "inspect")
              (:file "skills")
              (:file "inventory")

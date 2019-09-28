@@ -25,7 +25,8 @@
 (defcommand (actor "talk" "to" target "about" subject)
   "Talk to a nearby creature. You may optionally specify a particular subject of
   interest."
-  (let ((matches (match-objects actor target (remove actor (contents (location actor))))))
+  (let ((matches (match-objects target
+                                (remove actor (keep-visible actor (contents (location actor)))))))
     (case (length matches)
       (0 (show-text actor "You don't see anyone like that to talk to."))
       (1 (talk actor (first matches) subject))

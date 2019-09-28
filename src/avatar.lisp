@@ -91,6 +91,20 @@
 (defmethod encode-slot ((name (eql 'attack-timer)) value)
   nil)
 
+;;; Define how an avatar is described.
+
+(defmethod describe-brief ((subject avatar) &rest args)
+  (or (name subject) (apply #'describe-brief (race subject) args)))
+
+(defmethod describe-full ((subject avatar))
+  (or (full subject) (describe-full (race subject))))
+
+;;; Define how an avatar is matched against user input.
+
+(defmethod match-tokens (tokens (target avatar))
+  (best-match (call-next-method)
+              (match-tokens tokens (race target))))
+
 ;;; Base health, energy, and mana are derived from the avatar's race.
 
 (defmethod base-health ((entity avatar))

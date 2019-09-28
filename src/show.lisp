@@ -50,14 +50,14 @@
      "describeRoom"
      (describe-brief location)
      (describe-full location)
-     (sort (mapcar #'direction (remove-if-not #'(lambda (exit) (is-visible-p exit viewer))
+     (sort (mapcar #'direction (remove-if-not #'(lambda (exit) (visible-p exit viewer))
                                               (exits location)))
            #'string<)
      (mapcar #'(lambda (object)
                  (list (id object) (describe-brief object) (describe-pose object)))
              (remove-if #'(lambda (object)
                             (or (eq object viewer)
-                                (not (is-visible-p object viewer))))
+                                (not (visible-p object viewer))))
                         (contents location))))))
 
 (defun announce (location control-string &rest args)
@@ -83,7 +83,7 @@
   (when-let ((session (session avatar)))
     (send-client-command session "setNeighbors"
                          (keep-if #'(lambda (x)
-                                      (when (and (is-visible-p x avatar) (not (eq x avatar)))
+                                      (when (and (visible-p x avatar) (not (eq x avatar)))
                                         (neighbor-properties x)))
                                   (contents (location avatar))))))
 

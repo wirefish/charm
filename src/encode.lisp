@@ -2,19 +2,24 @@
 
 ;;;
 
-(defgeneric encode-slot (slot-name value))
+(defgeneric encode-slot (slot-name value)
+  (:documentation "Given the value of a named slot, returns the value that
+    should actually be encoded."))
 
 (defmethod encode-slot (slot-name value)
   value)
 
 ;;;
 
-(defgeneric encode-object (object stream))
+(defgeneric encode-object (object stream)
+  (:documentation "Writes the encoded form of `object` to `stream`."))
 
 (defmethod encode-object (object stream)
   (write object :stream stream :pretty nil :readably t))
 
 (defmethod encode-object ((object standard-object) stream)
+  "Writes `object` to `stream` by encoding its class name and the names and
+  values of all instance-allocated slots."
   (let ((class (find-class (type-of object))))
     (format stream "{~s" (class-name class))
     (dolist (slot (class-slots class))
@@ -43,6 +48,8 @@
   object)
 
 (defmethod encode-object ((object string) stream)
+  ;; NOTE: This is necessary to keep strings from using the vector
+  ;; specialization.
   (write object :stream stream))
 
 (defmethod encode-object ((object vector) stream)
@@ -71,7 +78,9 @@
 
 ;;;
 
-(defgeneric decode-slot (slot-name value))
+(defgeneric decode-slot (slot-name value)
+  (:documentation "Given the encoded value for the named slot, returns the
+    actual value that should be stored in the slot."))
 
 (defmethod decode-slot (slot-name value)
   value)

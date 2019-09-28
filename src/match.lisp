@@ -64,38 +64,14 @@
         (with-slots (plural) target
           (best-match match (and plural (match-tokens tokens plural)))))))
 
-(defmethod match-tokens (tokens (target entity))
-  (labels ((find-id-token (tokens)
-             (when-let ((id-token (find-if #'(lambda (x) (starts-with #\# x)) tokens)))
-               (parse-integer id-token :start 1 :junk-allowed t))))
-    (if-let ((id (find-id-token tokens)))
-      (if (= (id target) id) :exact nil)
-      (apply #'best-match
-             (match-tokens tokens (brief target))
-             (mapcar #'(lambda (x) (match-tokens tokens x)) (alts target))))))
-
-(defmethod match-tokens (tokens (target portal))
-  (let ((dir (direction target)))
-    (best-match (match-tokens tokens (direction-name dir))
-                (match-tokens tokens (direction-abbrev dir))
-                (call-next-method))))
-
-(defmethod match-tokens (tokens (target avatar))
-  (best-match (call-next-method)
-              (match-tokens tokens (race target))))
-
-(defmethod match-tokens (tokens (target quest))
-  (match-tokens tokens (name target)))
-
-(defun match-objects (actor tokens &rest object-lists)
+(defun match-objects (tokens &rest object-lists)
   "Returns a list of objects that represent matches between `tokens` and objects
   in `object-lists`. If any match is exact, only exact matches are returned.
   Otherwise, all partial matches are returned."
   (let (matches best)
     (dolist (list object-lists)
       (dolist (object list)
-        (when (is-visible-p object actor)
-          (when-let ((match (match-tokens tokens object)))
-            (push (cons object match) matches)
-            (setf best (best-match best match))))))
+        (when-let ((match (match-tokens tokens object)))
+          (push (cons object match) matches)
+          (setf best (best-match best match)))))
     (keep-if #'(lambda (x) (when (eq (cdr x) best) (car x))) matches)))

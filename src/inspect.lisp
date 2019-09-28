@@ -18,8 +18,8 @@
      (show-description actor actor))
     ;; Look within the location and the actor's inventory.
     (t
-     (let ((matches (match-objects actor target
-                                   (contents (location actor))
+     (let ((matches (match-objects target
+                                   (keep-visible actor (contents (location actor)))
                                    (exits (location actor)))))
        (if (= (length matches) 0)
            (show-text actor "You don't see anything like that.")

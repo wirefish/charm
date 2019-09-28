@@ -14,7 +14,7 @@
     (:down '(0 0 -1))
     (t '(0 0 0))))
 
-(defun walk-map (origin radius)
+(defun walk-map (origin radius &optional observer)
   (let* ((result nil)
          (visited (make-hash-table)))
     (labels ((recursive-walk (x y location)
@@ -26,14 +26,21 @@
                      (destructuring-bind (dx dy dz) (direction-offset (direction exit))
                        (when (and (= dz 0)
                                   (<= (max (abs (+ x dx)) (abs (+ y dy))) radius))
-                         (let ((dest (symbol-value (and (boundp (destination exit)) (destination exit)))))
+                         (let ((dest (symbol-value (and (or (null observer) (visible-p exit observer))
+                                                        (boundp (destination exit))
+                                                        (destination exit)))))
                            (when (and dest (null (gethash dest visited)))
                              (recursive-walk (+ x dx) (+ y dy) dest))))))))))
       (recursive-walk 0 0 origin)
       result)))
 
+(defun portal-visible-p (portal observer)
+  (or (visible-p portal observer)
+      (and (boundp (destination portal))
+           (eq (symbol-value (destination portal)) (location observer)))))
+
 (defun show-map (avatar &optional (radius 3))
-  (let ((locations (walk-map (location avatar) radius)))
+  (let ((locations (walk-map (location avatar) radius avatar)))
     (send-client-command
      (session avatar) "updateMap"
      (describe-brief (location avatar))
@@ -47,7 +54,7 @@
                          :false ; (quest-state avatar location)
                          :false ; (npc-state location)
                          (mapcar #'direction
-                                 (remove-if-not #'(lambda (x) (is-visible-p x avatar)) (exits location)))
+                                 (remove-if-not #'(lambda (x) (portal-visible-p x avatar)) (exits location)))
                          (surface location)
                          (domain location))))
              locations))))

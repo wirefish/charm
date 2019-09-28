@@ -94,6 +94,13 @@
   (print-unreadable-object (object stream :type t :identity t)
     (write (id object) :stream stream)))
 
+(defgeneric get-modifier (modifier entity)
+  (:documentation "Entities can have or impart modifiers, depending on context.
+    A modifier is an integer value that adjusts some attribute, and defaults to
+    zero.")
+  (:method (modifier entity)
+    0))
+
 ;;; Don't encode an entity's unique ID, and instead assign it a new one when it
 ;;; is decoded.
 
@@ -103,10 +110,31 @@
 (defmethod decode-slot ((name (eql 'id)) value)
   (incf *next-entity-id*))
 
-;;; Entities can have or impart modifiers, depending on context. A modifier is
-;;; an integer value that adjusts some attribute, and defaults to zero.
+;;; Define how entities are described.
 
-(defgeneric get-modifier (modifier entity))
+(defmethod visible-p ((subject entity) observer)
+  (not (hidden subject)))
 
-(defmethod get-modifier (modifier (entity entity))
-  0)
+(defmethod describe-brief ((subject entity) &rest args)
+  (apply #'format-noun (brief subject) args))
+
+(defmethod describe-pose ((subject entity))
+  (format-verb (pose subject)))
+
+(defmethod describe-full ((subject entity))
+  (or (full subject)
+      (concatenate 'string
+                   (describe-brief subject :capitalize t :article :definite)
+                   " is unremarkable.")))
+
+;;; Define how entities are matched against user input.
+
+(defmethod match-tokens (tokens (target entity))
+  (labels ((find-id-token (tokens)
+             (when-let ((id-token (find-if #'(lambda (x) (starts-with #\# x)) tokens)))
+               (parse-integer id-token :start 1 :junk-allowed t))))
+    (if-let ((id (find-id-token tokens)))
+      (when (= (id target) id) :exact)
+      (apply #'best-match
+             (match-tokens tokens (brief target))
+             (mapcar #'(lambda (x) (match-tokens tokens x)) (alts target))))))

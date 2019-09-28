@@ -83,7 +83,7 @@
                (describe-brief container :article nil))))
 
 (defmethod did-take-item ((observer avatar) actor item origin)
-  (when (is-visible-p item observer)
+  (when (visible-p item observer)
     (when (not (eq observer actor))
       (show-text observer "~a takes ~a."
                  (describe-brief actor :capitalize t)
@@ -143,8 +143,9 @@
   (declare (ignore destination)) ; TODO:
   (let (origin)
     (if source
-        (let ((matches (match-objects actor source
-                                      (remove-if-not #'(lambda (x) (typep x 'container))
+        (let ((matches (match-objects source
+                                      (remove-if-not #'(lambda (x) (and (visible-p x actor)
+                                                                        (typep x 'container)))
                                                      (contents (location actor))))))
           (case (length matches)
             (0 (show-text actor "You don't see anything matching \"~{~a~^ ~}\" that might contain items."
@@ -156,7 +157,7 @@
                           (format-list (mapcar #'describe-brief matches) :conjunction "or"))))))
         (setf origin (location actor)))
     (when origin
-      (let ((matches (match-objects actor item (contents origin))))
+      (let ((matches (match-objects item (keep-visible actor (contents origin)))))
         (if (= 0 (length matches))
             (show-text actor "You don't see anything matching \"~{~a~^ ~}\" that you can take." item)
             (dolist (item matches)

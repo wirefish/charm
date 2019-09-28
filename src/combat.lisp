@@ -282,7 +282,7 @@
   "Begin attacking an enemy and make it your default target for special attacks.
   You will enter combat with the enemy and its allies. See `help:combat` for
   details."
-  (let ((matches (match-objects actor target
+  (let ((matches (match-objects target
                                 (keep-if #'(lambda (x) (when (attackable-p actor x) x))
                                          (contents (location actor))))))
     (case (length matches)
@@ -321,7 +321,7 @@
   "Begin assisting an ally, making it your default target for subsequent helpful
   actions. You will enter combat with any enemies currently attacking your ally.
   See `help:combat` for details."
-  (let ((matches (match-objects actor target
+  (let ((matches (match-objects target
                                 (keep-if (curry #'assistable-p actor) (contents (location actor))))))
     (case (length matches)
       (0 (show-text actor "You don't see anyone matching \"~{~a~^ ~}\" that you can assist." target))

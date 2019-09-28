@@ -31,6 +31,9 @@ Four events occur during the lifetime of a quest:
    (level :initform 0 :initarg :level :reader level)
    (required-quests :initform nil :initarg :required-quests :reader required-quests)))
 
+(defmethod match-tokens (tokens (target quest))
+  (match-tokens tokens (name target)))
+
 ;;; The `defquest` macro creates an instance of class `quest`.
 
 (defmacro defquest (name &body slots)
@@ -38,20 +41,23 @@ Four events occur during the lifetime of a quest:
                      append `(,(make-keyword name) ,init-form))))
     `(defparameter ,name (make-instance 'quest :key ',name ,@args))))
 
+(defun find-quest (quest-key)
+  (symbol-value quest-key))
+
 ;;; A `quest-item` is an item that exists only as part of completing a quest.
 
 (defproto quest-item (item)
   (quest nil) ; key of associated quest
   (bound t))
 
+(defmethod visible-p ((subject quest-item) (observer avatar))
+  (quest-incomplete-p observer (find-quest (quest subject))))
+
 ;;;
 
 (defun quest-xp-reward (quest)
   "Computes the amount of experience awarded upon finishing `quest`."
   (+ 200 (* (level quest) 100)))
-
-(defun find-quest (quest-key)
-  (symbol-value quest-key))
 
 (defun remove-quest-items (avatar quest &key npc (message "~a is destroyed."))
   "Removes all items associated with `quest` from the inventory of `avatar`. If
