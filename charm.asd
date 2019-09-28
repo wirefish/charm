@@ -29,6 +29,7 @@
 
              (:file "entity")
              (:file "container")
+             (:file "region")
              (:file "location")
              (:file "item")
              (:file "combatant")
@@ -37,7 +38,6 @@
              (:file "equipment")
              (:file "skill")
              (:file "avatar")
-             (:file "region")
              (:file "event")
              (:file "state-machine")
 

@@ -31,7 +31,7 @@
     (send-client-command
      (session avatar) "updateMap"
      (describe-brief (location avatar))
-     "A Zone" ; FIXME:
+     (region-name (region (location avatar)))
      radius
      (mapcar #'(lambda (info)
                  (destructuring-bind (x y location) info

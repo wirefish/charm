@@ -7,5 +7,9 @@
   (destructuring-bind (name init-form) slot
     (list (intern (symbol-name name) :keyword) init-form)))
 
+(defparameter *current-region* nil)
+
 (defmacro defregion (name &body slots)
-  `(defparameter ,name (make-region ,@(mapcan #'transform-region-slot slots))))
+  `(progn
+     (defparameter ,name (make-region ,@(mapcan #'transform-region-slot slots)))
+     (setf *current-region* ,name)))

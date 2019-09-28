@@ -70,7 +70,11 @@
   (surface :dirt) ; any anything else, really
   (tutorial nil)
   (z-offset 0)
+  (region nil :instance)
   (exits () :instance))
+
+(defmethod initialize-instance :after ((location location) &key)
+  (setf (region location) *current-region*))
 
 (defmethod add-to-contents ((location location) entity)
   (prog1
