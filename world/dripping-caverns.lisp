@@ -226,7 +226,7 @@ the reward at the end of this story.
     located around the map's edge, each corresponding to a cardinal compass
     direction.
 
-    Around the sides of the dais you find an inscription:
+    Around the perimeter of the dais you find an inscription:
 
     > Devouring flames leap from the north; raging floods rush from the south.
     The west wind crashes against the bulwark of the eastern mountains. When
