@@ -46,7 +46,8 @@
                          :false ; icon
                          :false ; (quest-state avatar location)
                          :false ; (npc-state location)
-                         (mapcar #'direction (exits location))
+                         (mapcar #'direction
+                                 (remove-if-not #'(lambda (x) (is-visible-p x avatar)) (exits location)))
                          (surface location)
                          (domain location))))
              locations))))
