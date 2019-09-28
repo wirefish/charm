@@ -87,8 +87,8 @@
     (when (not (eq observer actor))
       (show-text observer "~a takes ~a."
                  (describe-brief actor :capitalize t)
-                 (describe-brief item)))
-    (remove-neighbor observer item)))
+                 (describe-brief item))))
+  (remove-neighbor observer item))
 
 ;;;
 
