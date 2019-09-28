@@ -547,7 +547,7 @@
 (defproto white-tulip (quest-item)
   (brief "a white tulip")
   (pose "draws your attention.")
-  (icon :flower)
+  (icon 'white-tulip)
   (full "The tulip is quite lovely; you can see why Dhalia prizes them.")
   (unique 1)
   (quest 'get-some-clothes)
