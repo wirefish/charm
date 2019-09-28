@@ -226,7 +226,6 @@ no Authorization header is present, sends a 400 response."
         (let ((message (websocket-decode-message (session-input-buffer session))))
           (when message
             (destructuring-bind (opcode . payload) message
-              (format-log :info "got message ~d ~s" opcode payload)
               (cond
                 ((= opcode +websocket-op-text+)
                  (process-input (session-avatar session) payload))
