@@ -1,19 +1,5 @@
 (in-package :charm)
 
-(defun direction-offset (direction)
-  (case direction
-    (:north '(0 -1 0))
-    (:northeast '(1 -1 0))
-    (:east '(1 0 0))
-    (:southeast '(1 1 0))
-    (:south '(0 1 0))
-    (:southwest '(-1 1 0))
-    (:west '(-1 0 0))
-    (:northwest '(-1 -1 0))
-    (:up '(0 0 1))
-    (:down '(0 0 -1))
-    (t '(0 0 0))))
-
 (defun walk-map (origin radius &optional observer)
   (let* ((result nil)
          (visited (make-hash-table)))
@@ -25,6 +11,7 @@
                    (dolist (exit exits)
                      (destructuring-bind (dx dy dz) (direction-offset (direction exit))
                        (when (and (= dz 0)
+                                  (or (/= dx 0) (/= dy 0))
                                   (<= (max (abs (+ x dx)) (abs (+ y dy))) radius))
                          (let ((dest (symbol-value (and (or (null observer) (visible-p exit observer))
                                                         (boundp (destination exit))
@@ -57,7 +44,9 @@
                                  (remove-if-not #'(lambda (x) (portal-visible-p x avatar)) (exits location)))
                          (surface location)
                          (domain location))))
-             locations))))
+             (remove-if-not #'(lambda (loc)
+                                (= (z-offset (third loc)) (z-offset (location avatar))))
+                            locations)))))
 
 (defun update-map-nearby (location &optional (radius 3))
   "Calls `show-map` for every avatar within `radius` of `location`. This is used

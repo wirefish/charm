@@ -4,18 +4,18 @@
 
 (defparameter *directions*
   (plist-hash-table
-   '(:north #("north" "n" :south)
-     :northeast #("northeast" "ne" :southwest)
-     :east #("east" "e" :west)
-     :southeast #("southeast" "se" :northwest)
-     :south #("south" "s" :north)
-     :southwest #("southwest" "sw" :northeast)
-     :west #("west" "w" :east)
-     :northwest #("northwest" "nw" :southeast)
-     :up #("up" "u" :down)
-     :down #("down" "d" :up)
-     :in #("in" nil :out)
-     :out #("out" nil :in))))
+   '(:north #("north" "n" :south (0 -1 0))
+     :northeast #("northeast" "ne" :southwest (1 -1 0))
+     :east #("east" "e" :west (1 0 0))
+     :southeast #("southeast" "se" :northwest (1 1 0))
+     :south #("south" "s" :north (0 1 0))
+     :southwest #("southwest" "sw" :northeast (-1 1 0))
+     :west #("west" "w" :east (-1 0 0))
+     :northwest #("northwest" "nw" :southeast (-1 -1 0))
+     :up #("up" "u" :down (0 0 1))
+     :down #("down" "d" :up (0 0 -1))
+     :in #("in" nil :out (0 0 0))
+     :out #("out" nil :in (0 0 0)))))
 
 (defun direction-name (dir)
   (elt (gethash dir *directions*) 0))
@@ -25,6 +25,9 @@
 
 (defun opposite-direction (dir)
   (elt (gethash dir *directions*) 2))
+
+(defun direction-offset (dir)
+  (elt (gethash dir *directions*) 3))
 
 ;;; Portals connect locations to one another.
 

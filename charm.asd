@@ -26,7 +26,6 @@
              (:file "session")
              (:file "show")
              (:file "command")
-             (:file "map")
 
              (:file "entity")
              (:file "container")
@@ -45,6 +44,7 @@
              (:file "config")
              (:file "help")
              (:file "tutorial")
+             (:file "map")
              (:file "accept")
              (:file "quest")
              (:file "inspect")
