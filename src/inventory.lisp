@@ -231,6 +231,28 @@
     :ears :neck :wrists :left-finger :right-finger
     :backpack))
 
+(defun show-equipment (actor)
+  (with-slots (equipment) actor
+    ;; List weapons.
+    (let (weapons)
+      (when-let ((off-hand (gethash :off-hand equipment)))
+        (push (format nil "~a in your off-hand" (describe-brief off-hand)) weapons))
+      (when-let ((main-hand (gethash :main-hand equipment)))
+        (if (eq (slot main-hand) :both-hands)
+            (push (format nil "~a in both hands" (describe-brief main-hand)) weapons)
+            (push (format nil "~a in your main hand" (describe-brief main-hand)) weapons)))
+      (if weapons
+          (show-text actor "You are wielding ~a." (format-list weapons))
+          (show-text actor "You are not wielding any weapons.")))
+    ;; List other equipment.
+    (let ((items (keep-if #'(lambda (slot)
+                              (when-let ((item (gethash slot equipment)))
+                                (describe-brief item)))
+                          *equipment-slot-order*)))
+      (if items
+          (show-text actor "You are wearing ~a." (format-list items))
+          (show-text actor "You are not wearing anything.")))))
+
 (defcommand (actor ("equip" "eq") item ("in" "on") slot)
   "When no item is specified, list the items that you currently have equipped.
 
@@ -244,28 +266,7 @@
   (declare (ignore slot)) ; FIXME: allow  explicit slot
   ;; FIXME: equipping a backpack must transfer contents first
   (if (null item)
-      ;; List equipped items.
-      (with-slots (equipment) actor
-        ;; List weapons.
-        (let (weapons)
-          (when-let ((off-hand (gethash :off-hand equipment)))
-            (push (format nil "~a in your off-hand" (describe-brief off-hand)) weapons))
-          (when-let ((main-hand (gethash :main-hand equipment)))
-            (if (eq (slot main-hand) :both-hands)
-                (push (format nil "~a in both hands" (describe-brief main-hand)) weapons)
-                (push (format nil "~a in your main hand" (describe-brief main-hand)) weapons)))
-          (if weapons
-              (show-text actor "You are wielding ~a." (format-list weapons))
-              (show-text actor "You are not wielding any weapons.")))
-        ;; List other equipment.
-        (let ((items (keep-if #'(lambda (slot)
-                                  (when-let ((item (gethash slot equipment)))
-                                    (describe-brief item)))
-                              *equipment-slot-order*)))
-          (if items
-              (show-text actor "You are wearing ~a." (format-list items))
-              (show-text actor "You are not wearing anything."))))
-      ;; Equip an item.
+      (show-equipment actor)
       (let ((matches (match-in-inventory actor item #'(lambda (x) (typep x 'equipment)))))
         (case (length matches)
           (0 (show-text actor
@@ -279,5 +280,6 @@
 (defcommand (actor ("unequip" "uneq") item ("into" "to") container)
   "Unequip an item and move it to your inventory. If no container is specified,
   the item is placed into any equipped container with sufficient space."
-  ;; FIXME
+  ;; FIXME: implement this. A backpack must be empty to unequip. item goes into
+  ;; backpack or hands if backpack is full.
   nil)
