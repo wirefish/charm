@@ -71,9 +71,11 @@
 
 (defmethod describe-full ((subject weapon))
   (destructuring-bind (min . max) (attack-damage subject nil)
+    ;; FIXME: show quality if > 0
     (format nil
-            "~a (~a; damage ~d-~d ~(~a~); DPS ~,1f~{; ~(~a~) ~d~})"
+            "~a (level ~d ~a; damage ~d-~d ~(~a~); DPS ~,1f~{; ~(~a~) ~d~})"
             (call-next-method)
+            (level subject)
             (weapon-type subject)
             min max
             (damage-type subject)
