@@ -19,6 +19,11 @@
     ;; Look within the location and the actor's inventory.
     (t
      (let ((matches (match-objects target
+                                   (hash-table-values (equipment actor))
+                                   (when-let ((backpack (gethash :backpack (equipment actor))))
+                                     (contents backpack))
+                                   (when-let ((hands (gethash :in-hands (equipment actor))))
+                                     (contents hands))
                                    (keep-visible actor (contents (location actor)))
                                    (exits (location actor)))))
        (if (= (length matches) 0)
