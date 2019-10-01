@@ -34,10 +34,6 @@
     :vitality ; increases health
     :toughness)) ; increases armor
 
-(defun base-primary-attribute-value (level)
-  ;; Scales from 10 at level 0 to 200 at level 50.
-  (+ 9 (* 2 level) (round (expt 1.0945 level))))
-
 ;;; Secondary attributes have a base value of zero and do not increase with
 ;;; level. Like primary attributes they can be modified by race, equipment,
 ;;; traits, and auras.
@@ -53,15 +49,18 @@
     :insight ; increases mana
     :resilience)) ; increases regeneration rate
 
+(defun base-attribute-value (attribute level)
+  (if (find attribute *primary-attributes*)
+      (+ 10 (* 5 level))
+      0))
+
 ;;;
 
 (defmethod get-modifier (modifier (entity combatant))
   "Sums contributions from inherent modifiers and those conferred by auras."
   (apply #'+
          (gethash modifier (modifiers entity) 0)
-         (if (find modifier *primary-attributes*)
-             (base-primary-attribute-value (level entity))
-             0)
+         (base-attribute-value modifier (level entity))
          (keep-if #'(lambda (x)
                       (destructuring-bind (aura . expiry) x
                         (declare (ignore expiry))
@@ -79,9 +78,13 @@
   (+ (base-energy entity)
      (get-modifier :spirit entity)))
 
+(defun compute-base-mana (entity)
+  "Base mana does not incorporate insight modifiers. It is used as the basis for
+  the cost of spells cast by `entity`."
+  (* (1+ (level entity)) (base-mana entity)))
+
 (defun compute-max-mana (entity)
-  (+ (* (1+ (level entity)) (base-mana entity))
-     (get-modifier :insight entity)))
+  (+ (compute-base-mana entity) (get-modifier :insight entity)))
 
 (defun update-resources (entity)
   (setf (max-health entity) (compute-max-health entity)

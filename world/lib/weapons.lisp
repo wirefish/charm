@@ -25,6 +25,7 @@
     leather-wrapped handle, and a full crossguard.")
   (damage-type :piercing)
   (attack-verb "pokes")
+  (weapon-type "dagger")
   (proficiency 'dagger-proficiency)
   (mastery 'dagger-mastery))
 
@@ -52,7 +53,9 @@
     radiates a magical aura.")
   (damage-type :arcane)
   (attack-verb "zaps")
-  (proficiency :wand-proficiency))
+  (weapon-type "wand")
+  (proficiency 'wand-proficiency)
+  (mastery 'wand-mastery))
 
 ;;; Maces are one-handed crushing weapons.
 
@@ -77,6 +80,7 @@
     sized for use in one hand.")
   (damage-type :crushing)
   (attack-verb "smashes")
+  (weapon-type "one-handed mace")
   (proficiency 'mace-proficiency)
   (mastery 'mace-mastery))
 
@@ -102,6 +106,7 @@
     and requires both hands to wield.")
   (damage-type :crushing)
   (attack-verb "smashes")
+  (weapon-type "two-handed mace")
   (proficiency 'mace-2h-proficiency)
   (mastery 'mace-2h-mastery))
 
@@ -128,6 +133,7 @@
     sized for use in one hand.")
   (damage-type :slashing)
   (attack-verb "slashes")
+  (weapon-type "one-handed sword")
   (proficiency 'sword-proficiency)
   (mastery 'sword-mastery))
 

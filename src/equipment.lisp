@@ -1,12 +1,5 @@
 (in-package :charm)
 
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (defmethod transform-slot-init-form (def-name (slot-name (eql 'attack-verb)) init-form)
-    `(parse-verb ,init-form))
-
-  (defmethod transform-slot-init-form (def-name (slot-name (eql 'base-damage)) init-form)
-    `(list ,@init-form)))
-
 ;;;
 
 (defproto equipment (item)

@@ -41,24 +41,32 @@
      (/ (- defend-modifier attack-modifier)
         (max 1 (+ defend-modifier attack-modifier)))))
 
+(defun offense-modifier (attacker attack)
+  "Returns the amount by which damage from `attack` is increased based on the
+  associated attribute of `attacker`."
+  (case (damage-group (damage-type attack))
+    ((:physical) (/ (get-modifier :strength attacker) 20))
+    ((:elemental :magical) (/ (get-modifier :intellect attacker) 20))
+    (t 0)))
+
+(defun defense-modifier (defender attack)
+  "Returns the amount by which damage from `attack` is decreased based on the
+  associated attribute of `defender`."
+  (case (damage-group (damage-type attack))
+    ((:physical :elemental) (/ (get-modifier :armor defender) 20))
+    ((:magical) (/ (get-modifier :willpower defender) 20))
+    (t 0)))
+
 (defun compute-damage (attacker target attack)
   "Returns the base damage done when `attacker` attacks `target` using
   `attack`."
-  (let ((group (damage-group (damage-type attack))))
+  (destructuring-bind (min . max) (weapon-damage attack) ;; FIXME:
     (round-random
      (max 0
-          (- (* (damage-amount attack)
-                (relative-level-ratio (level attacker) (level target))
-                (opposed-modifier-ratio
-                 (case group
-                   (:physical (get-modifier :strength attacker))
-                   ((:elemental :magical) (get-modifier :intellect attacker))
-                   (t 1))
-                 (case group
-                   ((:physical :elemental) (get-modifier :armor target))
-                   (:magical (get-modifier :willpower target))
-                   (t 1))))
-             (get-modifier (damage-type attack) target))))))
+          (+ min
+             (random (float (- max min)))
+             (offense-modifier attacker attack)
+             (- (defense-modifier target attack)))))))
 
 (defun diminish (x)
   "Applies diminishing returns in order to keep a value in the range [0, 1].
