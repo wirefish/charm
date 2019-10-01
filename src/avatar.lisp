@@ -9,34 +9,28 @@
 (defmethod get-modifier (modifier (entity race))
   (getf (modifiers entity) modifier 0))
 
-(defstruct equipment-slot
-  pose name)
-
 (defparameter *equipment-slots*
-  (alist-hash-table
-  (mapcar #'(lambda (spec)
-              (destructuring-bind (key pose name) spec
-                (cons key (make-equipment-slot :pose pose :name name))))
-          '(;; weapons
-            (:main-hand "in your" "main hand")
-            (:off-hand "in your" "off-hand")
-            ;; armor
-            (:head "on your" "head")
-            (:torso "on your" "body")
-            (:back "across your" "shoulders")
-            (:hands "on your" "hands")
-            (:waist "around your" "waist")
-            (:legs "on your" "legs")
-            (:feet "on your" "feet")
-            ;; accessories
-            (:ears "on your" "ears")
-            (:neck "around your" "neck")
-            (:wrists "on your" "wrists")
-            (:left-finger "on your" "left finger")
-            (:right-finger "on your" "right finger")
-            ;; containers
-            (:backpack "on your" "back")
-            (:in-hands "in your" "hands")))))
+  (plist-hash-table
+   '(;; weapons
+     :main-hand #("in your" "main hand")
+     :off-hand #("in your" "off-hand")
+     ;; armor
+     :head #("on your" "head")
+     :torso #("on your" "body")
+     :back #("across your" "shoulders")
+     :hands #("on your" "hands")
+     :waist #("around your" "waist")
+     :legs #("on your" "legs")
+     :feet #("on your" "feet")
+     ;; accessories
+     :ears #("on your" "ears")
+     :neck #("around your" "neck")
+     :wrists #("on your" "wrists")
+     :left-finger #("on your" "left finger")
+     :right-finger #("on your" "right finger")
+     ;; containers
+     :backpack #("on your" "back")
+     :in-hands #("in your" "hands"))))
 
 (defproto avatar-hands (container entity)
   (brief "hands")
@@ -182,7 +176,11 @@
             (incf (karma avatar) karma-gained)
             (show-notice avatar "You are now level ~d! You gain ~d karma."
                          (level avatar) karma-gained))
+          (update-resources avatar)
           (update-avatar avatar :level (level avatar)
                                 :xp (xp avatar)
-                                :xp-required (xp-required-for-next-level avatar)))
+                                :xp-required (xp-required-for-next-level avatar)
+                                :max-health (max-health avatar)
+                                :max-energy (max-energy avatar)
+                                :max-mana (max-mana avatar)))
         (update-avatar avatar :xp (xp avatar)))))
