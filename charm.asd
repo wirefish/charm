@@ -36,6 +36,7 @@
              (:file "creature")
              (:file "corpse")
              (:file "equipment")
+             (:file "weapon")
              (:file "skill")
              (:file "avatar")
              (:file "event")

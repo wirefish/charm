@@ -25,8 +25,9 @@
       completed before learning the skill.")
    (required-skills
     :initform nil :initarg :required-skills :reader required-skills
-    :documentation "A list of symbols denoting skills that must be known before
-      learning the skill.")
+    :documentation "A plist of where each key denotes a skill and each value is
+      the minimum rank that must be achieved in that skill before learning this
+      skill.")
    (exclusive-skills
     :initform nil :initarg :exclusive-skills :reader exclusive-skills
     :documentation "A list of symbols denoting skills that, if known, prevent
