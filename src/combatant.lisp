@@ -101,3 +101,12 @@
         (energy entity) (max-energy entity)
         (max-mana entity) (compute-max-mana entity)
         (mana entity) (max-mana entity)))
+
+;;; Combatants execute attacks in order to damage other combatants.
+
+(defgeneric attack-damage (attack attacker)
+  (:documentation "Returns a cons (min . max) representing the inherent damage
+    of `attack` when executed by `attacker`."))
+
+(defgeneric damage-type (attack)
+  (:documentation "Returns the type of damage caused by `attack`."))

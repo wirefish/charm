@@ -11,10 +11,6 @@
   (attack-delay 3)
   (offhand-penalty 0))
 
-(defgeneric weapon-damage (item)
-  (:documentation "Returns the inherent damage range for a weapon, based on its
-    level and quality."))
-
 ;;; Light weapons are quick, do relatively little damage per hit, and incur a
 ;;; relatively small penalty when used in the off-hand.
 
@@ -23,7 +19,7 @@
   (attack-delay 2)
   (offhand-penalty 2/3))
 
-(defmethod weapon-damage ((item light-weapon))
+(defmethod attack-damage ((item light-weapon) attacker)
   (let ((level (+ (level item) (quality item))))
     (cons (+ 2 level)
           (+ 4 (* 2 level)))))
@@ -36,7 +32,7 @@
   (attack-delay 2.5)
   (offhand-penalty 1/2))
 
-(defmethod weapon-damage ((item one-handed-weapon))
+(defmethod attack-damage ((item one-handed-weapon) attacker)
   (let ((level (+ (level item) (quality item))))
     (cons (+ 4 (* 2 level))
           (+ 6 (* 3 level)))))
@@ -48,15 +44,33 @@
   (slot :both-hands)
   (attack-delay 3))
 
-(defmethod weapon-damage ((item two-handed-weapon))
+(defmethod attack-damage ((item two-handed-weapon) attacker)
   (let ((level (+ (level item) (quality item))))
     (cons (+ 6 (* 3 level))
           (+ 10 (* 5 level)))))
 
+;;; Natural weapons are things like fists, claws, and teeth. Their damage and
+;;; delay are moderate like one-handed weapons. They scale based on attacker
+;;; level. If `attack-delay` is adjusted, damage is normalized based on the
+;;; default delay of 2.5 seconds to maintain the expected DPS. The
+;;; `damage-scale` slot allows for easy adjustment of the DPS output.
+
+(defproto natural-weapon (weapon)
+  (weapon-type "natural weapon")
+  (attack-delay 2.5)
+  (damage-scale 1.0))
+
+(defmethod attack-damage ((item natural-weapon) (attacker combatant))
+  (with-slots (level) attacker
+    (with-slots (attack-delay damage-scale) item
+      (let ((k (* damage-scale (/ attack-delay 2.5))))
+        (cons (* k (+ 4 (* 2 level)))
+              (* k (+ 6 (* 3 level))))))))
+
 ;;;
 
 (defmethod describe-full ((subject weapon))
-  (destructuring-bind (min . max) (weapon-damage subject)
+  (destructuring-bind (min . max) (attack-damage subject nil)
     (format nil
             "~a (~a; damage ~d-~d ~(~a~); DPS ~,1f~{; ~(~a~) ~d~})"
             (call-next-method)

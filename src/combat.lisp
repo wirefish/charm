@@ -51,20 +51,22 @@
 
 (defun defense-modifier (defender attack)
   "Returns the amount by which damage from `attack` is decreased based on the
-  associated attribute of `defender`."
-  (case (damage-group (damage-type attack))
-    ((:physical :elemental) (/ (get-modifier :armor defender) 20))
-    ((:magical) (/ (get-modifier :willpower defender) 20))
-    (t 0)))
+  associated attribute of `defender` and any immunity to the damage type."
+  (with-slots (damage-type) attack
+    (+ (get-modifier damage-type defender)
+       (case (damage-group damage-type)
+         ((:physical :elemental) (/ (get-modifier :armor defender) 20))
+         ((:magical) (/ (get-modifier :willpower defender) 20))
+         (t 0)))))
 
 (defun compute-damage (attacker target attack)
-  "Returns the base damage done when `attacker` attacks `target` using
-  `attack`."
-  (destructuring-bind (min . max) (weapon-damage attack) ;; FIXME:
+  "Returns the damage done when `attacker` attacks `target` using `attack`, not
+  accounting for critical hits."
+  (destructuring-bind (min . max) (attack-damage attack attacker)
     (round-random
      (max 0
           (+ min
-             (random (float (- max min)))
+             (* (random 1.0) (- max min))
              (offense-modifier attacker attack)
              (- (defense-modifier target attack)))))))
 
@@ -167,12 +169,11 @@
 
 (defgeneric select-attack (attacker target))
 
-(defproto fist (weapon)
+(defproto fist (natural-weapon)
   (brief "a fist")
   (damage-type :crushing)
-  (base-damage (1 4))
   (attack-verb "bashes")
-  (attack-delay 3))
+  (damage-scale 0.5))
 
 (defparameter *default-attack* (make-instance 'fist))
 

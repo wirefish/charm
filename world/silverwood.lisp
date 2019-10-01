@@ -5,11 +5,9 @@
   (full "The Silverwood is nestled in the hills west of Arwyck.")
   (climate :temperate))
 
-(defproto giant-spider-bite (weapon)
+(defproto giant-spider-bite (natural-weapon)
   (damage-type :piercing)
-  (base-damage (3 6))
-  (attack-verb "bites")
-  (attack-delay 2))
+  (attack-verb "bites"))
 
 (defproto giant-spider (monster)
   (brief "a giant forest spider")
