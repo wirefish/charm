@@ -202,14 +202,16 @@
       (let ((container (gethash (or (find-inventory-slot actor prev-item) :in-hands) equipment)))
         (show-text actor "You place ~a in your ~a."
                    (describe-brief prev-item)
-                   (describe-brief container :article nil))))
+                   (describe-brief container :article nil))
+        (add-to-contents container prev-item)))
     ;; If the item's slot is :both-hands, also clear the :off-hand slot in the
     ;; same way.
     (when-let ((off-hand (and (eq (slot item) :both-hands) (gethash :off-hand equipment))))
       (let ((container (gethash (or (find-inventory-slot actor off-hand) :in-hands) equipment)))
         (show-text actor "You place ~a in your ~a."
                    (describe-brief off-hand)
-                   (describe-brief container :article nil))))
+                   (describe-brief container :article nil))
+        (add-to-contents container off-hand)))
     ;; Equip the item.
     (setf (gethash equipment-slot equipment) item)
     (show-text actor "You equip ~a." (describe-brief item))))
