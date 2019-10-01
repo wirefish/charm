@@ -9,36 +9,36 @@
 (defmethod get-modifier (modifier (entity race))
   (getf (modifiers entity) modifier 0))
 
-(defstruct slot
-  pose name weight)
+(defstruct equipment-slot
+  pose name)
 
 (defparameter *equipment-slots*
+  (alist-hash-table
   (mapcar #'(lambda (spec)
-              (destructuring-bind (key pose name weight) spec
-                (cons key (make-slot :pose pose :name name :weight weight))))
+              (destructuring-bind (key pose name) spec
+                (cons key (make-equipment-slot :pose pose :name name))))
           '(;; weapons
-            (:main-hand "in your" "main hand" 5/4)
-            (:off-hand "in your" "off-hand" 5/4)
+            (:main-hand "in your" "main hand")
+            (:off-hand "in your" "off-hand")
             ;; armor
-            (:head "on your" "head" 1)
-            (:torso "on your" "body" 1)
-            (:back "across your" "shoulders" 1/2)
-            (:hands "on your" "hands" 1/2)
-            (:waist "around your" "waist" 1/2)
-            (:legs "on your" "legs" 1)
-            (:feet "on your" "feet" 1/2)
+            (:head "on your" "head")
+            (:torso "on your" "body")
+            (:back "across your" "shoulders")
+            (:hands "on your" "hands")
+            (:waist "around your" "waist")
+            (:legs "on your" "legs")
+            (:feet "on your" "feet")
             ;; accessories
-            (:ears "on your" "ears" 1/2)
-            (:neck "around your" "neck" 1/2)
-            (:wrists "on your" "wrists" 1/2)
-            (:left-finger "on your" "left finger" 1/2)
-            (:right-finger "on your" "right finger" 1/2)
+            (:ears "on your" "ears")
+            (:neck "around your" "neck")
+            (:wrists "on your" "wrists")
+            (:left-finger "on your" "left finger")
+            (:right-finger "on your" "right finger")
             ;; containers
-            (:backpack "on your" "back" 0)
-            (:sack "over your" "shoulder" 0)
-            (:in-hands "in your" "hands" 0))))
+            (:backpack "on your" "back")
+            (:in-hands "in your" "hands")))))
 
-(defproto avatar-hands (entity container)
+(defproto avatar-hands (container entity)
   (brief "hands")
   (empty-pose "are empty.")
   (nonempty-pose "are holding ~a.")

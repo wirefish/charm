@@ -226,6 +226,11 @@
 
 ;;;
 
+(defparameter *equipment-slot-order*
+  '(:head :torso :back :hands :waist :legs :feet
+    :ears :neck :wrists :left-finger :right-finger
+    :backpack))
+
 (defcommand (actor ("equip" "eq") item ("in" "on") slot)
   "When no item is specified, list the items that you currently have equipped.
 
@@ -236,22 +241,27 @@
   If an item can be equipped in multiple slots, such as a ring which can be worn
   on either hand, you can use \"in\" or \"on\" to specify the slot to use. For
   example, `equip gold ring on left finger`."
+  (declare (ignore slot)) ; FIXME: allow  explicit slot
+  ;; FIXME: equipping a backpack must transfer contents first
   (if (null item)
       ;; List equipped items.
       (with-slots (equipment) actor
+        ;; List weapons.
         (let (weapons)
           (when-let ((off-hand (gethash :off-hand equipment)))
             (push (format nil "~a in your off-hand" (describe-brief off-hand)) weapons))
           (when-let ((main-hand (gethash :main-hand equipment)))
-            (push (format nil "~a in your main hand" (describe-brief main-hand)) weapons))
+            (if (eq (slot main-hand) :both-hands)
+                (push (format nil "~a in both hands" (describe-brief main-hand)) weapons)
+                (push (format nil "~a in your main hand" (describe-brief main-hand)) weapons)))
           (if weapons
               (show-text actor "You are wielding ~a." (format-list weapons))
               (show-text actor "You are not wielding any weapons.")))
+        ;; List other equipment.
         (let ((items (keep-if #'(lambda (slot)
                                   (when-let ((item (gethash slot equipment)))
                                     (describe-brief item)))
-                              (remove-if #'(lambda (x) (find x '(:main-hand :off-hand :in-hands)))
-                                         (mapcar #'car *equipment-slots*)))))
+                              *equipment-slot-order*)))
           (if items
               (show-text actor "You are wearing ~a." (format-list items))
               (show-text actor "You are not wearing anything."))))
