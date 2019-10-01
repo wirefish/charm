@@ -827,16 +827,6 @@
   (brief "a worn copper dagger")
   (full "The dagger has a slender blade and a smooth wooden handle."))
 
-(defproto scratched-buckler (lib::small-shield)
-  (brief "a scratched wooden buckler")
-  (full "The buckler is lightweight but provides minimal protection."))
-
-(defskill basic-melee-combat
-  (name "basic melee combat")
-  (summary "Improves your effectiveness when wielding simple weapons (clubs,
-    daggers, and staves) and small shields.")
-  (modifiers '(:basic-weapon-proficiency 1 :small-shield-proficiency 1)))
-
 (defquest kill-some-plants
   (name "Weed Control")
   (summary "Prove your worth to the guard by killing a vineling. Lashleaf?
@@ -854,11 +844,10 @@
     plants, but vicious killers! Vinelings, I think they're called. Or maybe
     lashleaves? Whatever. The name's not important.
 
-    Here, take this dagger and buckler. Equip 'em and go kill one of those
-    plants. Practice your technique. Strike fast and true! If you can overcome
-    such a fearsome foe, I'll happily let you pass.")
-  (dolist (item '(worn-dagger scratched-buckler))
-    (give-item npc (make-instance item) avatar)))
+    Here, take this dagger. Equip it and go kill one of those plants. Practice
+    your technique. Strike fast and true! If you can overcome such a fearsome
+    foe, I'll happily let you pass.")
+  (give-item npc (make-instance 'worn-dagger) avatar))
 
 (defmethod do-advise-quest (avatar (quest (eql kill-some-plants)) npc)
   (show-say avatar npc "Any progress so far? Kill one of those plant things and
@@ -868,7 +857,7 @@
   (show-say avatar npc "Great job! I'll confess, those things give me the heebie
     jeebies. Plants shouldn't writhe around like that. Please, feel free to head
     south whenever you like.")
-  (learn-skill avatar basic-melee-combat npc))
+  (learn-skill avatar lib::dagger-proficiency npc))
 
 (defproto guard (npc)
   (brief "a burly guard")
