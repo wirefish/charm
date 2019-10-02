@@ -42,7 +42,7 @@
 (defun make-initial-equipment ()
   (plist-hash-table (list :in-hands (make-instance 'avatar-hands))))
 
-(defproto avatar (combatant creature)
+(defproto avatar (combatant creature state-machine)
   (name nil :instance)
   (full nil :instance)
   (race nil :instance)
@@ -97,6 +97,7 @@
 
 (defmethod match-tokens (tokens (target avatar))
   (best-match (call-next-method)
+              (if (name target) (match-tokens tokens (name target)))
               (match-tokens tokens (race target))))
 
 ;;; Base health, energy, and mana are derived from the avatar's race.
@@ -184,3 +185,22 @@
                                 :max-energy (max-energy avatar)
                                 :max-mana (max-mana avatar)))
         (update-avatar avatar :xp (xp avatar)))))
+
+(defun regenerate (avatar)
+  (with-slots (race health max-health energy max-energy mana max-mana) avatar
+    (when (or (< health max-health)
+              (< energy max-energy)
+              (< mana max-mana))
+      (let ((regen (floor (/ (get-modifier :resilience avatar) 20))))
+        (setf health (min (+ health (base-health race) regen) max-health)
+              energy (min (+ energy 10 regen) max-energy)
+              mana (min (+ mana (base-mana race) regen) max-mana))
+        (update-avatar avatar
+                       :health health
+                       :energy energy
+                       :mana mana)))))
+
+(defmethod do-change-state ((avatar avatar) (state (eql :start)))
+  (with-delay (3)
+    (regenerate avatar)
+    (change-state avatar :start)))

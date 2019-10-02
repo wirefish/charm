@@ -19,12 +19,13 @@
                        :race (describe-brief (race actor) :article nil)
                        :health (health actor)
                        :max-health (max-health actor)
-                       :energy (health actor)
-                       :max-energy (max-health actor)
-                       :mana (health actor)
-                       :max-mana (max-health actor)
+                       :energy (energy actor)
+                       :max-energy (max-energy actor)
+                       :mana (mana actor)
+                       :max-mana (max-mana actor)
                        :xp (xp actor)
                        :xp-required (xp-required-for-next-level actor))
+  (start-state-machine actor)
   (call-next-method))
 
 ;;;
