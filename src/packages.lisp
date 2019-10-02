@@ -1,9 +1,11 @@
 (defpackage :charm
   (:documentation "Core server functionality.")
   (:use :common-lisp :sb-mop :alexandria)
+  (:import-from :cl-async :with-delay)
   (:export
    :defentity :defproto :defregion :transform-slot-init-form
    :describe-brief :describe-pose :describe-full
+   :same-location-p
    ;;
    :opposite-direction :add-exit :remove-exit :traverse-portal
    ;;

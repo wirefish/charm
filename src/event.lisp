@@ -32,8 +32,3 @@
   Returns t iff all observers' implementations of the event handler return t."
   (and (apply fn place actor args)
        (every #'(lambda (obs) (apply fn obs actor args)) (contents place))))
-
-(defmacro with-delay ((delay &optional (condition t)) &body body)
-  `(cl-async:with-delay (,delay)
-     (when ,condition
-       ,@body)))

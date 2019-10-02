@@ -183,7 +183,7 @@ no Authorization header is present, sends a 400 response."
   (send-response socket request 200 "OK")
   ;; Don't exit until after this request has been handled, otherwise the
   ;; response won't be sent.
-  (as:with-delay (0)
+  (with-delay (0)
     (as:exit-event-loop)))
 
 (setf (gethash "/stopserver" *request-handlers*) #'handle-stop-server-request)

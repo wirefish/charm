@@ -141,3 +141,8 @@
       (apply #'best-match
              (match-tokens tokens (brief target))
              (mapcar #'(lambda (x) (match-tokens tokens x)) (alts target))))))
+
+;;;
+
+(defun same-location-p (a b)
+  (and (location a) (eq (location a) (location b))))

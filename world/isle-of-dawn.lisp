@@ -48,10 +48,11 @@
     He wears dark blue robes with gold embroidered trim."))
 
 (defmethod did-enter-location ((observer spirit-warden) (actor avatar) location entry)
-  (with-delay (3 (eq (location actor) location))
-    (if (eq (race actor) lib::reborn-hero)
-        (show-text actor "The spirit warden beckons to you.")
-        (show-text actor "The spirit warden gives you a friendly nod."))))
+  (with-delay (3)
+    (when (same-location-p actor observer)
+      (if (eq (race actor) lib::reborn-hero)
+          (show-text actor "The spirit warden beckons to you.")
+          (show-text actor "The spirit warden gives you a friendly nod.")))))
 
 (defmethod do-talk (actor (target spirit-warden) subject)
   (declare (ignore subject))
