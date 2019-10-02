@@ -6,9 +6,10 @@
   (setf (pending-offer actor) (cons fn args)))
 
 (defcommand (actor "accept")
-  "The accept command allows you to accept whatever was most recently offered to
-  you. The offer could be for any number of things, such as a quest, a trade, or
-  a party invitation."
+  "Accept whatever was most recently offered to you. The offer could be for any
+  number of things, such as a quest, a trade, or a party invitation. You can
+  have at most one active offer at a time; an offer is canceled when you move or
+  when it is replaced by a newer offer."
   (if-let ((offer (pending-offer actor)))
     (progn
       (setf (pending-offer actor) nil)
