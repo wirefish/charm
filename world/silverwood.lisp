@@ -105,7 +105,7 @@
     days, what with the spiders and worse lurking in the woods. Speaking of
     spiders, I could use your help if you are willing."))
 
-(defmethod do-accept-quest (actor (quest (eql find-spiderwebs )) npc)
+(defmethod do-accept-quest (actor (quest (eql find-spiderwebs)) npc)
   (show-say actor npc "As you can see I like to sew; it helps me pass the time
     and keeps my nieces and nephews from running around bare naked! There's just
     one problem: I need spider silk to make thread. Perhaps you can bring me a
