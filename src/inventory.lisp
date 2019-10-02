@@ -42,6 +42,8 @@
                   (remove-from-contents-if container pred)))))
 
 (defun match-in-inventory (avatar tokens &optional filter-fn)
+  "Returns a list of (slot . item) for all items in inventory that match
+  `tokens`."
   (let ((matches nil))
     (dolist (slot *inventory-slot-order*)
       (when-let ((container (gethash slot (equipment avatar))))
@@ -163,7 +165,42 @@
             (dolist (item matches)
               (do-take-item actor item origin)))))))
 
-;;;
+;;; Drop one or more items.
+
+(defevent drop-item (actor item inventory-slot))
+
+(defmethod do-drop-item (actor item inventory-slot)
+  (let ((container (gethash inventory-slot (equipment actor)))
+        (location (location actor)))
+    (remove-from-contents container item)
+    (show-text actor "You drop ~a." (describe-brief item))
+    ;; TODO: need a proper entry message.
+    (enter-location item location nil)))
+
+(defcommand (actor "drop" item)
+  "Drop one or more items, removing them from your inventory and placing them on
+  the ground at your current location. If *item* is not specified, you drop
+  everything you are holding in your hands."
+  (if item
+      ;; Drop matching items.
+      (let ((matches (match-in-inventory actor item)))
+        (case (length matches)
+          (0 (show-text actor "You don't have anything matching \"~{~a~^ ~}\" that you can drop."
+                        item))
+          (1 (destructuring-bind (slot . item) (first matches)
+               (drop-item actor item slot)))
+          (otherwise
+           (show-text actor "Do you want to drop ~a?"
+                      (format-list (mapcar #'(lambda (x) (describe-brief (cdr x))) matches)
+                                   :conjunction "or")))))
+      ;; Drop all items carried in hands.
+      (let ((container (gethash :in-hands (equipment actor))))
+        (loop while (contents container)
+              do
+                 (drop-item actor (first (contents container)) :in-hands)))))
+
+;;; Display items in the avatar's inventory, which is the contents of any
+;;; containers in its :backpack, :in-hands, and :coin-purse slots.
 
 (defcommand (actor ("inv" "inventory") container)
   (let ((containers (if container
@@ -182,7 +219,7 @@
                      (describe-brief container :article nil)
                      (empty-pose container))))))
 
-;;;
+;;; Equip an item, moving it from inventory to an equipment slot.
 
 (defevent equip-item (actor item inventory-slot equipment-slot))
 
@@ -226,7 +263,7 @@
      (if (gethash :left-finger (equipment avatar)) :right-finger :left-finger))
     (otherwise (slot item))))
 
-;;;
+;;; Display a list of the avatar's equipment.
 
 (defparameter *equipment-slot-order*
   '(:head :torso :back :hands :waist :legs :feet
