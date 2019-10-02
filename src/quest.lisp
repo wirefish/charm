@@ -89,8 +89,8 @@ Four events occur during the lifetime of a quest:
 
 (defmethod do-offer-quest :around (avatar quest npc)
   (notify-observers (location avatar) #'will-offer-quest avatar quest npc)
-  (setf (pending-offer avatar) (list quest npc))
   (call-next-method)
+  (make-offer avatar #'accept-quest avatar quest npc)
   (show-notice avatar "~a has offered you the level ~d quest ~s. Type `accept` to accept it."
                (describe-brief npc :capitalize t :article :definite)
                (level quest)
@@ -187,9 +187,6 @@ Four events occur during the lifetime of a quest:
     (when (and state (>= (incf (cdr state) amount) 1))
       (show-notice avatar "You have completed the objectives for the quest ~s!" (name quest))
       t)))
-
-(defmethod accept-offer (avatar (quest quest) npc)
-  (accept-quest avatar quest npc))
 
 (defun summarize-quest-state (quest-state)
   (destructuring-bind (key . progress) quest-state
