@@ -227,10 +227,19 @@
 (defevent equip-item (actor item inventory-slot equipment-slot))
 
 (defmethod do-equip-item :around (actor item inventory-slot equipment-slot)
-  ;; TODO: Check that item is equippable, any item(s) already in the required
-  ;; equipment slot(s) are unequippable, and that there is space in inventory to
-  ;; place those items after removing the item to equip.
-  (call-next-method))
+  (cond
+    ;; Check level.
+    ((< (level actor) (level item))
+     (show-text actor "You are not high enough level to equip ~a."
+                (describe-brief item :article :definite)))
+    ;; Check proficiency.
+    ((and (proficiency item)
+          (null (gethash (proficiency item) (skills actor))))
+     (show-text actor "You are not proficient in the use of ~a."
+                (describe-brief item :article :definite)))
+    ;; Check observers.
+    ((query-observers (location actor) #'can-equip-item actor item inventory-slot equipment-slot)
+     (call-next-method))))
 
 (defmethod do-equip-item (actor item inventory-slot equipment-slot)
   (with-slots (equipment) actor

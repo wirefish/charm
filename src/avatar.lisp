@@ -49,7 +49,7 @@
   (gender nil :instance)
   (session nil :instance)
   (equipment (make-initial-equipment) :instance)
-  (skills (make-hash-table) :instance)
+  (skills (make-hash-table) :instance) ; skill-key -> rank
 
   (level 0 :instance)
   (xp 0 :instance)
