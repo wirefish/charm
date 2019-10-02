@@ -82,10 +82,8 @@
 
 (defvar *aliases* (make-hash-table :test #'equal))
 
-(defun make-alias (command &rest aliases)
-  (let ((tokens (tokenize-input command)))
-    (dolist (alias aliases)
-      (setf (gethash alias *aliases*) tokens))))
+(defun make-alias (alias command)
+  (setf (gethash alias *aliases*) (tokenize-input command)))
 
 (defun strip-preposition (preps tokens)
   (if (find (first tokens) preps :test #'string-equal)

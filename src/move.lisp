@@ -131,7 +131,8 @@
                             (format-list (mapcar #'describe-brief matches)))))))
 
 (maphash-keys #'(lambda (dir)
-                  (make-alias (format nil "go ~a" (direction-name dir))
-                              (direction-name dir)
-                              (direction-abbrev dir)))
+                  (let ((command (format nil "go ~a" (direction-name dir))))
+                    (make-alias (direction-name dir) command)
+                    (when-let ((abbrev (direction-abbrev dir)))
+                      (make-alias abbrev command))))
               *directions*)
