@@ -7,10 +7,10 @@
   (slot nil)
   (proficiency nil)
   (mastery nil)
-  (modifiers nil)
+  (modifiers nil) ; plist
   (quality 0 :instance)
-  (affixes nil :instance)
-  (inscription nil :instance))
+  (affix nil :instance) ; enchant, etc.
+  (inscription nil :instance)) ; personalization text
 
 (defmethod get-modifier (modifier (entity equipment))
   (getf (modifiers entity) modifier 0))
@@ -28,7 +28,7 @@
    '(;; weapons
      :both-hands 4/20 ; two-handed weapons
      :main-hand 2/20 ; light and one-handed weapons
-     :off-hand 2/20 ; shields
+     :off-hand 2/20 ; shields, lamps, ...
      ;; armor
      :head 2/20
      :torso 2/20
@@ -55,3 +55,23 @@
   (* level
      *attribute-budget-per-level*
      (gethash slot *equipment-slot-weights*)))
+
+;;; The `quality` of an piece of equipment is an integer that adds to the item's
+;;; effective level when computing its attributes, but does not increase the
+;;; level required to use the item. Each quality modifier greater than zero has
+;;; a name that appears when describing the item.
+
+(defparameter *quality-names*
+  (plist-hash-table
+   (list 1 (parse-noun "a fine")
+         2 (parse-noun "a masterwork")
+         3 (parse-noun "an exceptional")
+         4 (parse-noun "an exquisite")
+         5 (parse-noun "a legendary"))))
+
+(defmethod describe-brief ((subject equipment) &rest args)
+  (if-let ((quality-name (gethash (quality subject) *quality-names*)))
+    (format nil "~a ~a"
+            (apply #'format-noun quality-name args)
+            (call-next-method subject :article nil))
+    (call-next-method)))

@@ -483,23 +483,23 @@
 
 ;;; clothing-stall
 
-(defproto simple-shirt (equipment)
+(defproto simple-shirt (clothing)
   (brief "a simple cotton shirt")
   (full "The shirt is well-made and comfortable.")
   (slot :torso))
 
-(defproto simple-pants (equipment)
+(defproto simple-pants (clothing)
   (brief "a pair of cotton pants")
   (full "The pants are made of thick brown cloth.")
   (slot :legs))
 
-(defproto leather-shoes (equipment)
+(defproto leather-shoes (clothing)
   (brief "a pair of leather shoes")
   (full "These low shoes have a sturdy sole, suitable for walking long
     distances.")
   (slot :feet))
 
-(defproto small-backpack (equipment container)
+(defproto small-backpack (equipment container) ; FIXME: lib::small-backpack etc.
   (brief "a small canvas backpack")
   (full "The backpack has wide leather straps and a drawstring closure.")
   (slot :backpack)
