@@ -202,7 +202,10 @@
 ;;; Display items in the avatar's inventory, which is the contents of any
 ;;; containers in its :backpack, :in-hands, and :coin-purse slots.
 
-(defcommand (actor ("inv" "inventory") container)
+(defcommand (actor ("inventory" "inv") container)
+  "Display a list of the items you are carrying in your inventory. This includes
+  items in your backpack as well as anything you are carrying in your hands. If
+  *container* is specified, show only items in that container."
   (let ((containers (if container
                         (list container) ; FIXME: match container slots
                         (remove-if #'null
