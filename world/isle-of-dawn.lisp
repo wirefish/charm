@@ -844,10 +844,15 @@
     plants, but vicious killers! Vinelings, I think they're called. Or maybe
     lashleaves? Whatever. The name's not important.
 
-    Here, take this dagger. Equip it and go kill one of those plants. Practice
-    your technique. Strike fast and true! If you can overcome such a fearsome
-    foe, I'll happily let you pass.")
-  (give-item npc (make-instance 'worn-dagger) avatar))
+    I have a dagger for you. Here, let me show you how to use it.")
+  (give-item npc (make-instance 'worn-dagger) avatar)
+  (show-text avatar "The guard begins to demonstrate some basic dagger
+      techniques.")
+  (with-delay (2)
+    (learn-skill avatar lib::dagger-proficiency npc)
+    (show-say avatar npc "You're a natural! Now equip that dagger and go kill
+      one of those plants. Strike fast and true! If you can overcome such a
+      fearsome foe, I'll happily let you pass.")))
 
 (defmethod do-advise-quest (avatar (quest (eql kill-some-plants)) npc)
   (show-say avatar npc "Any progress so far? Kill one of those plant things and
@@ -856,8 +861,7 @@
 (defmethod do-finish-quest (avatar (quest (eql kill-some-plants)) npc)
   (show-say avatar npc "Great job! I'll confess, those things give me the heebie
     jeebies. Plants shouldn't writhe around like that. Please, feel free to head
-    south whenever you like.")
-  (learn-skill avatar lib::dagger-proficiency npc))
+    south whenever you like."))
 
 (defproto guard (npc)
   (brief "a burly guard")
