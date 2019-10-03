@@ -72,6 +72,7 @@
   (alts ())
   (size :medium)
   (entry-pose nil)
+  (exit-pose nil)
   (hidden nil)
   ;;
   (id (incf *next-entity-id*) :instance)

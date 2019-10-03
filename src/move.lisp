@@ -94,6 +94,20 @@
     (setf (attack-target actor) nil)
     (setf (opponents actor) nil)))
 
+(defmethod did-exit-location ((observer avatar) actor location exit)
+  ;; TODO: handle exit-specific messages.
+  (when (and (not (eq observer actor))
+             (visible-p actor observer))
+    (show-text observer "~a ~a"
+               (describe-brief actor :capitalize t)
+               (or (exit-pose actor)
+                   (if exit
+                       (format nil "exits to the ~(~a~)." (direction exit))
+                       "disappears into thin air!")))
+    (remove-neighbor observer actor)))
+
+;;;
+
 (defmethod do-enter-location (actor location entry)
   (add-to-contents location actor))
 
@@ -123,7 +137,7 @@
                (describe-brief actor :capitalize t)
                (or (entry-pose actor)
                    (if entry
-                       (format nil "enters from the ~a." (direction entry))
+                       (format nil "enters from the ~(~a~)." (direction entry))
                        "appears from thin air!")))
     (update-neighbor observer actor)))
 
