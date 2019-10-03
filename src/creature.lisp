@@ -1,14 +1,14 @@
 (in-package :charm)
 
 (defproto creature (entity)
-  (attitude :neutral))
+  (attitude :neutral)
+  (begins-quests nil)
+  (ends-quests nil))
 
 (defproto monster (combatant creature))
 
 (defproto npc (creature)
-  (attitude :friendly)
-  (begins-quests nil)
-  (ends-quests nil))
+  (attitude :friendly))
 
 (defproto vendor (npc)
   (sells nil))
