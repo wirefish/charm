@@ -243,25 +243,34 @@ no Authorization header is present, sends a 400 response."
   "Associates an input buffer with a newly-connected socket."
   (setf (as:socket-data socket) (make-instance 'buffer)))
 
-(defun do-state-machines (fn)
-  (dolist (pkg-name *region-packages*)
-    (let ((pkg (find-package pkg-name)))
-      (do-all-symbols (sym pkg)
-        (when (and (boundp sym) (eq (symbol-package sym) pkg))
-          (funcall fn (symbol-value sym)))))))
+(defun start-world ()
+  (format-log :info "starting ~d locations" (hash-table-count *locations*))
+  (maphash-values #'(lambda (location)
+                      (enter-world location nil))
+                  *locations*))
+
+(defun stop-world ()
+  (format-log :info "stopping ~d locations" (hash-table-count *locations*))
+  (maphash-values #'(lambda (location)
+                      (exit-world location nil))
+                  *locations*))
 
 (defun run-event-loop ()
   (as:with-event-loop ()
     (format-log :info "starting event loop")
+
+    (start-world)
+
+    (as:add-event-loop-exit-callback
+     (lambda ()
+       (format-log :info "exiting event loop")
+       (stop-world)))
 
     ;; Arrange to remove avatars from the world if the session has been nil for
     ;; a while, as when the player navigates away from the page without exiting
     ;; the world.
     #+nil(as:with-interval (30)
            (cleanup-idle-sessions))
-
-    ;; Start state machines.
-    (do-state-machines #'start-state-machine)
 
     ;; Start the server.
     (as:tcp-server
@@ -275,9 +284,7 @@ no Authorization header is present, sends a 400 response."
      as:+sigint+
      (lambda (sig)
        (format-log :info "stopping with signal ~a" sig)
-       (as:exit-event-loop))))
-  (format-log :info "event loop has stopped")
-  (do-state-machines #'reset-state-machine))
+       (as:exit-event-loop)))))
 
 (defun run-server ()
   ;; FIXME: probably need to remove all players from the world before clearing

@@ -73,6 +73,19 @@
   (region nil :instance)
   (exits () :instance))
 
+;;; A macro to define a location class and a singleton instance.
+
+(defvar *locations* (make-hash-table :size 5000))
+
+(defmacro deflocation (name (&rest bases) &body slots)
+  (let ((slot-defs (loop for (slot-name init-form) in slots
+                         collect (list slot-name :initform
+                                       (transform-slot-init-form name slot-name init-form)))))
+    `(progn
+       (defclass ,name ,bases ,slot-defs)
+       (defparameter ,name (make-instance ',name))
+       (setf (gethash ',name *locations*) ,name))))
+
 (defmethod initialize-instance :after ((location location) &key)
   (setf (region location) *current-region*))
 

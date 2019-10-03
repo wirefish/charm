@@ -12,12 +12,12 @@
   (domain :outdoor)
   (surface :wood))
 
-(defentity west-dock (dock-location)
+(deflocation west-dock (dock-location)
   (brief "West Dock")
   (full "A short wooden dock juts out into the bay.")
   (exits ((gravel-path :south bayside-plaza-2))))
 
-(defentity east-dock (dock-location)
+(deflocation east-dock (dock-location)
   (brief "East Dock")
   (full "A rickety wooden dock extends out into the bay.")
   (exits ((gravel-path :south bayside-plaza-4))))
@@ -35,22 +35,22 @@
   (domain :outdoor)
   (surface :stone))
 
-(defentity bayside-plaza-1 (bayside-plaza-location)
+(deflocation bayside-plaza-1 (bayside-plaza-location)
   (exits ((bayside-plaza-portal :east bayside-plaza-2))))
 
-(defentity bayside-plaza-2 (bayside-plaza-location)
+(deflocation bayside-plaza-2 (bayside-plaza-location)
   (exits ((bayside-plaza-portal :west bayside-plaza-1 :east bayside-plaza-3)
           (gravel-path :north west-dock))))
 
-(defentity bayside-plaza-3 (bayside-plaza-location)
+(deflocation bayside-plaza-3 (bayside-plaza-location)
   (exits ((bayside-plaza-portal :west bayside-plaza-2 :east bayside-plaza-4)
           (dirt-road :south harbor-road-1))))
 
-(defentity bayside-plaza-4 (bayside-plaza-location)
+(deflocation bayside-plaza-4 (bayside-plaza-location)
   (exits ((bayside-plaza-portal :west bayside-plaza-3 :east bayside-plaza-5)
           (gravel-path :north east-dock))))
 
-(defentity bayside-plaza-5 (bayside-plaza-location)
+(deflocation bayside-plaza-5 (bayside-plaza-location)
   (exits ((bayside-plaza-portal :west bayside-plaza-4))))
 
 ;;; harbor-road
@@ -61,10 +61,10 @@
   (domain :outdoor)
   (surface :dirt))
 
-(defentity harbor-road-1 (harbor-road-location)
+(deflocation harbor-road-1 (harbor-road-location)
   (exits ((dirt-road :north bayside-plaza-3 :south harbor-road-2))))
 
-(defentity harbor-road-2 (harbor-road-location)
+(deflocation harbor-road-2 (harbor-road-location)
   (exits ((dirt-road :north harbor-road-1 :south village-square-n))))
 
 ;;; village-square
@@ -80,7 +80,7 @@
   (brief "the square")
   (pose "continues to the ~a."))
 
-(defproto shaggy-dog (creature state-machine)
+(defproto shaggy-dog (creature)
   (brief "a shaggy white dog")
   (pose "is nearby.")
   (icon "sniffing-dog.png")
@@ -88,45 +88,46 @@
     fur is matted and dirty but it seems happy.")
   (initial-state :stretch))
 
-(defmethod do-change-state ((actor shaggy-dog) (state (eql :stretch)))
-  (dolist (observer (contents (location actor)))
-    (show-text observer "The shaggy dog gets up and stretches."))
-  (with-delay (5)
-    (change-state actor :move)))
+(defbehavior wander (actor portal-type)
+    ()
+  (:stretch
+   (dolist (observer (contents (location actor)))
+     (show-text observer "The shaggy dog gets up and stretches."))
+   (change-state :move 5))
+  (:move
+   (let ((exit (random-elt (remove-if-not #'(lambda (x)
+                                             (typep x portal-type))
+                                          (exits (location actor))))))
+     (when exit
+       (traverse-portal actor exit))
+     (change-state :sleep 5)))
+  (:sleep
+   (dolist (observer (contents (location actor)))
+     (show-text observer "The shaggy dog lies down and closes its eyes."))
+   (change-state :stretch 20)))
 
-(defmethod do-change-state ((actor shaggy-dog) (state (eql :move)))
-  (let ((exit (random-elt (remove-if-not #'(lambda (x)
-                                             (typep x 'village-square-portal))
-                                         (exits (location actor))))))
-    (traverse-portal actor exit)
-    (with-delay (5)
-      (change-state actor :sleep))))
-
-(defmethod do-change-state ((actor shaggy-dog) (state (eql :sleep)))
-  (dolist (observer (contents (location actor)))
-    (show-text observer "The shaggy dog lies down."))
-  (with-delay (20)
-    (change-state actor :stretch)))
+(defmethod do-enter-world :after ((actor shaggy-dog) location)
+  (start-behavior actor :wander-square #'wander 'village-square-portal))
 
 (defmethod do-talk (actor (target shaggy-dog) subject)
   (declare (ignore subject))
   (show-text actor "The dog's ears perk up and it tilts its head to the side."))
 
-(defentity village-square-nw (village-square-location)
+(deflocation village-square-nw (village-square-location)
   (exits ((village-square-portal :east village-square-n :south village-square-w)
           (entry-doorway :north armory-training-hall :west sword-shop)))
   (contents (shaggy-dog)))
 
-(defentity village-square-n (village-square-location)
+(deflocation village-square-n (village-square-location)
   (exits ((village-square-portal :west village-square-nw :east village-square-ne
                                  :south village-square-c)
           (dirt-road :north harbor-road-2))))
 
-(defentity village-square-ne (village-square-location)
+(deflocation village-square-ne (village-square-location)
   (exits ((village-square-portal :west village-square-n :south village-square-e)
           (entry-doorway :east inn-common-room))))
 
-(defentity village-square-w (village-square-location)
+(deflocation village-square-w (village-square-location)
   (exits ((village-square-portal :north village-square-nw :south village-square-sw
                                  :east village-square-c)
           (entry-doorway :west library-main))))
@@ -138,22 +139,22 @@
     platform. When you speak from atop the podium, your words will be heard
     throughout the village square."))
 
-(defentity village-square-c (village-square-location)
+(deflocation village-square-c (village-square-location)
   (exits ((village-square-portal :west village-square-w :east village-square-e
                                  :north village-square-n :south village-square-s)))
   (contents (podium)))
 
-(defentity village-square-e (village-square-location)
+(deflocation village-square-e (village-square-location)
   (exits ((village-square-portal :north village-square-ne :south village-square-se
                                  :west village-square-c)
           (dirt-road :east east-road-1))))
 
-(defentity village-square-sw (village-square-location)
+(deflocation village-square-sw (village-square-location)
   (exits ((village-square-portal :north village-square-w :east village-square-s)
           (dirt-road :west forest-road-1)
           (entry-doorway :south lodge-foyer))))
 
-(defentity village-square-s (village-square-location)
+(deflocation village-square-s (village-square-location)
   (exits ((village-square-portal :west village-square-sw :east village-square-se
                                  :north village-square-c)
           (dirt-road :south south-road-1))))
@@ -186,7 +187,7 @@
     times.\" Bah. Perhaps I will be lucky, and my days will end before things
     become too interesting. For you, though, I foresee no such luck."))
 
-(defentity village-square-se (village-square-location)
+(deflocation village-square-se (village-square-location)
   (exits ((village-square-portal :west village-square-s :north village-square-e)))
   (contents (crone)))
 
@@ -199,7 +200,7 @@
     hair hangs down to his shoulders.")
   (sells nil))
 
-(defentity sword-shop (location)
+(deflocation sword-shop (location)
   (brief "Bryndan's House of Blades")
   (full "A variety of bladed weapons are displayed in racks that fill this
     small shop.")
@@ -233,7 +234,7 @@
     If you're learning to cook, I can sell you a few recipes as well. Type `buy`
     to see what I have for sale."))
 
-(defentity inn-common-room (inn-room)
+(deflocation inn-common-room (inn-room)
   (brief "Common Room")
   (full "The common room of the Golden Gryphon is a cheerful place. A crackling
     fire burns in the stone hearth. Numerous tables and chairs give the space a
@@ -270,26 +271,26 @@
   (with-delay (30)
     (do-enter-location (make-instance 'slice-of-rye) origin nil)))
 
-(defentity inn-kitchen (inn-room)
+(deflocation inn-kitchen (inn-room)
   (brief "Kitchen")
   (full "This large and somewhat disorganized kitchen smells faintly of ale and
     grease.")
   (exits ((doorway :south inn-common-room)))
   (contents (cooking-guildmaster slice-of-rye)))
 
-(defentity inn-upstairs-hall (inn-room)
+(deflocation inn-upstairs-hall (inn-room)
   (brief "Upstairs Hall")
   (full "This dark, windowless hall leads to the Golden Gryphon's guest rooms.")
   (exits ((stairway :down inn-common-room)
           (doorway :west guest-room-1 :east guest-room-2))))
 
-(defentity guest-room-1 (inn-room)
+(deflocation guest-room-1 (inn-room)
   (brief "Small Guest Room")
   (full "This cramped room holds a small bed and an iron-bound chest. The
     window overlooks the village square.")
   (exits ((doorway :east inn-upstairs-hall))))
 
-(defentity guest-room-2 (inn-room)
+(deflocation guest-room-2 (inn-room)
   (brief "Large Guest Room")
   (full "This room is tastefully furnished. The wide feather bed is lumpy but
     comfortable. An oak wardrobe features carvings of trees and forest
@@ -319,7 +320,7 @@
     Type `learn` to see the skills I can teach you. You can also type `help
     skills` to learn more about skills in general."))
 
-(defentity armory-training-hall (armory-room)
+(deflocation armory-training-hall (armory-room)
   (brief "Training Hall")
   (full "This long hall has stone walls and an arched ceiling. The soft wooden
     floor is clean but marred from the many training matches that have been
@@ -344,7 +345,7 @@
   (declare (ignore subject))
   (show-say actor target "Good day to you."))
 
-(defentity lodge-foyer (lodge-room)
+(deflocation lodge-foyer (lodge-room)
   (brief "Explorers' Lodge Foyer")
   (full "This airy room has wood-paneled walls and a thick carpet on the
     floor.")
@@ -362,7 +363,7 @@
     > Although it slew several dogs and gravely wounded our scout, our party
     defeated this beast as we traversed the jungles of Phaa, CY 549."))
 
-(defentity lodge-trophy-room (lodge-room)
+(deflocation lodge-trophy-room (lodge-room)
   (brief "Explorers' Lodge Trophy Room")
   (full "The walls of this long room are lined with hunting prizes of all
     kinds: antlers, horns, mounted heads, and more.")
@@ -381,7 +382,7 @@
   (declare (ignore subject))
   (show-say actor target "Why yes, be a dear and fetch me a bourbon, won't you?"))
 
-(defentity lodge-library (lodge-room)
+(deflocation lodge-library (lodge-room)
   (brief "Explorers' Lodge Library")
   (full "Two walls of this room are lined with shelves full of books. A number
     of comfortable armchairs and small tables fill the remainder of the space.")
@@ -390,14 +391,14 @@
 
 #| FIXME: skills!
 
-(defentity swimming skill
+(deflocation swimming skill
   [:brief "swimming"
    :full "Allows you to swim in deep water, underwater, and in dangerous
      conditions."
    :karma 5
    :max-rank 100])
 
-(defentity climbing skill
+(deflocation climbing skill
   [:brief "climbing"
    :full "Allows you to climb steep, slippery, and unstable surfaces."
    :karma 5
@@ -423,7 +424,7 @@
     I am happy to teach you some of those skills. Type `learn` to see what I can
     teach you."))
 
-(defentity lodge-workshop (lodge-room)
+(deflocation lodge-workshop (lodge-room)
   (brief "Explorers' Lodge Workshop")
   (full "A long table fills the center of this room; various implements are
     strewn across its surface. Shelves along the walls hold all manner of tools
@@ -437,7 +438,7 @@
   (domain :indoor)
   (surface :stone))
 
-(defentity library-main (library-room)
+(deflocation library-main (library-room)
   (brief "Library")
   (full "This large, circular room encompasses the entire ground floor of a
     squat, stone tower. The walls are lined with shelves full of leather-bound
@@ -445,7 +446,7 @@
   (exits ((exit-doorway :east village-square-w)
           (stairway :down library-basement :up library-study))))
 
-(defentity library-basement (library-room)
+(deflocation library-basement (library-room)
   (brief "Basement")
   (full "The basement of the library is full of books, scrolls, and other
     scholarly items. Everything is neatly stacked and organized, if a little
@@ -501,7 +502,7 @@
     town, you might want to type `help skills` to learn more about skills in
     general."))
 
-(defentity library-study (library-room)
+(deflocation library-study (library-room)
   (brief "Study")
   (full "This circular room commands an excellent view of Arwyck through a
     number of large, glass-paned windows. A desk and padded leather chair have
@@ -518,15 +519,15 @@
   (domain :outdoor)
   (surface :dirt))
 
-(defentity east-road-1 (east-road)
+(deflocation east-road-1 (east-road)
   (exits ((dirt-road :west village-square-e :east east-road-2)
           (entry-doorway :south mace-shop))))
 
-(defentity east-road-2 (east-road)
+(deflocation east-road-2 (east-road)
   (exits ((dirt-road :west east-road-1 :east east-road-3)
           (alley :south muggers-alley-1))))
 
-(defentity east-road-3 (east-road)
+(deflocation east-road-3 (east-road)
   (exits ((dirt-road :west east-road-2 :east east-gate)
           (entry-doorway :north temple-sanctuary))))
 
@@ -545,7 +546,7 @@
   (show-say actor target "Welcome to my shop, ~a. You'll find my wares to be of
     better quality than most." (describe-brief (race actor) :article nil)))
 
-(defentity mace-shop (location)
+(deflocation mace-shop (location)
   (brief "Maury's Maces")
   (full "This shop sells maces, clubs, and similar weapons meant for cracking
     skulls.")
@@ -588,7 +589,7 @@
     The absence of the gods leaves a great void. My only hope is that evil and
     darkness do not fill it."))
 
-(defentity temple-sanctuary (location)
+(deflocation temple-sanctuary (location)
   (brief "Sanctuary")
   (full "This large room was once a place where people gathered to worship the
     gods, but it has clearly not been used in many years. A large altar stands
@@ -603,7 +604,7 @@
 
 ;;; east-gate
 
-(defentity east-gate (location)
+(deflocation east-gate (location)
   (brief "East Gate")
   (full "A squat stone gatehouse stands at the village's entrance. To the east,
     a road winds through marshes that stretch along the coast of Emerald Bay.")
@@ -618,14 +619,14 @@
   (domain :outdoor)
   (surface :dirt))
 
-(defentity muggers-alley-1 (muggers-alley)
+(deflocation muggers-alley-1 (muggers-alley)
   (exits ((alley :north east-road-2 :south muggers-alley-2))))
 
-(defentity muggers-alley-2 (muggers-alley)
+(deflocation muggers-alley-2 (muggers-alley)
   (exits ((alley :north muggers-alley-1 :south muggers-alley-3)
           (entry-doorway :west dagger-shop))))
 
-(defentity muggers-alley-3 (muggers-alley)
+(deflocation muggers-alley-3 (muggers-alley)
   (exits ((alley :north muggers-alley-2 :south wall-street-6)
           (entry-doorway :east warehouse-anteroom))))
 
@@ -645,7 +646,7 @@
     dagger, yer in the right place. Pick one ya like an' leave yer silver on the
     table on yer way out."))
 
-(defentity dagger-shop (location)
+(deflocation dagger-shop (location)
   (brief "Shivs n' Such")
   (full "This shop sells all manner of knives and daggers.")
   (domain :indoor)
@@ -659,7 +660,7 @@
   (domain :indoor)
   (surface :wood))
 
-(defentity warehouse-anteroom (warehouse)
+(deflocation warehouse-anteroom (warehouse)
   (brief "Anteroom")
   (full "This cramped room has stained walls and an uneven wooden floor. The
     air is heavy with smoke.")
@@ -668,7 +669,7 @@
           (stairway :up warehouse-office))))
 
 #| FIXME: skills
-(defentity stealth skill
+(deflocation stealth skill
   [:brief "stealth"
    :full "Gives you a chance to move around unnoticed."
    :karma 5])
@@ -698,20 +699,20 @@
     to see what you can learn from me. You might also want to type `help skills`
     to learn more about skills in general."))
 
-(defentity warehouse-office (warehouse)
+(deflocation warehouse-office (warehouse)
   (brief "Office")
   (full "A huge mahogany desk dominates this small room. Shelves along the
     walls are packed with numerous scrolls, ledgers, and other documents.")
   (exits ((stairway :down warehouse-anteroom)))
   (contents (vagabond-guildmaster)))
 
-(defentity warehouse-storeroom (warehouse)
+(deflocation warehouse-storeroom (warehouse)
   (brief "Storeroom")
   (full "This large room has a high ceiling supported by heavy beams. All shapes
     and sizes of crates, barrels, and boxes are stacked on the floor.")
   (exits ((doorway :west warehouse-anteroom :east warehouse-meeting-room))))
 
-(defentity warehouse-meeting-room (warehouse)
+(deflocation warehouse-meeting-room (warehouse)
   (brief "Meeting Room")
   (full "This cramped room contains a long table and numerous chairs and
     stools.")
@@ -725,10 +726,10 @@
   (domain :outdoor)
   (surface :dirt))
 
-(defentity south-road-1 (south-road)
+(deflocation south-road-1 (south-road)
   (exits ((dirt-road :north village-square-s :south south-road-2))))
 
-(defentity south-road-2 (south-road)
+(deflocation south-road-2 (south-road)
   (exits ((dirt-road :north south-road-1 :south wall-street-3))))
 
 ;;; wall-street
@@ -740,29 +741,29 @@
   (domain :outdoor)
   (surface :stone))
 
-(defentity wall-street-1 (wall-street)
+(deflocation wall-street-1 (wall-street)
   (exits ((cobbled-road :east wall-street-2))))
 
-(defentity wall-street-2 (wall-street)
+(deflocation wall-street-2 (wall-street)
   (exits ((cobbled-road :west wall-street-1 :east wall-street-3))))
 
-(defentity wall-street-3 (wall-street)
+(deflocation wall-street-3 (wall-street)
   (exits ((cobbled-road :west wall-street-2 :east wall-street-4 :south south-gate)
           (dirt-road :north south-road-2))))
 
-(defentity wall-street-4 (wall-street)
+(deflocation wall-street-4 (wall-street)
   (exits ((cobbled-road :west wall-street-3 :east wall-street-5))))
 
-(defentity wall-street-5 (wall-street)
+(deflocation wall-street-5 (wall-street)
   (exits ((cobbled-road :west wall-street-4 :east wall-street-6))))
 
-(defentity wall-street-6 (wall-street)
+(deflocation wall-street-6 (wall-street)
   (exits ((cobbled-road :west wall-street-5)
           (alley :north muggers-alley-3))))
 
 ;;; south-gate
 
-(defentity south-gate (location)
+(deflocation south-gate (location)
   (brief "South Gate")
   (surface :stone)
   (domain :outdoor)
@@ -777,13 +778,13 @@
   (domain :outdoor)
   (surface :dirt))
 
-(defentity forest-road-1 (forest-road)
+(deflocation forest-road-1 (forest-road)
   (exits ((dirt-road :east village-square-sw :west forest-road-2))))
 
-(defentity forest-road-2 (forest-road)
+(deflocation forest-road-2 (forest-road)
   (exits ((dirt-road :east forest-road-1 :west forest-road-3))))
 
-(defentity forest-road-3 (forest-road)
+(deflocation forest-road-3 (forest-road)
   (exits ((dirt-road :east forest-road-2 :west forest-gate)
           (dirt-path :north grove-sw))))
 
@@ -796,7 +797,7 @@
   (domain :outdoor)
   (surface :forest))
 
-(defentity grove-sw (grove)
+(deflocation grove-sw (grove)
   (exits ((dirt-path :south forest-road-3 :north grove-nw :east grove-se))))
 
 (defproto druid-guildmaster (trainer)
@@ -816,14 +817,14 @@
     and--when needed--destroy. Type `learn` to see what I can teach you, or type
     `help skills` for more general information."))
 
-(defentity grove-nw (grove)
+(deflocation grove-nw (grove)
   (exits ((dirt-path :south grove-sw :east grove-ne)))
   (contents (druid-guildmaster)))
 
-(defentity grove-ne (grove)
+(deflocation grove-ne (grove)
   (exits ((dirt-path :west grove-nw :south grove-se))))
 
-(defentity grove-se (grove)
+(deflocation grove-se (grove)
   (exits ((dirt-path :north grove-ne :west grove-sw))))
 
 ;;; forest-gate
@@ -858,7 +859,7 @@
 (defmethod do-finish-quest (actor (quest (eql find-my-son)) npc)
   (show-say actor npc "Oh, thank you...thank you!"))
 
-(defentity forest-gate (location)
+(deflocation forest-gate (location)
   (brief "Forest Gate")
   (full "A stout wooden stockade separates Arwyck from the forest to the west. A
     narrow gate allows access to the wilderness beyond.")

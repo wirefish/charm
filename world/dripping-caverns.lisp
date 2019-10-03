@@ -60,7 +60,7 @@ the reward at the end of this story.
   (pose "leads toward distant daylight.")
   (message "You carefully follow a narrow ledge alongside the turbulent water."))
 
-(defentity entrance (cavern)
+(deflocation entrance (cavern)
   (brief "Whirlpool")
   (full "A clamorous stream of turbulent water emerges from a narrow crevice in
     the north wall and forms a swirling pool that fills most of the cavern,
@@ -85,7 +85,7 @@ the reward at the end of this story.
   (brief "a small wicker boat")
   (full "This lightweight boat is suitable for use in calm waters."))
 
-(defentity north-barricade (cavern)
+(deflocation north-barricade (cavern)
   (brief "Rubble-Filled Chamber")
   (full "A partial cave-in has left much of this chamber choked with debris.")
   (exits ((narrow-passage :northeast entrance)
@@ -97,7 +97,7 @@ the reward at the end of this story.
 (defproto undergnome-guard (monster)
   (brief "an undergnome guard"))
 
-(defentity north-guardroom (cavern)
+(deflocation north-guardroom (cavern)
   (brief "Guardroom")
   (exits ((barricade :northeast north-barricade)
           (narrow-passage :east dewcap-field-nw :southwest undergnome-camp-n)))
@@ -120,16 +120,16 @@ the reward at the end of this story.
     form columns. Hundreds of small green mushrooms blanket the loamy floor.")
   (surface :dirt))
 
-(defentity dewcap-field-nw (dewcap-field)
+(deflocation dewcap-field-nw (dewcap-field)
   (exits ((narrow-passage :west north-guardroom :east dewcap-field-ne
                           :southeast dewcap-field-se)))
   (contents (mature-dewcap)))
 
-(defentity dewcap-field-ne (dewcap-field)
+(deflocation dewcap-field-ne (dewcap-field)
   (exits ((narrow-passage :west dewcap-field-nw :south dewcap-field-se)))
   (contents (mature-dewcap)))
 
-(defentity dewcap-field-se (dewcap-field)
+(deflocation dewcap-field-se (dewcap-field)
   (exits ((narrow-passage :north dewcap-field-ne :northwest dewcap-field-nw)))
   (contents (mature-dewcap)))
 
@@ -138,7 +138,7 @@ the reward at the end of this story.
 (defproto undergnome-laborer (monster)
   (brief "an undergnome laborer"))
 
-(defentity undergnome-camp-n (cavern)
+(deflocation undergnome-camp-n (cavern)
   (brief "Undergnome Camp")
   (full "The gnomes have set up a number of makeshift shelters in this large
     cavern to protect themselves from the constantly dripping water.")
@@ -156,7 +156,7 @@ the reward at the end of this story.
   (pose "are strewn about.")
   (full "Each chair consists of...a small boulder."))
 
-(defentity undergnome-camp-s (cavern)
+(deflocation undergnome-camp-s (cavern)
   (brief "Undergnome Camp")
   (full "This cavern is relatively dry. Its low ceiling is supported by a
     number of natural stone columns.")
@@ -168,7 +168,7 @@ the reward at the end of this story.
   (brief "an undergnome magus")
   (pose "is studing the carvings."))
 
-(defentity undergnome-camp-w (cavern)
+(deflocation undergnome-camp-w (cavern)
   (brief "Undergnome Camp")
   (full "This long, narrow cavern has unusually smooth walls; numerous
     geometric shapes have been expertly carved upon their surface.")
@@ -184,7 +184,7 @@ the reward at the end of this story.
   (full "Brindan is a robust, red-haired dwarven male. Although he is currently
     rather wet and bedraggled, his green eyes sparkle."))
 
-(defentity holding-cell (cavern)
+(deflocation holding-cell (cavern)
   (brief "Holding Cell")
   (full "This tiny chamber is especially damp and uncomfortable.")
   (exits ((iron-gate :south undergnome-camp-w)))
@@ -193,7 +193,7 @@ the reward at the end of this story.
 (defproto undergnome-commander (monster)
   (brief "the undergnome commander"))
 
-(defentity undergnome-hq (cavern)
+(deflocation undergnome-hq (cavern)
   (brief "Undergnome Headquarters")
   (full "The walls of this small chamber have been decorated with
     freshly-tanned skins that give the place a pungent smell.")
@@ -202,7 +202,7 @@ the reward at the end of this story.
 
 ;; south guardroom
 
-(defentity south-guardroom (cavern)
+(deflocation south-guardroom (cavern)
   (brief "Guardroom")
   (exits ((barricade :southeast south-barricade)
           (narrow-passage :west undergnome-camp-s)))
@@ -210,7 +210,7 @@ the reward at the end of this story.
 
 ;; south barricade
 
-(defentity south-barricade (cavern)
+(deflocation south-barricade (cavern)
   (brief "Tilted Chamber")
   (full "The floor of this long cavern tilts sharply down to the southeast.")
   (exits ((barricade :northwest south-guardroom)
@@ -236,7 +236,7 @@ the reward at the end of this story.
 ;; TODO: rotate the artifact room to connect to the guardian's hall when the
 ;; artifact is activated.
 
-(defentity artifact-room (cavern)
+(deflocation artifact-room (cavern)
   (brief "Artifact Chamber")
   (full "This circular chamber has smooth stone walls, a domed ceiling, and a
     mosaic tile floor.")
@@ -255,7 +255,7 @@ the reward at the end of this story.
   (brief "a large pile of rubble")
   (pose "stands in the middle of the chamber."))
 
-(defentity guardian-hall (cavern)
+(deflocation guardian-hall (cavern)
   (brief "Hall of the Guardian")
   (surface :tile)
   (exits ((narrow-passage :west treasure-room)))
@@ -263,7 +263,7 @@ the reward at the end of this story.
 
 ;;; treasure room
 
-(defentity treasure-room (cavern)
+(deflocation treasure-room (cavern)
   (brief "Treasure Room")
   (full "Who doesn't like treasure?")
   (surface :tile)
@@ -283,33 +283,33 @@ the reward at the end of this story.
   (full "The stone walls and floor of this cavern bear numerous marks, scrapes,
     and gouges. Little piles of gray dust are littered about."))
 
-(defentity rockeater-den-nw (rockeater-den)
+(deflocation rockeater-den-nw (rockeater-den)
   (exits ((narrow-passage :northwest south-barricade :south rockeater-den-w
                           :east rockeater-den-n))))
 
-(defentity rockeater-den-n (rockeater-den)
+(deflocation rockeater-den-n (rockeater-den)
   (exits ((narrow-passage :west rockeater-den-nw :east rockeater-den-ne))))
 
-(defentity rockeater-den-ne (rockeater-den)
+(deflocation rockeater-den-ne (rockeater-den)
   (exits ((narrow-passage :west rockeater-den-n :south rockeater-den-e))))
 
-(defentity rockeater-den-w (rockeater-den)
+(deflocation rockeater-den-w (rockeater-den)
   (exits ((narrow-passage :north rockeater-den-nw :south rockeater-den-sw))))
 
-(defentity rockeater-sanctum (rockeater-den)
+(deflocation rockeater-sanctum (rockeater-den)
   (exits ((narrow-passage :east rockeater-den-e))))
 
-(defentity rockeater-den-e (rockeater-den)
+(deflocation rockeater-den-e (rockeater-den)
   (exits ((narrow-passage :west rockeater-sanctum :north rockeater-den-ne
                           :south rockeater-den-se))))
 
-(defentity rockeater-den-sw (rockeater-den)
+(deflocation rockeater-den-sw (rockeater-den)
   (exits ((narrow-passage :north rockeater-den-w :east rockeater-den-s))))
 
-(defentity rockeater-den-s (rockeater-den)
+(deflocation rockeater-den-s (rockeater-den)
   (exits ((narrow-passage :west rockeater-den-sw :east rockeater-den-se))))
 
-(defentity rockeater-den-se (rockeater-den)
+(deflocation rockeater-den-se (rockeater-den)
   (exits ((narrow-passage :west rockeater-den-s :north rockeater-den-e))))
 
 ;;; slanted passage
@@ -317,24 +317,24 @@ the reward at the end of this story.
 (defproto slanted-passage (cavern)
   (brief "Slanted Passage"))
 
-(defentity slanted-passage-top (slanted-passage)
+(deflocation slanted-passage-top (slanted-passage)
   (full "This is the top of a narrow passage that slants steeply down to the
     east.")
   (exits ((narrow-passage :northwest entrance :east slanted-passage-mid))))
 
-(defentity slanted-passage-mid (slanted-passage)
+(deflocation slanted-passage-mid (slanted-passage)
   (full "This is part of a narrow passage that slants steeply down to the
     east.")
   (exits ((narrow-passage :west slanted-passage-top :east slanted-passage-bot))))
 
-(defentity slanted-passage-bot (slanted-passage)
+(deflocation slanted-passage-bot (slanted-passage)
   (full "This is the bottom of a wide tunnel that slants steeply up to the
     west.")
   (exits ((narrow-passage :west slanted-passage-mid :northeast ceiling-waterfall))))
 
 ;; lower stream and pools
 
-(defentity ceiling-waterfall (cavern)
+(deflocation ceiling-waterfall (cavern)
   (brief "Waterfalls")
   (full "A deluge of cold water rushes in from several openings in the high
     ceiling, creating a number of waterfalls that feed a wide pool. The pool, in
@@ -342,13 +342,13 @@ the reward at the end of this story.
   (surface :shallow-water)
   (exits ((narrow-passage :southwest slanted-passage-bot :east lower-stream-1))))
 
-(defentity lower-stream-1 (cavern)
+(deflocation lower-stream-1 (cavern)
   (brief "Sluggish Stream")
   (full "A slow-moving stream flows eastward through this large chamber.")
   (surface :shallow-water)
   (exits ((narrow-passage :west ceiling-waterfall :east lower-stream-2))))
 
-(defentity lower-stream-2 (cavern)
+(deflocation lower-stream-2 (cavern)
   (brief "Sluggish Stream")
   (full "A slow-moving stream flows eastward through this large chamber.")
   (surface :shallow-water)
@@ -359,7 +359,7 @@ the reward at the end of this story.
   (brief "an underwater passage")
   (hidden t))
 
-(defentity lower-pool-w (cavern)
+(deflocation lower-pool-w (cavern)
   (brief "Wide Pool")
   (full "A sluggish stream enters from the west and forms a pool of cold water
     that fills most of this large chamber.")
@@ -373,13 +373,13 @@ the reward at the end of this story.
   (domain :underground)
   (surface :shallow-water))
 
-(defentity underwater-passage-w (underwater-passage)
+(deflocation underwater-passage-w (underwater-passage)
   (exits ((narrow-passage :up lower-pool-w :east underwater-passage-e))))
 
-(defentity underwater-passage-e (underwater-passage)
+(deflocation underwater-passage-e (underwater-passage)
   (exits ((narrow-passage :up lower-pool-e :west underwater-passage-w))))
 
-(defentity lower-pool-e (cavern)
+(deflocation lower-pool-e (cavern)
   (brief "Wide Pool")
   (full "A still pool of cold water fills the western half of this chamber. The
     sound of dripping water echoes around you. The pool drains to the east
@@ -399,22 +399,22 @@ the reward at the end of this story.
   (full "This large cavern has a musty, earthy odor.")
   (surface :dirt))
 
-(defentity myconid-camp-ne (myconid-camp)
+(deflocation myconid-camp-ne (myconid-camp)
   (exits ((narrow-passage :north lower-stream-2)
           (cavern-portal :west myconid-camp-nw :south myconid-camp-se))))
 
-(defentity myconid-camp-nw (myconid-camp)
+(deflocation myconid-camp-nw (myconid-camp)
   (exits ((cavern-portal :east myconid-camp-ne :south myconid-camp-sw))))
 
-(defentity myconid-camp-se (myconid-camp)
+(deflocation myconid-camp-se (myconid-camp)
   (exits ((cavern-portal :north myconid-camp-ne :west myconid-camp-sw))))
 
-(defentity myconid-camp-sw (myconid-camp)
+(deflocation myconid-camp-sw (myconid-camp)
   (exits ((cavern-portal :north myconid-camp-nw :east myconid-camp-se))))
 
 ;;; cockatrice lair
 
-(defentity cockatrice-lair (cavern)
+(deflocation cockatrice-lair (cavern)
   (brief "Cockatrice's Lair")
   (full "A narrow stream winds its way through the many stalagmites that dot
     the floor of large chamber.")

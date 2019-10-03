@@ -16,7 +16,7 @@
 
 ;;; hilltop
 
-(defentity hilltop (isle-location)
+(deflocation hilltop (isle-location)
   (brief "Hilltop")
   (full "You are standing atop a low hill in the center of a small island. A
     ring of ancient standing stones surrounds you.")
@@ -69,7 +69,7 @@
     To the south you will meet an odd creature who will get you started. Head
     that way when you are ready."))
 
-(defentity pavilion (isle-location)
+(deflocation pavilion (isle-location)
   (brief "Pavilion")
   (full "An open-air pavilion stands a few feet from the path. Its silk canopy
     is painted in bright colors.")
@@ -139,7 +139,7 @@
   (show-say actor target "Good to see you again! How has that body been treating
     you?"))
 
-(defentity wildflower-field (isle-location)
+(deflocation wildflower-field (isle-location)
   (brief "Field of Wildflowers")
   (full "Flowers of every color and description bloom in the expansive fields
     along the sides of the path. The air is heavy with their fragrance.")
@@ -185,7 +185,7 @@
     If you want to join humankind, `meditate` here. I will then use the power of
     the shrine to complete your transformation."))
 
-(defentity human-shrine (isle-location)
+(deflocation human-shrine (isle-location)
   (brief "Shrine of Humanity")
   (full "This part of the isle is a large garden. Plants bearing flowers,
     fruits, and vegetables are arranged in orderly rows. The soil is dark and
@@ -247,7 +247,7 @@
     If you would join my folk, simply `meditate` here to make your purpose
     known; the shrine's power will do the rest."))
 
-(defentity elven-shrine (isle-location)
+(deflocation elven-shrine (isle-location)
   (brief "Shrine of the Forest")
   (full "A low wooden fence surrounds a perfect ring of thirteen graceful birch
     trees. The area radiates an aura of tranquility.")
@@ -300,7 +300,7 @@
     then `meditate` before the shrine. If you are found worthy, I will welcome
     you into the fold."))
 
-(defentity sidhe-shrine (isle-location)
+(deflocation sidhe-shrine (isle-location)
   (brief "Shrine of Shadows")
   (full "A lone tree grows atop an enormous granite boulder. Its gnarled, gray
     roots wrap around the stone before sinking into the fertile earth below. The
@@ -358,7 +358,7 @@
 
     If ye think that all sounds good, then get ta meditatin'!"))
 
-(defentity dwarven-shrine (isle-location)
+(deflocation dwarven-shrine (isle-location)
   (brief "Shrine of the Mountain")
   (full "Rows of stone statues stand in the tall grass, each depicting a stout
     warrior with a grim expression and glowing amber eyes. The statues are
@@ -421,7 +421,7 @@
     If you feel like you're one of us at heart, why not become one of us in
     body, too? Just `meditate` here and the deed will be done."))
 
-(defentity goblin-shrine (isle-location)
+(deflocation goblin-shrine (isle-location)
   (brief "Shrine of Fortune")
   (full "The ground here has been cleared, leveled, and surfaced with
     multi-colored bricks.")
@@ -460,7 +460,7 @@
 
     You came to `meditate`? Ha. If you wanna be ogre, do it. Done!"))
 
-(defentity ogre-shrine (isle-location)
+(deflocation ogre-shrine (isle-location)
   (brief "Shrine of Strength")
   (full "This area is choked with a haphazard collection of rough stone blocks,
     many overgrown with vines and twisting grasses. The blocks' surfaces have
@@ -568,7 +568,7 @@
   (begins-quests '(get-some-clothes))
   (ends-quests '(get-some-clothes)))
 
-(defentity clothing-stall (isle-location)
+(deflocation clothing-stall (isle-location)
   (brief "Clothing Stall")
   (full "A wooden market stall has been erected beside the path. Its counter is
     piled with basic clothing items in myriad styles and sizes.")
@@ -586,7 +586,7 @@
   (full "Tulips in myriad colors have been planted here.")
   (surface :flowers))
 
-(defentity tulip-field-sw (tulip-field)
+(deflocation tulip-field-sw (tulip-field)
   (exits ((gravel-path :west clothing-stall)
           (tulip-field-portal :east tulip-field-se :north tulip-field-nw)))
   (contents (white-tulip)))
@@ -599,15 +599,15 @@
       the `inventory` command (or just `inv` for short) to list the items you
       are carrying.")))
 
-(defentity tulip-field-se (tulip-field)
+(deflocation tulip-field-se (tulip-field)
   (exits ((tulip-field-portal :west tulip-field-sw :north tulip-field-ne)))
   (contents (white-tulip)))
 
-(defentity tulip-field-nw (tulip-field)
+(deflocation tulip-field-nw (tulip-field)
   (exits ((tulip-field-portal :south tulip-field-sw :east tulip-field-ne)))
   (contents (white-tulip)))
 
-(defentity tulip-field-ne (tulip-field)
+(deflocation tulip-field-ne (tulip-field)
   (exits ((tulip-field-portal :west tulip-field-nw :south tulip-field-se)))
   (contents (white-tulip)))
 
@@ -657,7 +657,7 @@
   (declare (ignore subject))
   (show-say actor target "Hello there!"))
 
-(defentity fountain-plaza (isle-location)
+(deflocation fountain-plaza (isle-location)
   (brief "Fountain Plaza")
   (full "This hexagonal plaza is paved with multi-colored stone tiles.")
   (surface :stone)
@@ -675,7 +675,7 @@
     masculine virtues. It somehow reflects your own personal concept of the
     perfect male."))
 
-(defentity male-shrine (isle-location)
+(deflocation male-shrine (isle-location)
   (brief "Shrine of Masculinity")
   (full "Low shrubs, cut in complex geometric patterns, surround a plaza
     covered with white gravel.")
@@ -700,7 +700,7 @@
     As you consider the statue, your thoughts wander; its features change in
     your mind's eye to reflect your personal ideal of femininity."))
 
-(defentity female-shrine (isle-location)
+(deflocation female-shrine (isle-location)
   (brief "Shrine of Femininity")
   (full "A multitude of flowering vines have been trained to ornate trellises
     that surround a bowl-shaped area covered with a carpet of blossoming
@@ -778,7 +778,7 @@
                 (map 'list #'(lambda (c) (char-upcase c)) (name actor)))
       (show-text actor "The mistress of names frowns at you over her glasses.")))
 
-(defentity circle-of-names (isle-location)
+(deflocation circle-of-names (isle-location)
   (brief "Circle of Names")
   (full "You stand within a wide circle of well-tended lawn surrounded by a low
     stone wall.")
@@ -795,7 +795,7 @@
     smooth and cloudy. If a creature speaks a word within its presence, the orb
     has the power to make that word the creature's name."))
 
-(defentity clifftop (isle-location)
+(deflocation clifftop (isle-location)
   (brief "Windy Clifftop")
   (full "You stand atop a rocky cliff that falls perhaps a hundred feet to a
     narrow beach. The wind is brisk and smells of the sea.")
@@ -870,7 +870,7 @@
   (begins-quests '(kill-some-plants))
   (ends-quests '(kill-some-plants)))
 
-(defentity guard-station (isle-location)
+(deflocation guard-station (isle-location)
   (brief "Guard Station")
   (full "A small guard post stands alongside the path.")
   (tutorial "In your adventures you will have the chance to learn many different
@@ -920,11 +920,11 @@
 (defmethod do-kill :after ((actor avatar) (target lashling))
   (advance-quest actor kill-some-plants))
 
-(defentity overgrown-field-sw (overgrown-field)
+(deflocation overgrown-field-sw (overgrown-field)
   (exits ((overgrown-field-portal :east overgrown-field-se :north overgrown-field-nw)))
   (contents (lashling)))
 
-(defentity overgrown-field-se (overgrown-field)
+(deflocation overgrown-field-se (overgrown-field)
   (tutorial "To begin attacking a lashling, type `attack lashling`. You will
     automatically perform basic attacks with the weapon in your main hand.
     Combat ends when you or your opponent is dead!
@@ -936,17 +936,17 @@
           (gravel-path :east guard-station)))
   (contents (lashling)))
 
-(defentity overgrown-field-nw (overgrown-field)
+(deflocation overgrown-field-nw (overgrown-field)
   (exits ((overgrown-field-portal :south overgrown-field-sw :east overgrown-field-ne)))
   (contents (lashling)))
 
-(defentity overgrown-field-ne (overgrown-field)
+(deflocation overgrown-field-ne (overgrown-field)
   (exits ((overgrown-field-portal :west overgrown-field-nw :south overgrown-field-se)))
   (contents (lashling)))
 
 ;;; cobbled-square
 
-(defentity cobbled-square (isle-location)
+(deflocation cobbled-square (isle-location)
   (brief "Cobbled Square")
   (full "The fresh smell of the sea pleasantly fills this small seaside plaza.")
   (tutorial "Completing quests has granted you `help:experience`, shown by the
@@ -976,7 +976,7 @@
 (defproto gangplank (portal)
   (brief "a gangplank"))
 
-(defentity pier (isle-location)
+(deflocation pier (isle-location)
   (brief "Sturdy Pier")
   (full "This stone pier juts out into the sea, giving ships that visit the
     isle a safe place to dock.")
@@ -999,7 +999,7 @@
     the short run between Arwyck and the Isle of Dawn. Relax and enjoy the
     trip!"))
 
-(defentity the-siren (vehicle)
+(deflocation the-siren (location)
   (brief "The *Siren*")
   (pose "is docked at the pier.")
   (full "This sturdy single-masted vessel makes frequent trips between the Isle
@@ -1007,9 +1007,12 @@
   (icon :ship)
   (surface :deep-water)
   (domain :outdoor)
-  (contents (sailor))
-  (waypoints ((gangplank :west pier)
-              (gangplank :south arwyck::west-dock))))
+  (contents (sailor)))
+
+(defmethod do-enter-world :after ((actor the-siren) location)
+  (start-behavior actor :move-the-siren #'lib::move-vehicle
+                  '((gangplank :west pier)
+                    (gangplank :south arwyck::west-dock))))
 
 ;;; dockmaster-shack
 
@@ -1020,7 +1023,7 @@
     His left eye is covered with a leather patch, but his right eye harbors a
     dangerous gleam."))
 
-(defentity dockmaster-shack (isle-location)
+(deflocation dockmaster-shack (isle-location)
   (brief "Dockmaster's Shack")
   (full "This one-room structure is dominated by a large desk that is piled with
     documents and empty wine bottles.")
@@ -1040,7 +1043,7 @@
 
 ;;; dockmaster-basement
 
-(defentity dockmaster-basement (isle-location)
+(deflocation dockmaster-basement (isle-location)
   (brief "Basement of the Dockmaster's Shack")
   (full "This low, damp space is more of a crawlspace than a basement. Several
     barrels and crates have been pushed into one corner of the dirt floor.")
@@ -1072,13 +1075,13 @@
   (domain :outdoor)
   (surface :sand))
 
-(defentity beach-east (beach-location)
+(deflocation beach-east (beach-location)
   (exits ((beach-portal :west beach-center)
           (sandy-path :east cobbled-square))))
 
-(defentity beach-center (beach-location)
+(deflocation beach-center (beach-location)
   (exits ((beach-portal :west beach-west :east beach-east))))
 
-(defentity beach-west (beach-location)
+(deflocation beach-west (beach-location)
   (exits ((beach-portal :east beach-center)))
   (contents (shiny-seashell)))

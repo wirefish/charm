@@ -28,6 +28,7 @@
              (:file "command")
 
              (:file "entity")
+             (:file "behavior")
              (:file "container")
              (:file "region")
              (:file "location")
@@ -41,7 +42,6 @@
              (:file "skill")
              (:file "avatar")
              (:file "event")
-             (:file "state-machine")
 
              (:file "config")
              (:file "help")

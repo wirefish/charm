@@ -1,35 +1,35 @@
 (in-package :lib)
 
-(defentity reborn-hero (race)
+(defrace reborn-hero
   (brief "a reborn hero")
   (full "The reborn hero has a ghostly humanoid form. Its features shift in an
     unpredictable fashion, as if it hasn't quite settled on a final shape."))
 
 (setf charm::*new-avatar-race* reborn-hero)
 
-(defentity elf (race)
+(defrace elf
   (brief "an el[f|ves]")
   (full "Elves are known for their gruff voices and long beards. Right?"))
 
-(defentity human (race)
+(defrace human
   (brief "a human")
   (full "Humans are all fat and scruffy. Right?"))
 
-(defentity sidhe (race)
+(defrace sidhe
   (brief "a sidhe")
   (full "The sidhe are very jolly people. Right?")
   (modifiers '(:shadow 5)))
 
-(defentity dwarf (race)
+(defrace dwarf
   (brief "a dwar[f|ves]")
   (full "Dwarves are tall and graceful, as a rule. Right?")
   (modifiers '(:resilience 10)))
 
-(defentity goblin (race)
+(defrace goblin
   (brief "a goblin")
   (full "Goblins are honest and open. Right?"))
 
-(defentity ogre (race)
+(defrace ogre
   (brief "an ogre")
   (full "Ogres are petite and have impeccable manners. Right?")
   (base-health 18))

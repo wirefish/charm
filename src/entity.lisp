@@ -38,19 +38,6 @@
        ,(mapcar #'(lambda (slot) (transform-slot name slot)) slots))
      (export '(,name ,@(mapcar #'car slots)))))
 
-;;; A macro to define an entity class and a singleton instance.
-
-(defmacro defentity (name (&rest bases) &body slots)
-  (let ((initargs (loop for (slot-name init-form) in slots
-                        append (list (intern (string slot-name) :keyword)
-                                     (transform-slot-init-form name slot-name init-form)))))
-    `(progn
-       (defclass ,name ,bases
-         ,(mapcar #'(lambda (slot)
-                      (list (car slot) :initarg (intern (string (car slot)) :keyword)))
-           slots))
-       (defparameter ,name (make-instance ',name ,@initargs)))))
-
 ;;; Entities have a notion of size. Depending on context this can indicate the
 ;;; size of the entity itself, or the size of the largest entity than can
 ;;; enter or pass through the entity.
@@ -86,8 +73,10 @@
   (size :medium)
   (entry-pose nil)
   (hidden nil)
+  ;;
   (id (incf *next-entity-id*) :instance)
-  (location nil :instance))
+  (location nil :instance)
+  (behaviors nil :instance))
 
 (defmethod print-object ((object entity) stream)
   "Inserts an entity's unique ID into its printed representation."
@@ -109,6 +98,11 @@
 
 (defmethod decode-slot ((name (eql 'id)) value)
   (incf *next-entity-id*))
+
+;;; Don't save behaviors.
+
+(defmethod encode-slot ((name (eql 'behaviors)) value)
+  nil)
 
 ;;; Define how entities are described.
 

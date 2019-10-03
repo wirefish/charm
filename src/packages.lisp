@@ -3,11 +3,15 @@
   (:use :common-lisp :sb-mop :alexandria)
   (:import-from :cl-async :with-delay)
   (:export
-   :defentity :defproto :defregion :transform-slot-init-form
+   :defproto :deflocation :defregion :transform-slot-init-form
    :describe-brief :describe-pose :describe-full
    :same-location-p
    ;;
    :opposite-direction :add-exit :remove-exit :traverse-portal
+   ;;
+   :defrace
+   ;;
+   :defbehavior :start-behavior :stop-behavior :change-state
    ;;
    :quest :defquest :offer-quest :advance-quest :quest-available-p
    :quest-active-p :quest-incomplete-p :quest-complete-p :quest-finished-p

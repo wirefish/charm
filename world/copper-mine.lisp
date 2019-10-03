@@ -16,7 +16,7 @@
 
 ;;; entry
 
-(defentity entry (mine)
+(deflocation entry (mine)
   (brief "Mine Entry")
   (full "This narrow tunnel slants steeply down to the north. Its low roof is
     supported by heavy timber beams.")
@@ -33,20 +33,20 @@
   (brief "the mine shaft")
   (pose "ascends toward the surface."))
 
-(defentity shaft-top (mine)
+(deflocation shaft-top (mine)
   (brief "Top of Mine Shaft")
   (full "This is the top of a vertical shaft. Irregular, shallow handholds on
     the wall provide an uncertain means of descent.")
   (exits ((rough-tunnel :south entry)
           (shaft-down :down shaft-middle))))
 
-(defentity shaft-middle (mine)
+(deflocation shaft-middle (mine)
   (brief "Middle of Mine Shaft")
   (full "This is the middle of a vertical shaft. The handholds on the wall
     provide only a tenuous grip, making movement up or down very difficult.")
   (exits ((shaft-up :up shaft-top) (shaft-down :down shaft-bottom))))
 
-(defentity shaft-bottom (mine)
+(deflocation shaft-bottom (mine)
   (brief "Bottom of Mine Shaft")
   (full "This is the bottom of a vertical shaft. You can just make out handholds
     on the wall that provide a means of climbing upwards.")
@@ -65,52 +65,52 @@
   (full "This small deposit might yield a chunk of copper ore to someone with
     mining skill."))
 
-(defentity tunnel-1 (tunnel-room)
+(deflocation tunnel-1 (tunnel-room)
   (exits ((rough-tunnel :south tunnel-2))))
 
-(defentity tunnel-2 (tunnel-room)
+(deflocation tunnel-2 (tunnel-room)
   (exits ((rough-tunnel :west tunnel-3 :north tunnel-1
                         :east tunnel-9 :south shaft-bottom))))
 
 #| FIXME: Make the layout more interesting.
 
-(defentity tunnel-3 tunnel-room
+(deflocation tunnel-3 tunnel-room
   [:exits [:north tunnel-4 :east tunnel-2]])
 
-(defentity tunnel-4 tunnel-room
+(deflocation tunnel-4 tunnel-room
   [:exits [:north tunnel-5 :south tunnel-3]])
 
-(defentity tunnel-5 tunnel-room
+(deflocation tunnel-5 tunnel-room
   [:exits [:south tunnel-4 :east tunnel-6]])
 
-(defentity tunnel-6 tunnel-room
+(deflocation tunnel-6 tunnel-room
   [:exits [:west tunnel-5 :east tunnel-7]])
 
-(defentity tunnel-7 tunnel-room
+(deflocation tunnel-7 tunnel-room
   [:exits [:west tunnel-6 :south tunnel-8]])
 
-(defentity tunnel-8 tunnel-room
+(deflocation tunnel-8 tunnel-room
   [:exits [:north tunnel-7 :south tunnel-9 :east tunnel-15]])
 
-(defentity tunnel-9 tunnel-room
+(deflocation tunnel-9 tunnel-room
   [:exits [:north tunnel-8 :west tunnel-2 :south tunnel-10]])
 
-(defentity tunnel-10 tunnel-room
+(deflocation tunnel-10 tunnel-room
   [:exits [:north tunnel-9 :east tunnel-11]])
 
-(defentity tunnel-11 tunnel-room
+(deflocation tunnel-11 tunnel-room
   [:exits [:west tunnel-10 :north tunnel-12]])
 
-(defentity tunnel-12 tunnel-room
+(deflocation tunnel-12 tunnel-room
   [:exits [:south tunnel-11 :east tunnel-13]])
 
-(defentity tunnel-13 tunnel-room
+(deflocation tunnel-13 tunnel-room
   [:exits [:west tunnel-12 :north tunnel-14]])
 
-(defentity tunnel-14 tunnel-room
+(deflocation tunnel-14 tunnel-room
   [:exits [:south tunnel-13 :west tunnel-15]])
 
-(defentity tunnel-15 tunnel-room
+(deflocation tunnel-15 tunnel-room
   [:exits [:east tunnel-14 :west tunnel-8]])
 
 |#

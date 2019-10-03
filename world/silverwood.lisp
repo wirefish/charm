@@ -120,7 +120,7 @@
   (show-say actor npc "Thank you! You can rest assured that I will put these to
     good use."))
 
-(defentity cabin (location)
+(deflocation cabin (location)
   (brief "Cabin in the Woods")
   (full "This one-room cabin is tiny but well maintained.")
   (icon 'house)
@@ -131,19 +131,19 @@
 
 ;;; forest
 
-(defentity forest-1-1 (forest)
+(deflocation forest-1-1 (forest)
   (exits ((forest-portal :east forest-2-1 :south forest-1-2))))
 
-(defentity forest-2-1 (forest)
+(deflocation forest-2-1 (forest)
   (exits ((forest-portal :west forest-1-1 :east forest-3-1 :south forest-2-2)))
   (contents (large-spiderweb)))
 
-(defentity forest-3-1 (forest)
+(deflocation forest-3-1 (forest)
   (exits ((forest-portal :west forest-2-1 :east forest-4-1 :south forest-3-2)
           (dirt-path :north copper-mine::entry)))
   (contents (giant-spider)))
 
-(defentity forest-4-1 (forest)
+(deflocation forest-4-1 (forest)
   (exits ((forest-portal :west forest-3-1 :east forest-5-1 :south forest-4-2))))
 
 (defproto waterfall-portal (portal)
@@ -151,7 +151,7 @@
   (pose "cascades down the rocky cliff.")
   (hidden t))
 
-(defentity forest-5-1 (location)
+(deflocation forest-5-1 (location)
   (brief "Shallow Pool")
   (full "A shallow pool has formed at the base of a small waterfall to the
     north. Spray from the waterfall hangs in the air. Thick moss covers the
@@ -166,7 +166,7 @@
   (pose "cascades down a rocky cliff, concealing this area from the wilderness
     outside."))
 
-(defentity behind-the-waterfall (location)
+(deflocation behind-the-waterfall (location)
   (brief "Behind the Waterfall")
   (full "You are in a space behind the waterfall where the earth has eroded
     away, forming a small chamber. Light filters through the curtain of water
@@ -176,40 +176,40 @@
   (surface :shallow-water)
   (exits ((behind-waterfall-portal :south forest-5-1))))
 
-(defentity forest-6-1 (forest)
+(deflocation forest-6-1 (forest)
   (exits ((forest-portal :west forest-5-1 :south forest-6-2)))
   (contents (giant-spider)))
 
-(defentity forest-0-2 (forest)
+(deflocation forest-0-2 (forest)
   (exits ((forest-portal :east forest-1-2 :south forest-0-3)))
   (contents (giant-spider)))
 
-(defentity forest-1-2 (forest)
+(deflocation forest-1-2 (forest)
   (exits ((forest-portal :east forest-2-2 :north forest-1-1 :south forest-1-3 :west forest-0-2))))
 
-(defentity forest-2-2 (forest)
+(deflocation forest-2-2 (forest)
   (exits ((forest-portal :west forest-1-2 :east forest-3-2 :north forest-2-1 :south forest-2-3))))
 
-(defentity forest-3-2 (forest)
+(deflocation forest-3-2 (forest)
   (exits ((forest-portal :west forest-2-2 :east forest-4-2 :north forest-3-1 :south forest-3-3))))
 
-(defentity forest-4-2 (forest)
+(deflocation forest-4-2 (forest)
   (exits ((forest-portal :west forest-3-2 :east forest-5-2 :north forest-4-1 :south forest-4-3)))
   (contents (large-spiderweb)))
 
-(defentity forest-5-2 (forest-stream)
+(deflocation forest-5-2 (forest-stream)
   (exits ((forest-portal :west forest-4-2 :east forest-6-2)
           (stream-portal :north forest-5-1 :south under-the-bridge))))
 
-(defentity forest-6-2 (forest)
+(deflocation forest-6-2 (forest)
   (exits ((forest-portal :west forest-5-2 :north forest-6-1 :south forest-6-3)))
   (contents (large-spiderweb)))
 
-(defentity forest-0-3 (forest)
+(deflocation forest-0-3 (forest)
   (exits ((forest-portal :east forest-1-3 :south forest-0-4 :north forest-0-2)))
   (contents (large-spiderweb)))
 
-(defentity forest-1-3 (forest)
+(deflocation forest-1-3 (forest)
   (exits ((forest-portal :east forest-2-3 :north forest-1-2 :south forest-1-4 :west forest-0-3))))
 
 (defproto cabin-exterior (entity)
@@ -223,7 +223,7 @@
   (brief "a gaily painted door")
   (pose "leads into the cabin."))
 
-(defentity forest-2-3 (forest)
+(deflocation forest-2-3 (forest)
   (brief "Clearing")
   (full "You are in a small meadow of wildflowers surrounded by trees.")
   (surface :grass)
@@ -231,14 +231,14 @@
           (cabin-door :in cabin)))
   (contents (cabin-exterior)))
 
-(defentity forest-3-3 (forest)
+(deflocation forest-3-3 (forest)
   (exits ((forest-portal :west forest-2-3 :east forest-4-3 :north forest-3-2 :south forest-3-4))))
 
-(defentity forest-4-3 (forest-path)
+(deflocation forest-4-3 (forest-path)
   (exits ((forest-portal :west forest-3-3 :north forest-4-2 :south forest-4-4)
           (dirt-path :east forest-5-3))))
 
-(defentity forest-5-3 (location)
+(deflocation forest-5-3 (location)
   (brief "Stone Bridge")
   (full "You stand on an arched bridge of white stone that spans the gurgling
     stream below.")
@@ -249,7 +249,7 @@
   (surface :stone)
   (exits ((dirt-path :west forest-4-3 :east forest-6-3))))
 
-(defentity under-the-bridge (location)
+(deflocation under-the-bridge (location)
   (brief "Under the Bridge")
   (full "The stream passes beneath an arched bridge of white stone. Someone has
     scratched a few words into the underside of the bridge; it is nearly
@@ -259,64 +259,64 @@
   (surface :shallow-water)
   (exits ((stream-portal :north forest-5-2 :south forest-5-4))))
 
-(defentity forest-6-3 (forest-path)
+(deflocation forest-6-3 (forest-path)
   (exits ((dirt-path :west forest-5-3 :east arwyck::forest-gate)
           (forest-portal :north forest-6-2 :south forest-6-4))))
 
-(defentity forest-0-4 (forest)
+(deflocation forest-0-4 (forest)
   (exits ((forest-portal :east forest-1-4 :north forest-0-3)))
   (contents (giant-spider)))
 
-(defentity forest-1-4 (forest)
+(deflocation forest-1-4 (forest)
   (exits ((forest-portal :east forest-2-4 :north forest-1-3
                          :south forest-1-5 :west forest-0-4)))
   (contents (large-spiderweb)))
 
-(defentity forest-2-4 (forest)
+(deflocation forest-2-4 (forest)
   (exits ((forest-portal :west forest-1-4 :east forest-3-4
                          :north forest-2-3 :south forest-2-5))))
 
-(defentity forest-3-4 (forest)
+(deflocation forest-3-4 (forest)
   (exits ((forest-portal :west forest-2-4 :east forest-4-4
                          :north forest-3-3 :south forest-3-5))))
 
-(defentity forest-4-4 (forest-path)
+(deflocation forest-4-4 (forest-path)
   (exits ((forest-portal :west forest-3-4 :east forest-5-4)
           (dirt-path :north forest-4-3 :south forest-4-5))))
 
-(defentity forest-5-4 (forest-stream)
+(deflocation forest-5-4 (forest-stream)
   (exits ((forest-portal :west forest-4-4 :east forest-6-4)
           (stream-portal :north under-the-bridge :south forest-5-5))))
 
-(defentity forest-6-4 (forest)
+(deflocation forest-6-4 (forest)
   (exits ((forest-portal :west forest-5-4 :north forest-6-3 :south forest-6-5)))
   (contents (giant-spider)))
 
-(defentity forest-1-5 (forest)
+(deflocation forest-1-5 (forest)
   (exits ((forest-portal :east forest-2-5 :north forest-1-4 :south forest-1-6))))
 
-(defentity forest-2-5 (forest-path)
+(deflocation forest-2-5 (forest-path)
   (exits ((forest-portal :west forest-1-5 :north forest-2-4)
           (dirt-path :east forest-3-5 :south forest-2-6))))
 
-(defentity forest-3-5 (forest-path)
+(deflocation forest-3-5 (forest-path)
   (exits ((dirt-path :west forest-2-5 :east forest-4-5)
           (forest-portal :north forest-3-4 :south forest-3-6))))
 
-(defentity forest-4-5 (forest-path)
+(deflocation forest-4-5 (forest-path)
   (exits ((dirt-path :west forest-3-5 :north forest-4-4)
           (forest-portal :east forest-5-5 :south forest-4-6))))
 
-(defentity forest-5-5 (forest-stream)
+(deflocation forest-5-5 (forest-stream)
   (exits ((forest-portal :west forest-4-5 :east forest-6-5)
           (stream-portal :north forest-5-4 :south forest-5-6))))
 
-(defentity forest-6-5 (forest)
+(deflocation forest-6-5 (forest)
   (exits ((forest-portal :west forest-5-5 :east forest-7-5
                          :north forest-6-4 :south forest-6-6)))
   (contents (large-spiderweb)))
 
-(defentity forest-7-5 (location)
+(deflocation forest-7-5 (location)
   (brief "Granite Outcrop")
   (full "You are at the base of an enormous granite spire that juts high above
     the forest canopy. Climbing it would require the proper gear and skill.")
@@ -325,7 +325,7 @@
   (exits ((forest-portal :west forest-6-5 :south forest-7-6)
           (portal :up outcrop-top)))) ; FIXME:
 
-(defentity outcrop-top (location)
+(deflocation outcrop-top (location)
   (brief "Atop a Granite Outcrop")
   (full "You are precariously perched atop a high granite spire. The view is
     breathtaking: you can see the village of Arwyck to the northeast, and beyond
@@ -335,11 +335,11 @@
   (surface :stone)
   (exits ((portal :down forest-7-5)))) ; FIXME:
 
-(defentity forest-1-6 (forest)
+(deflocation forest-1-6 (forest)
   (exits ((forest-portal :east forest-2-6 :north forest-1-5 :south forest-1-7)))
   (contents (large-spiderweb)))
 
-(defentity forest-2-6 (forest-path)
+(deflocation forest-2-6 (forest-path)
   (exits ((forest-portal :west forest-1-6 :east forest-3-6)
           (dirt-path :north forest-2-5 :south forest-2-7))))
 
@@ -360,7 +360,7 @@
     His face is smeared with berry juice.")
   (icon 'human-boy))
 
-(defentity forest-3-6 (forest)
+(deflocation forest-3-6 (forest)
   (brief "Rangers' Camp")
   (full "Several stained canvas tents have been erected around a tidy firepit
     in this small clearing.")
@@ -369,30 +369,30 @@
                          :north forest-3-5 :south forest-3-7)))
   (contents (ranger rhody)))
 
-(defentity forest-4-6 (forest)
+(deflocation forest-4-6 (forest)
   (exits ((forest-portal :west forest-3-6 :east forest-5-6 :north forest-4-5)))
   (contents (large-spiderweb giant-spider)))
 
-(defentity forest-5-6 (forest-stream)
+(deflocation forest-5-6 (forest-stream)
   (exits ((forest-portal :west forest-4-6 :east forest-6-6)
           (stream-portal :north forest-5-5 :south canyon-stream-1))))
 
-(defentity forest-6-6 (forest)
+(deflocation forest-6-6 (forest)
   (exits ((forest-portal :west forest-5-6 :east forest-7-6 :north forest-6-5)))
   (contents (giant-spider)))
 
-(defentity forest-7-6 (forest)
+(deflocation forest-7-6 (forest)
   (exits ((forest-portal :west forest-6-6 :north forest-7-5))))
 
-(defentity forest-1-7 (forest)
+(deflocation forest-1-7 (forest)
   (exits ((forest-portal :east forest-2-7 :north forest-1-6)))
   (contents (giant-spider)))
 
-(defentity forest-2-7 (forest-path)
+(deflocation forest-2-7 (forest-path)
   (exits ((forest-portal :west forest-1-7 :east forest-3-7)
           (dirt-path :north forest-2-6))))
 
-(defentity forest-3-7 (forest)
+(deflocation forest-3-7 (forest)
   (exits ((forest-portal :west forest-2-7 :north forest-3-6))))
 
 ;;; canyon-stream
@@ -404,10 +404,10 @@
   (domain :outdoor)
   (surface :shallow-water))
 
-(defentity canyon-stream-1 (canyon-stream)
+(deflocation canyon-stream-1 (canyon-stream)
   (exits ((stream-portal :north forest-5-6 :south canyon-stream-2))))
 
-(defentity canyon-stream-2 (canyon-stream)
+(deflocation canyon-stream-2 (canyon-stream)
   (exits ((stream-portal :north canyon-stream-1 :south canyon-end))))
 
 (defproto crevice (portal)
@@ -415,7 +415,7 @@
   (pose "leads into the cliff face.")
   (message "You carefully follow a narrow ledge alongside the turbulent water."))
 
-(defentity canyon-end (canyon-stream)
+(deflocation canyon-end (canyon-stream)
   (brief "Canyon's End")
   (full "The narrow canyon comes to an abrupt end, enclosed on three sides by
     steep walls. The waters of the stream froth and churn amongst numerous huge

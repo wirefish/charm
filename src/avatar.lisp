@@ -1,13 +1,49 @@
 (in-package :charm)
 
-(defproto race (entity)
-  (base-health 15)
-  (base-energy 100)
-  (base-mana 15)
-  (modifiers nil))
+;;; An object of class `race` defines a collection of properties inherited by an
+;;; avatar that is a member of that race.
+
+(defclass race ()
+  ((key
+    :initarg :key :reader key
+    :documentation "Symbol whose value is the singleton race instance.")
+   (brief
+    :initarg :brief :reader brief
+    :documentation "A noun describing a member of the race, e.g. 'an elf'.")
+   (full
+    :initarg :full :reader full
+    :documentation "A prose description of a generic member of the race.")
+   (base-health
+    :initarg :base-health :initform 15 :reader base-health
+    :documentation "The base health per level for a member of the race.")
+   (base-energy
+    :initarg :base-energy :initform 100 :reader base-energy
+    :documentation "The base energy (not scaled by level) for a member of the
+      race.")
+   (base-mana
+    :initarg :base-mana :initform 15 :reader base-mana
+    :documentation "The base mana per level for a member of the race.")
+   (modifiers
+    :initarg :modifiers :initform nil :reader modifiers
+    :documentation "A plist containing base modifiers for a member of the
+      race.")))
+
+(defmacro defrace (name &body slots)
+  (let ((args (loop for (slot-name init-form) in slots
+                    append `(,(make-keyword slot-name)
+                             ,(transform-slot-init-form name slot-name init-form)))))
+    `(defparameter ,name (make-instance 'race :key ',name ,@args))))
 
 (defmethod get-modifier (modifier (entity race))
   (getf (modifiers entity) modifier 0))
+
+(defmethod describe-brief ((subject race) &rest args)
+  (apply #'format-noun (brief subject) args))
+
+(defmethod describe-full ((subject race))
+  (full subject))
+
+;;; An avatar can equip items in a number of slots.
 
 (defparameter *equipment-slots*
   (plist-hash-table
@@ -42,7 +78,7 @@
 (defun make-initial-equipment ()
   (plist-hash-table (list :in-hands (make-instance 'avatar-hands))))
 
-(defproto avatar (combatant creature state-machine)
+(defproto avatar (combatant creature)
   (name nil :instance)
   (full nil :instance)
   (race nil :instance)
@@ -71,7 +107,7 @@
   (and value (symbol-value value)))
 
 (defmethod encode-slot ((name (eql 'race)) value)
-  (type-of value))
+  (key value))
 
 (defmethod decode-slot ((name (eql 'race)) value)
   (symbol-value value))
@@ -186,21 +222,22 @@
                                 :max-mana (max-mana avatar)))
         (update-avatar avatar :xp (xp avatar)))))
 
-(defun regenerate (avatar)
-  (with-slots (race health max-health energy max-energy mana max-mana) avatar
-    (when (or (< health max-health)
-              (< energy max-energy)
-              (< mana max-mana))
-      (let ((regen (floor (/ (get-modifier :resilience avatar) 20))))
-        (setf health (min (+ health (base-health race) regen) max-health)
-              energy (min (+ energy 10 regen) max-energy)
-              mana (min (+ mana (base-mana race) regen) max-mana))
-        (update-avatar avatar
-                       :health health
-                       :energy energy
-                       :mana mana)))))
+(defbehavior regenerate (avatar)
+    ()
+  (:start
+   (with-slots (race health max-health energy max-energy mana max-mana) avatar
+     (when (or (< health max-health)
+               (< energy max-energy)
+               (< mana max-mana))
+       (let ((regen (floor (/ (get-modifier :resilience avatar) 20))))
+         (setf health (min (+ health (base-health race) regen) max-health)
+               energy (min (+ energy 10 regen) max-energy)
+               mana (min (+ mana (base-mana race) regen) max-mana))
+         (update-avatar avatar
+                        :health health
+                        :energy energy
+                        :mana mana))))
+   (change-state :start 3)))
 
-(defmethod do-change-state ((avatar avatar) (state (eql :start)))
-  (with-delay (3)
-    (regenerate avatar)
-    (change-state avatar :start)))
+(defmethod do-enter-world :after ((avatar avatar) location)
+  (start-behavior avatar :regenerate #'regenerate))

@@ -2,15 +2,31 @@
 
 ;;;
 
-(defevent enter-world (actor location))
-
 (defevent exit-world (actor location))
 
 (defmethod do-exit-world (actor location)
-  (remove-from-contents location actor))
+  (remove-from-contents location actor)
+  (stop-all-behaviors actor))
+
+(defmethod do-exit-world ((actor location) location)
+  (let ((contents (copy-list (contents actor))))
+    (dolist (entity contents)
+      (exit-world entity actor))
+    (setf (contents actor) contents))
+  (stop-all-behaviors actor))
+
+;;;
+
+(defevent enter-world (actor location))
 
 (defmethod do-enter-world (actor location)
   (do-enter-location actor location nil))
+
+(defmethod do-enter-world ((actor location) location)
+  (let ((contents (contents actor)))
+    (setf (contents actor) nil)
+    (dolist (entity contents)
+      (enter-world entity actor))))
 
 (defmethod do-enter-world ((actor avatar) location)
   ;; TODO: Show intro if new player. Or maybe intro, delay, then enter world.
@@ -25,7 +41,6 @@
                        :max-mana (max-mana actor)
                        :xp (xp actor)
                        :xp-required (xp-required-for-next-level actor))
-  (start-state-machine actor)
   (call-next-method))
 
 ;;;
