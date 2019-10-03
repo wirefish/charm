@@ -26,10 +26,10 @@
                           (format-log :debug "~a changing state to ~a" ,actor ,state)
                           (case ,state ,@states)))))
            (change-state ,(first (first states)))
-           (lambda ()
+           (lambda (&optional (,state :stop) ,delay)
              (when (and ,event (not (as:event-freed-p ,event)))
                (as:free-event ,event))
-             (change-state :stop)))))))
+             (change-state ,state ,delay)))))))
 
 (defun start-behavior (actor key behavior &rest args)
   "Starts running `behavior` for `actor`, associating it with an arbitrary
@@ -47,8 +47,8 @@
       (funcall (cdr entry)))))
 
 (defun stop-all-behaviors (actor)
-  (loop for (key . cancel-closure) in (behaviors actor)
+  (loop for (key . closure) in (behaviors actor)
         do
            (format-log :debug "stopping behavior ~a for ~a" key actor)
-           (funcall cancel-closure))
+           (funcall closure))
   (setf (behaviors actor) nil))
