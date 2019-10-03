@@ -29,6 +29,8 @@
      :both-hands 4/20 ; two-handed weapons
      :main-hand 2/20 ; light and one-handed weapons
      :off-hand 2/20 ; shields, lamps, ...
+     ;; tools
+     :tool 0
      ;; armor
      :head 2/20
      :torso 2/20

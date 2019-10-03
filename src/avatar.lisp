@@ -50,6 +50,8 @@
    '(;; weapons
      :main-hand #("in your" "main hand")
      :off-hand #("in your" "off-hand")
+     ;; tools
+     :tool #("as your" "tool")
      ;; armor
      :head #("on your" "head")
      :torso #("on your" "body")

@@ -295,7 +295,11 @@
       (if weapons
           (show-text actor "You are wielding ~a." (format-list weapons))
           (show-text actor "You are not wielding any weapons.")))
-    ;; List other equipment.
+    ;; List tools.
+    (if-let ((tool (gethash :tool equipment)))
+      (show-text actor "You have ~a at the ready." (describe-brief tool))
+      (show-text actor "You have no tool equipped."))
+    ;; List worn equipment.
     (let ((items (keep-if #'(lambda (slot)
                               (when-let ((item (gethash slot equipment)))
                                 (describe-brief item)))
