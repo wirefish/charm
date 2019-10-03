@@ -17,10 +17,10 @@
     ((< (level avatar) (level skill))
      (show-text avatar "You must be at least level ~d to learn the skill ~s."
                 (level skill) (name skill)))
-    ;; Check required race. FIXME: this comparison is wrong
-    ((and (required-race skill) (not (eq (required-race skill) (race avatar))))
+    ;; Check required race.
+    ((and (required-race skill) (not (eq (required-race skill) (key (race avatar)))))
      (show-text avatar "You must be ~a in order to learn the skill ~s."
-                (describe-brief (required-race skill))
+                (describe-brief (symbol-value (required-race skill)))
                 (name skill)))
     ;; Check that the skill is not already known.
     ((skill-rank avatar skill)
