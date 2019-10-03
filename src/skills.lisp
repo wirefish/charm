@@ -55,7 +55,7 @@
                      (describe-brief trainer :capitalize t))
           (dolist (key (teaches trainer))
             (let ((skill (find-skill key)))
-              (show-text actor "- ~a: ~a Level ~d. Cost: ~{~(~a~) ~d~^, ~}."
+              (show-text actor "- `learn:~a`: ~a Level ~d. Cost: ~{~(~a~) ~d~^, ~}."
                          (name skill) (summary skill) (level skill)
                          (cost skill))))))
     ;; No trainer.
