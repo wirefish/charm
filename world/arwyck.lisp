@@ -62,10 +62,42 @@
   (surface :dirt))
 
 (deflocation harbor-road-1 (harbor-road-location)
-  (exits ((dirt-road :north bayside-plaza-3 :south harbor-road-2))))
+  (exits ((dirt-road :north bayside-plaza-3 :south harbor-road-2)
+          (entry-doorway :east miners-guild))))
 
 (deflocation harbor-road-2 (harbor-road-location)
   (exits ((dirt-road :north harbor-road-1 :south village-square-n))))
+
+;;; miner's guild
+
+(defproto mining-guildmaster (trainer)
+  (brief "Marigold")
+  (pose "is nearby, poking through a stack of ore.")
+  (full "Marigold is a cheerful, rosy-cheeked dwarven woman who looks strong
+    enough to crush rocks. Her leather garments are streaked with soot.")
+  (teaches '(mining)))
+
+(defproto mining-vendor (vendor)
+  (brief "Hermetch the Bald")
+  (pose "stands in front of the tool rack, whistling idly.")
+  (full "Hermetch lives up to his apellation; his head shines almost as brightly
+    as the polished blades of the pickaxes on the rack behind him."))
+
+(defproto simple-forge (entity)
+  (brief "a simple forge")
+  (pose "stands in the southeast corner of the room.")
+  (full "The forge can be used by miners to smelt common ore and by blacksmiths
+    to craft simple items."))
+
+(deflocation miners-guild (location)
+  (brief "Miners' Guild")
+  (full "This cavernous warehouse contains numerous carts filled with different
+    types of ore. A rack on the south wall holds a variety of pickaxes, shovels,
+    and other tools useful for mining.")
+  (domain :indoor)
+  (surface :wood)
+  (exits ((exit-doorway :west harbor-road-1)))
+  (contents (mining-guildmaster mining-vendor simple-forge copper-pickaxe)))
 
 ;;; village-square
 

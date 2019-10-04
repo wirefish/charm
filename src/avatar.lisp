@@ -243,3 +243,10 @@
 
 (defmethod do-enter-world :after ((avatar avatar) location)
   (start-behavior avatar :regenerate #'regenerate))
+
+;;;
+
+(defun skill-rank (avatar skill-key)
+  "Returns the rank of `avatar` in the skill with the given key, or nil if the
+  skill has not been learned."
+  (gethash skill-key (skills avatar)))

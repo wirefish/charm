@@ -68,7 +68,7 @@
     (let ((stack-pos (find-stack-in-container container entity)))
       (cond
         (stack-pos
-         (add-to-stack (nth stack-pos contents)))
+         (add-to-stack (nth stack-pos contents) entity))
         ((or (null capacity)
              (< (length contents) capacity))
          (push entity contents)

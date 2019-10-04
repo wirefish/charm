@@ -8,6 +8,9 @@
   (stack-limit 1)
   (stack-size 1 :instance))
 
+(defmethod describe-brief ((subject item) &rest args)
+  (apply #'format-noun (brief subject) :count (stack-size subject) args))
+
 (defmethod describe-pose ((subject item))
   (format-verb (pose subject) :count (stack-size subject)))
 

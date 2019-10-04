@@ -2,13 +2,6 @@
 
 ;;;
 
-(defun skill-rank (avatar skill)
-  "Returns the rank of `avatar` in `skill`, or nil if the skill has not been
-  learned."
-  (gethash (key skill) (skills avatar)))
-
-;;;
-
 (defevent learn-skill (avatar skill trainer))
 
 (defmethod do-learn-skill :around (avatar skill trainer)
@@ -23,7 +16,7 @@
                 (describe-brief (symbol-value (required-race skill)))
                 (name skill)))
     ;; Check that the skill is not already known.
-    ((skill-rank avatar skill)
+    ((skill-rank avatar (key skill))
      (show-text avatar "You have already learned the skill ~s." (name skill)))
     ;; FIXME: Check that all required skills are known.
     ;; FIXME: Check that no exclusive skills are known.
@@ -47,11 +40,21 @@
                              (contents (location actor)))))
     ;; There is a trainer here.
     (if skill-name
-        ;; FIXME: learn the skill
-        (show-text actor "TBD")
+        ;; Try to learn the skill.
+        (let ((matches (match-objects skill-name
+                                      (mapcar #'find-skill (teaches trainer)))))
+          (case (length matches)
+            (0
+             (show-text actor "~a doesn't teach any skill like that."
+                        (describe-brief trainer :capitalize t)))
+            (1
+             (learn-skill actor (first matches) trainer))
+            (t
+             (show-text actor "Do you want to learn ~a?"
+                        (format-list (mapcar #'describe-brief matches) :conjunction "or")))))
         ;; List teachable skills.
         (progn
-          (show-text actor "~a teaches the following skills:"
+          (show-text actor "~a can teach you the following skills:"
                      (describe-brief trainer :capitalize t))
           (dolist (key (teaches trainer))
             (let ((skill (find-skill key)))
@@ -68,7 +71,7 @@
 (defmethod do-unlearn-skill :around (avatar skill trainer)
   ;; FIXME: check that unlearning won't violate any constrains on
   ;; required-skills for other known skills.
-  (if (skill-rank avatar skill)
+  (if (skill-rank avatar (key skill))
       (call-next-method)
       (show-text avatar "Do haven't learned the skill ~s." (name skill))))
 

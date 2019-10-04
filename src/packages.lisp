@@ -5,6 +5,7 @@
   (:export
    :defproto :deflocation :defregion :transform-slot-init-form
    :describe-brief :describe-pose :describe-full
+   :format-noun :format-verb
    :same-location-p
    ;;
    :opposite-direction :add-exit :remove-exit :traverse-portal

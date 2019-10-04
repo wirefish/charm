@@ -54,8 +54,13 @@
 
 (defmacro defskill (name &body slots)
   (let ((args (loop for (name init-form) in slots
-                     append `(,(make-keyword name) ,init-form))))
-    `(defparameter ,name (make-instance 'skill :key ',name ,@args))))
+                    append `(,(make-keyword name) ,init-form))))
+    `(progn
+       (defparameter ,name (make-instance 'skill :key ',name ,@args))
+       (export ',name))))
 
 (defun find-skill (key)
   (symbol-value key))
+
+(defmethod match-tokens (tokens (target skill))
+  (match-tokens tokens (name target)))

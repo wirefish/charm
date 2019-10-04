@@ -59,18 +59,13 @@
   (full "You are in a narrow tunnel deep underground. Heavy timbers
     support the low ceiling."))
 
-(defproto copper-deposit (entity)
-  (brief "a small copper deposit")
-  (icon "ore.png")
-  (full "This small deposit might yield a chunk of copper ore to someone with
-    mining skill."))
-
 (deflocation tunnel-1 (tunnel-room)
   (exits ((rough-tunnel :south tunnel-2))))
 
 (deflocation tunnel-2 (tunnel-room)
   (exits ((rough-tunnel :west tunnel-3 :north tunnel-1
-                        :east tunnel-9 :south shaft-bottom))))
+                        :east tunnel-9 :south shaft-bottom)))
+  (contents (copper-deposit)))
 
 #| FIXME: Make the layout more interesting.
 

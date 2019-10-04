@@ -96,10 +96,10 @@
              ;; case optionally prepend the definite article.
              ((eq count t)
               (if (eq article :definite)
-                  (format t "the ~a" (noun-plural noun))
+                  (format nil "the ~a" (noun-plural noun))
                   (noun-plural noun)))
              (t
-              (format t "~a ~a" count (noun-plural noun))))))
+              (format nil "~a ~a" count (noun-plural noun))))))
     (when capitalize
       (setf (elt s 0) (char-upcase (elt s 0))))
     s))
