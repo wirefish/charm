@@ -38,17 +38,25 @@
   (format-log :debug "starting behavior ~a (~a) for ~a" key behavior actor)
   (push (cons key (apply behavior actor args)) (behaviors actor)))
 
+(defun remove-behavior (actor key)
+  "Removes a behavior associated with `key` for `actor` without sending it any
+  state change. This is typically used from within the behavior itself to
+  indicate it has naturally ended."
+  (with-slots (behaviors) actor
+    (when-let ((entry (assoc key behaviors)))
+      (setf behaviors (delete (car entry) behaviors :key #'car)))))
+
 (defun stop-behavior (actor key)
   "Stops running a behavior associated with `key` for `actor`."
   (with-slots (behaviors) actor
     (when-let ((entry (assoc key behaviors)))
       (format-log :debug "stopping behavior ~a for ~a" key actor)
       (setf behaviors (delete (car entry) behaviors :key #'car))
-      (funcall (cdr entry)))))
+      (funcall (cdr entry) :stop))))
 
 (defun stop-all-behaviors (actor)
   (loop for (key . closure) in (behaviors actor)
         do
            (format-log :debug "stopping behavior ~a for ~a" key actor)
-           (funcall closure))
+           (funcall closure :stop))
   (setf (behaviors actor) nil))

@@ -67,6 +67,7 @@
       (do-enter-location (make-instance (type-of entity)) location nil))))
 
 (defmethod do-exit-location (actor location exit)
+  (stop-behavior actor :activity)
   (remove-from-contents location actor))
 
 (defmethod do-exit-location :around (actor location exit)

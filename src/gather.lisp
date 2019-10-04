@@ -78,7 +78,24 @@
 
 ;;;
 
+(defbehavior gather (actor resources node)
+    ((tool (gethash :tool (equipment actor))))
+  (:start
+   (show-text actor "You begin gathering from ~a with your ~a."
+              (describe-brief node :article :definite)
+              (describe-brief tool :article nil))
+   (change-state :finish 5))
+  (:finish
+   (do-gather-resources actor (gathered-resources resources) node)
+   (remove-behavior actor :activity))
+  (:stop
+   (show-text actor "Your gathering attempt has been interrupted.")))
+
 (defcommand (actor "gather")
+  "Attempt to gather resources from a resource node at your location. You must
+  have a tool equipped that is appropriate for the type of resource you wish to
+  gather. Gathering takes several seconds and will be interrupted if you move,
+  enter combat, or use another ability."
   (if-let ((tool (gethash :tool (equipment actor))))
     (if-let ((node (find-if #'(lambda (x)
                                 (and (typep x 'resource-node)
@@ -86,11 +103,8 @@
                             (contents (location actor)))))
       (if-let ((resources (gatherable-resources actor node)))
         (progn
-          (show-text actor "You begin gathering from ~a with your ~a."
-                     (describe-brief node :article :definite)
-                     (describe-brief tool :article nil))
-          (with-delay (5)
-            (do-gather-resources actor (gathered-resources resources) node)))
+          (stop-behavior actor :activity)
+          (start-behavior actor :activity #'gather resources node))
         (show-text actor
                    "You do not have the required skill to gather anything from ~a."
                    (describe-brief node :article :definite)))
