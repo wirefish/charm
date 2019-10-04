@@ -23,9 +23,9 @@
      ;; Display the help message defined by the help command itself followed by
      ;; lists of commands and topics.
      (show-help actor (command-help (find-command "help")))
-     (show-links actor "Help is available for the following commands:" ""
+     (show-links actor "Help is available for the following commands:" "help"
                  (get-all-command-verbs))
-     (show-links actor "Help is also available for the following general topics:" ""
+     (show-links actor "Help is also available for the following general topics:" "help"
                  (get-help-topics)))
     (t
      (if-let ((command (find-command topic)))

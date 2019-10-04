@@ -175,7 +175,7 @@ a:link {
 .link.look { color:#ffd898 }
 .link.inv { color:#ffd898 }
 .link.help { color:#6fcf6f }
-.link.list { margin-left:0.75em; display:inline-block }
+.link.list { margin-left:1em; display:inline-block }
 
 /* paragraph styles */
 .cmd { color:#df9fdf }

@@ -700,8 +700,9 @@ MessageHandler.prototype.showLinks = function(heading, prefix, topics)
 
     elements.push(makeTextElement('p', heading));
     elements.push(wrapElements('p', topics.map(function (topic) {
-        var link = makeTextElement('span', topic, 'link list help');
-        link.onclick = function() { sendInput('help ' + prefix + ' ' + topic); };
+        var link = makeTextElement('span', topic,
+                                   'link list' + (prefix.startsWith('help') ? ' help' : ''));
+        link.onclick = function() { sendInput(prefix + ' ' + topic); };
         return link;
     })));
 
