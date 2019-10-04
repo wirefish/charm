@@ -136,8 +136,13 @@
 
 (defmethod do-talk (actor (target officious-kobold) subject)
   (declare (ignore subject))
-  (show-say actor target "Good to see you again! How has that body been treating
-    you?"))
+  (if (>= (level actor) 1)
+    (show-say actor target "Hello! You might have heard that some of my kind
+      have occupied an old copper mine, deep in the forest west of Arwyck. I
+      assure you I nothing whatsoever to do with those filthy creatures, despite
+      our shared ancestry.")
+    (show-say actor target "Good to see you again! How has that body been
+      treating you?")))
 
 (deflocation wildflower-field (isle-location)
   (brief "Field of Wildflowers")
