@@ -35,7 +35,6 @@
   (full "The ore is a small piece of ~(~:*~a~)-bearing rock. It can be smelted to
     obtain ~(~a~) in its pure form.")
   (icon 'ore)
-  (stack-limit 100)
   (content nil)
   (required-skill 'mining))
 
@@ -51,7 +50,6 @@
 
 (defproto raw-gemstone (resource)
   (icon 'gemstone)
-  (stack-limit 100)
   (required-skill 'mining))
 
 ;;; A mining deposit contains ore, raw gemstones, and sometimes other things.

@@ -8,6 +8,9 @@
   (stack-limit 1)
   (stack-size 1 :instance))
 
+(defproto stackable-item (item)
+  (stack-limit 100))
+
 (defmethod describe-brief ((subject item) &rest args)
   (apply #'format-noun (brief subject) :count (stack-size subject) args))
 

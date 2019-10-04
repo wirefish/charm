@@ -20,7 +20,7 @@
       (t
        (call-next-method)))))
 
-(defproto resource (item)
+(defproto resource (stackable-item)
   (required-rank 0))
 
 ;;;
