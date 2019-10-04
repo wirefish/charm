@@ -60,14 +60,27 @@
                    (make-instance (type-of item) :stack-size (uniform-random min max)))))
            gatherable-resources))
 
+(defun gathering-skill-increase (actor-rank item-rank)
+  "Returns the amount by which to increase an actor's rank in a gathering skill
+  based on the actor's current rank and the required-rank of an item that has
+  been gathered."
+  (expt 1.25 (- item-rank actor-rank)))
+
 ;;;
 
 (defevent gather-resources (actor resources node))
 
 (defmethod do-gather-resources (actor resources node)
   (if resources
-      (dolist (item resources)
-        (give-item node item actor))
+      (let* ((skill-key (required-skill node))
+             (actor-rank (skill-rank actor skill-key)))
+        (dolist (item resources)
+          (give-item node item actor))
+        (increase-skill-rank
+         actor skill-key
+         (apply #'+ (mapcar #'(lambda (item)
+                                (gathering-skill-increase actor-rank (required-rank item)))
+                            resources))))
       (show-text actor "You obtain nothing of value.")))
 
 (defmethod do-gather-resources :after (actor resources node)

@@ -257,3 +257,15 @@
                  (when (match-tokens tokens skill)
                    skill)))
            (hash-table-keys (skills avatar))))
+
+(defun increase-skill-rank (avatar skill-key amount)
+  (let* ((current-rank (skill-rank avatar skill-key))
+         (skill (find-skill skill-key))
+         (new-rank (min (max-rank skill)
+                        (+ current-rank amount))))
+    (setf (gethash skill-key (skills avatar)) new-rank)
+    (when (> (floor new-rank)
+             (floor current-rank))
+      (show-notice avatar "Your rank in ~a has increased to ~d!"
+                   (name skill)
+                   (floor (+ new-rank))))))
