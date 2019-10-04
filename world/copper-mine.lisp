@@ -1,5 +1,15 @@
 (in-package :copper-mine)
 
+#|
+
+An old copper mine was abandoned years ago, and subsequently occupied by a band
+of kobolds. The kobolds hide in the mine as protection against the spiders in
+Silverwood. They also cultivate mushrooms (a delicacy, second only to fresh
+meat) and prey upon the occasional wanderer who is foolish enough to enter the
+mine.
+
+|#
+
 (defregion copper-mine
   (name "Abandoned Copper Mine")
   (full "This mine once yielded plentiful copper ore, but was abandoned years
@@ -50,7 +60,7 @@
   (brief "Bottom of Mine Shaft")
   (full "This is the bottom of a vertical shaft. You can just make out handholds
     on the wall that provide a means of climbing upwards.")
-  (exits ((shaft-up :up shaft-middle) (rough-tunnel :north tunnel-2))))
+  (exits ((shaft-up :up shaft-middle) (rough-tunnel :north tunnel-1))))
 
 ;; tunnel
 
@@ -60,52 +70,99 @@
     support the low ceiling."))
 
 (deflocation tunnel-1 (tunnel-room)
-  (exits ((rough-tunnel :south tunnel-2))))
+  (exits ((rough-tunnel :south shaft-bottom :west tunnel-3 :east tunnel-10))))
 
 (deflocation tunnel-2 (tunnel-room)
-  (exits ((rough-tunnel :west tunnel-3 :north tunnel-1
-                        :east tunnel-9 :south shaft-bottom)))
+  (exits ((rough-tunnel :south tunnel-1)))
   (contents (copper-deposit)))
 
-#| FIXME: Make the layout more interesting.
+(deflocation tunnel-3 (tunnel-room)
+  (exits ((rough-tunnel :northwest tunnel-4 :east tunnel-1 :southwest tunnel-20))))
 
-(deflocation tunnel-3 tunnel-room
-  [:exits [:north tunnel-4 :east tunnel-2]])
+(deflocation tunnel-4 (tunnel-room)
+  (exits ((rough-tunnel :southeast tunnel-3 :northeast tunnel-5 :west tunnel-16)))
+  (contents (copper-deposit)))
 
-(deflocation tunnel-4 tunnel-room
-  [:exits [:north tunnel-5 :south tunnel-3]])
+(deflocation tunnel-5 (tunnel-room)
+  (exits ((rough-tunnel :southwest tunnel-4 :east tunnel-6))))
 
-(deflocation tunnel-5 tunnel-room
-  [:exits [:south tunnel-4 :east tunnel-6]])
+(deflocation tunnel-6 (tunnel-room)
+  (exits ((rough-tunnel :west tunnel-5 :east tunnel-7 :north antechamber))))
 
-(deflocation tunnel-6 tunnel-room
-  [:exits [:west tunnel-5 :east tunnel-7]])
+(deflocation tunnel-7 (tunnel-room)
+  (exits ((rough-tunnel :west tunnel-6 :southeast tunnel-8)))
+  (contents (copper-deposit)))
 
-(deflocation tunnel-7 tunnel-room
-  [:exits [:west tunnel-6 :south tunnel-8]])
+(deflocation tunnel-8 (tunnel-room)
+  (exits ((rough-tunnel :northwest tunnel-7 :northeast tunnel-14 :south tunnel-9))))
 
-(deflocation tunnel-8 tunnel-room
-  [:exits [:north tunnel-7 :south tunnel-9 :east tunnel-15]])
+(deflocation tunnel-9 (tunnel-room)
+  (exits ((rough-tunnel :west tunnel-10 :north tunnel-8 :southeast tunnel-11))))
 
-(deflocation tunnel-9 tunnel-room
-  [:exits [:north tunnel-8 :west tunnel-2 :south tunnel-10]])
+(deflocation tunnel-10 (tunnel-room)
+  (exits ((rough-tunnel :west tunnel-1 :east tunnel-9))))
 
-(deflocation tunnel-10 tunnel-room
-  [:exits [:north tunnel-9 :east tunnel-11]])
+(deflocation tunnel-11 (tunnel-room)
+  (exits ((rough-tunnel :northwest tunnel-9 :northeast tunnel-12)))
+  (contents (copper-deposit)))
 
-(deflocation tunnel-11 tunnel-room
-  [:exits [:west tunnel-10 :north tunnel-12]])
+(deflocation tunnel-12 (tunnel-room)
+  (exits ((rough-tunnel :southwest tunnel-11 :north tunnel-13))))
 
-(deflocation tunnel-12 tunnel-room
-  [:exits [:south tunnel-11 :east tunnel-13]])
+(deflocation tunnel-13 (tunnel-room)
+  (exits ((rough-tunnel :south tunnel-12 :northwest tunnel-14 :east tunnel-15))))
 
-(deflocation tunnel-13 tunnel-room
-  [:exits [:west tunnel-12 :north tunnel-14]])
+(deflocation tunnel-14 (tunnel-room)
+  (exits ((rough-tunnel :southwest tunnel-8 :southeast tunnel-13 :north grotto))))
 
-(deflocation tunnel-14 tunnel-room
-  [:exits [:south tunnel-13 :west tunnel-15]])
+(deflocation tunnel-15 (tunnel-room)
+  (exits ((rough-tunnel :west tunnel-13)))
+  (contents (copper-deposit)))
 
-(deflocation tunnel-15 tunnel-room
-  [:exits [:east tunnel-14 :west tunnel-8]])
+(deflocation tunnel-16 (tunnel-room)
+  (exits ((rough-tunnel :east tunnel-4 :southwest tunnel-17))))
 
-|#
+(deflocation tunnel-17 (tunnel-room)
+  (exits ((rough-tunnel :northeast tunnel-16 :south tunnel-18)))
+  (contents (copper-deposit)))
+
+(deflocation tunnel-18 (tunnel-room)
+  (exits ((rough-tunnel :north tunnel-17 :east tunnel-19))))
+
+(deflocation tunnel-19 (tunnel-room)
+  (exits ((rough-tunnel :west tunnel-18 :east tunnel-20))))
+
+(deflocation tunnel-20 (tunnel-room)
+  (exits ((rough-tunnel :west tunnel-19 :northeast tunnel-3)))
+  (contents (copper-deposit)))
+
+;; hideout
+
+(deflocation antechamber (mine)
+  (brief "Guard Chamber")
+  (full "The tunnel broadens here into a good-sized chamber. The floor has been
+    worn smooth. Refuse piles fill the shadowed corners.")
+  (exits ((rough-tunnel :south tunnel-6 :north hideout))))
+
+(deflocation hideout (mine)
+  (brief "Kobold Hideout")
+  (full "The ceiling of this large chamber is supported by rough-hewn timbers.
+    Smoky torches along the walls provide dim, flickering light. Much of the
+    floor is covered with a thick bed of slightly-rotten grass and leaves.")
+  (exits ((rough-tunnel :south antechamber :east storage))))
+
+(deflocation storage (mine)
+  (brief "Storage Chamber")
+  (full "This small chamber contains barrels and boxes of primitive supplies.")
+  (exits ((rough-tunnel :west hideout))))
+
+;; grotto
+
+(deflocation grotto (mine)
+  (brief "Mushroom Grotto")
+  (full "This appears to be a natural cavern. Stalactites hang from the ceiling;
+    water drips down into numerous pools. The floor is covered with loam and
+    decaying leaves, presumably brought here by the kobolds. Various types of
+    mushrooms grow throughout the chamber.")
+  (surface :dirt)
+  (exits ((rough-tunnel :south tunnel-14))))
