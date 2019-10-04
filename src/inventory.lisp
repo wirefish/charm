@@ -56,6 +56,13 @@
 (defun remove-from-inventory (avatar item slot)
   (remove-from-contents (gethash slot (equipment avatar)) item))
 
+(defun match-equipment (avatar tokens)
+  (keep-if #'(lambda (slot)
+               (when-let ((item (gethash slot (equipment avatar))))
+                 (when (match-tokens tokens item)
+                   slot)))
+           (remove :in-hands (hash-table-keys *equipment-slots*))))
+
 ;;;
 
 (defevent take-item (actor item origin))
@@ -254,6 +261,7 @@
 
 (defmethod do-equip-item (actor item inventory-slot equipment-slot)
   (with-slots (equipment) actor
+    (stop-behavior actor :activity)
     (remove-from-inventory actor item inventory-slot)
     ;; If there's already an item equipped in the slot, move it to inventory.
     ;; Make sure this never fails by always allowing the item to be held in the
@@ -343,9 +351,39 @@
           (t (show-text actor "Do you want to equip ~a?"
                         (format-list (mapcar #'cdr matches) :conjunction "or")))))))
 
+;;
+
+(defevent unequip-item (actor item equipment-slot))
+
+(defmethod do-unequip-item :around (actor item equipment-slot)
+  (when (query-observers (location actor) #'can-unequip-item actor item equipment-slot)
+    (call-next-method)))
+
+(defmethod do-unequip-item :around (actor (item container) equipment-slot)
+  (if (> (length (contents container)) 0)
+      (show-text actor "You cannot unequip ~a until it is empty."
+                 (describe-brief container :article :definite))
+      (call-next-method)))
+
+(defmethod do-unequip-item (actor item equipment-slot)
+  (with-slots (equipment) actor
+    (stop-behavior actor :activity)
+    (let ((container (gethash (or (find-inventory-slot actor item) :in-hands) equipment)))
+      (show-text actor "You unequip ~a and place it in your ~a."
+                 (describe-brief item)
+                 (describe-brief container :article nil))
+      (setf (gethash equipment-slot (equipment actor)) nil)
+      (add-to-contents container item))))
+
 (defcommand (actor ("unequip" "uneq") item ("into" "to") container)
   "Unequip an item and move it to your inventory. If no container is specified,
-  the item is placed into any equipped container with sufficient space."
-  ;; FIXME: implement this. A backpack must be empty to unequip. item goes into
-  ;; backpack or hands if backpack is full.
-  nil)
+  the item is placed into any equipped container with sufficient space, or into
+  your hands if there is no other place for the item."
+  (declare (ignore container)) ; FIXME: allow choice of container
+  (if item
+      (let ((matches (match-equipment actor item)))
+        (if matches
+            (dolist (slot matches)
+              (unequip-item actor (gethash slot (equipment actor)) slot))
+            (show-text actor "You don't have anything equipped that matches that description.")))
+      (show-text actor "What do you want to unequip?")))
