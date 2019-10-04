@@ -185,6 +185,7 @@ a:link {
 .error { color:#ff8f6f }
 .notice { color:#a8f0e8 }
 
+/* scrollbars */
 .scroll { overflow-y: auto; overflow-x: hidden; }
 ::-webkit-scrollbar { width:10px; height:10px }
 ::-webkit-scrollbar-track { background-color:#2a2a2e; margin:8px 0px; border-radius:5px }
@@ -349,12 +350,21 @@ a:link {
 /* Testing: stat box */
 
 #pane_title {
-    font: 12pt uncial;
-    color: #ffffcf;
-    text-align: center;
-    text-transform: lowercase;
-    cursor: pointer;
     text-align: justify;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
+#pane_title div {
+    display: inline-block;
+    background-size: contain;
+    background-position: bottom;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    padding-top: 8px;
+    opacity: 0.5;
 }
 
 #pane_title:after {
@@ -372,116 +382,22 @@ a:link {
     background-color: red;
 }
 
-#statbox {
+/* Social chat */
+
+#chatbox {
     display: block;
 }
 
-#statbox > div {
-    margin-top: 5px;
-    font-size: 12pt;
-}
-
-#statbox > div > div {
-    display: inline-block;
-    vertical-align: middle;
-    width: 33%;
-    text-align: center;
-}
-
-#modbox {
-    display: none;
-}
-
-#modbox > div {
-    margin-top: 5px;
-    font-size: 12pt;
-}
-
-#modbox > div > div {
-    display: inline-block;
-    vertical-align: middle;
-    text-align: center;
-}
-
-#modbox > div > div:nth-child(1) {
-    width: 33%;
-}
-
-#modbox > div > div:nth-child(2) {
-    width: 34%;
-}
-
-#modbox > div > div:nth-child(3) {
-    width: 33%;
-}
-
-#modbox hr {
-    margin-top: 5px;
-    border: 1px solid #18181e;
-}
-
-#profbox {
-    display: none;
-}
-
-#profbox > div {
-    margin-top: 5px;
-}
-
-#profbox > div > div {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-#profbox > div > div:nth-child(1) {
-    width: 66%;
-    text-align: left;
-}
-
-#profbox > div > div:nth-child(2) {
-    width: 34%;
-    text-align: right;
-}
-
-#profbox > h3 {
-    font: 10pt artifika;
-    border-bottom: 1px solid #9a9a9a;
-    margin: 5px 0;
-    text-align: center;
-}
-
-#guildbox {
-    display: none;
-}
-
-#guildbox > div {
-    margin-top: 5px;
-}
-
-#guildbox > div > div {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-#guildbox > div > div:nth-child(1) {
-    width: 66%;
-    text-align: left;
-}
-
-#guildbox > div > div:nth-child(2) {
-    width: 34%;
-    text-align: right;
-}
-
-#guildbox > h3 {
-    font: 10pt artifika;
-    border-bottom: 1px solid #9a9a9a;
-    margin: 10px 0;
-    text-align: center;
-}
+/* Equipment */
 
 #equipbox {
     display: none;
+    margin-top: 10px;
+}
+
+#equipbox > hr {
+    margin: 10px 0;
+    border: 1px solid #9a9a9a;
 }
 
 #equipbox > div {
@@ -504,8 +420,8 @@ a:link {
 }
 
 #equipbox > div > div:nth-child(2) > div:nth-child(1) {
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
     margin-right: 4px;
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -517,12 +433,7 @@ a:link {
     text-align: left;
 }
 
-#equipbox > h3 {
-    font: 10pt artifika;
-    border-bottom: 1px solid #9a9a9a;
-    margin: 10px 0;
-    text-align: center;
-}
+/* Inventory */
 
 /* shdfsdf */
 
@@ -540,8 +451,8 @@ a:link {
 }
 
 #invbox > div > div:nth-child(1) {
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
     margin-right: 4px;
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -555,6 +466,88 @@ a:link {
 }
 
 #invbox > h3 {
+    font: 10pt artifika;
+    border-bottom: 1px solid #9a9a9a;
+    margin: 5px 0;
+    text-align: center;
+}
+
+/* Combat modifiers */
+
+#combatbox {
+    display: none;
+}
+
+#combatbox > div > div {
+    margin-top: 5px;
+    font-size: 10pt;
+}
+
+#combatbox > div > div > div {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+}
+
+#combatbox > div > div > div:nth-child(1) {
+    width: 75%;
+    text-align: left;
+}
+
+#combatbox > div > div > div:nth-child(2) {
+    width: 25%;
+    text-align: right;
+}
+
+#combatbox h3 {
+    font: 10pt artifika;
+    border-bottom: 1px solid #9a9a9a;
+    margin: 5px 0;
+    text-align: center;
+}
+
+#attrbox {
+    display: inline-block;
+    width: 49%;
+}
+
+#modbox {
+    display: inline-block;
+    width: 49%;
+}
+
+/* Skills */
+
+#skillbox {
+    display: none;
+    margin: 0 10px;
+}
+
+#skillbox > hr {
+    margin: 10px 0;
+    border: none;
+}
+
+#skillbox > div {
+    margin-top: 5px;
+}
+
+#skillbox > div > div {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+#skillbox > div > div:nth-child(1) {
+    width: 66%;
+    text-align: left;
+}
+
+#skillbox > div > div:nth-child(2) {
+    width: 34%;
+    text-align: right;
+}
+
+#skillbox > h3 {
     font: 10pt artifika;
     border-bottom: 1px solid #9a9a9a;
     margin: 5px 0;

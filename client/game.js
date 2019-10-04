@@ -187,12 +187,11 @@ function appendBlock(block, containerId = 'game_text')
     container.scrollTop = container.scrollHeight;
 }
 
-var PANES = [['Attributes', 'statbox'],
-             ['Combat&emsp14;Modifiers', 'modbox'],
-             ['Proficiencies', 'profbox'],
-             ['Guilds&emsp14;&amp;&emsp14;Skills', 'guildbox'],
-             ['Equipment', 'equipbox'],
-             ['Inventory', 'invbox']]
+var PANES = {'social': 'chatbox',
+             'equipment': 'equipbox',
+             'inventory': 'invbox',
+             'modifiers': 'combatbox',
+             'skills': 'skillbox'};
 
 // An object that encapsulates functions callable based on messages from the
 // server.
@@ -210,15 +209,20 @@ function MessageHandler()
     // True to show paths, etc. for debugging.
     this.debug = true;
 
-    this.currentPane = 0;
+    // Select the social chat pane by default.
+    this.currentPane = 'social';
+    document.getElementById(this.currentPane).style.opacity = '1.0';
 }
 
-MessageHandler.prototype.showNextPane = function(offset)
+MessageHandler.prototype.showPane = function(button_id)
 {
-    document.getElementById(PANES[this.currentPane][1]).style.display = 'none';
-    this.currentPane = (this.currentPane + PANES.length + offset) % PANES.length;
-    document.getElementById(PANES[this.currentPane][1]).style.display = 'block';
-    document.getElementById("pane_title").children[1].innerHTML = PANES[this.currentPane][0];
+    document.getElementById(this.currentPane).style.opacity = '0.5';
+    document.getElementById(PANES[this.currentPane]).style.display = 'none';
+
+    this.currentPane = button_id;
+
+    document.getElementById(this.currentPane).style.opacity = '1.0';
+    document.getElementById(PANES[this.currentPane]).style.display = 'block';
 }
 
 MessageHandler.prototype.showRaw = function(text)

@@ -61,51 +61,37 @@
     </div>
 
     <!-- Social text -->
-    <div class="box textbox scroll" id="chat_text">
+    <div class="box textbox" id="chat_text">
       <div id="pane_title">
-        <span onclick="handler.showNextPane(-1);">&#9668;</span>
-        <span>Attributes</span>
-        <span onclick="handler.showNextPane(1);">&#9658;</span>
+        <div id="social" style="background-image: url('icons/chat.png')"
+             title="Social chat"
+             onclick="handler.showPane('social');"></div>
+        <div id="equipment" style="background-image: url('icons/equipment.png')"
+             title="Equipment"
+             onclick="handler.showPane('equipment');"></div>
+        <div id="inventory" style="background-image: url('icons/inventory.png')"
+             title="Inventory"
+             onclick="handler.showPane('inventory');"></div>
+        <div id="modifiers" style="background-image: url('icons/modifiers.png')"
+             title="Combat modifiers"
+             onclick="handler.showPane('modifiers');"></div>
+        <div id="skills" style="background-image: url('icons/skills.png')"
+             title="Skills"
+             onclick="handler.showPane('skills');"></div>
       </div>
-      <div id="statbox">
-        <div><div>Strength</div><div>123</div><div>+55%</div></div>
-        <div><div>Agility</div><div>1234</div><div>+555%</div></div>
-        <div><div>Vitality</div><div>12</div><div>+3%</div></div>
-        <div><div>Intellect</div><div>12</div><div>+3%</div></div>
-        <div><div>Willpower</div><div>12</div><div>+3%</div></div>
-      </div>
-      <div id="modbox">
-        <div><div>Attack</div><div></div><div>Defense</div></div>
-        <hr/>
-        <div><div>-3%</div><div>Physical</div><div>+3%</div></div>
-        <div><div>-3%</div><div>Magical</div><div>+3%</div></div>
-        <hr/>
-        <div><div>-3%</div><div>Slashing</div><div>+3%</div></div>
-        <div><div>-3%</div><div>Piercing</div><div>+3%</div></div>
-        <div><div>-3%</div><div>Crushing</div><div>+3%</div></div>
-        <hr/>
-        <div><div>-33%</div><div>Fire</div><div>+344%</div></div>
-        <div><div>-33%</div><div>Cold</div><div>+344%</div></div>
-        <div><div>-33%</div><div>Electricity</div><div>+344%</div></div>
-        <div><div>-33%</div><div>Arcane</div><div>+344%</div></div>
-        <div><div>-33%</div><div>Shadow</div><div>+344%</div></div>
-      </div>
-      <div id="profbox">
-        <h3>Weapons</h3>
-        <div><div>Daggers</div><div>50%</div></div>
-        <div><div>Axes</div><div>100%</div></div>
-        <div><div>Swords</div><div>125%</div></div>
-        <h3>Armor</h3>
-        <div><div>Light armor</div><div>100%</div></div>
-      </div>
-      <div id="guildbox">
-        <div><div>Unspent karma points:</div><div>0</div></div>
-        <h3>Brotherhood of Foo (rank 12 crybaby)</h3>
-        <div><div>wall of madness</div><div>(rank 1)</div></div>
+      <div id="chatbox" class="scroll">
+        <div>Hello!</div>
       </div>
       <div id="equipbox">
-        <h3>Weapons</h3>
-        <h3>Armor</h3>
+        <div>
+          <div>Main hand</div>
+          <div><div></div><div>masterwork copper battle-axe</div></div>
+        </div>
+        <div>
+          <div>Off-hand</div>
+          <div><div></div><div>&mdash;</div></div>
+        </div>
+        <hr/>
         <div>
           <div>Head</div>
           <div><div></div><div>silver helmet of farsight</div></div>
@@ -134,9 +120,9 @@
           <div>Feet</div>
           <div><div></div><div>fine leather sandals</div></div>
         </div>
-        <h3>Jewelry</h3>
+        <hr/>
         <div>
-          <div>Ear</div>
+          <div>Ears</div>
           <div><div></div><div>jade earring</div></div>
         </div>
         <div>
@@ -144,22 +130,81 @@
           <div><div></div><div>pendant of last year's brunch</div></div>
         </div>
         <div>
-          <div>Wrist</div>
+          <div>Wrists</div>
           <div><div></div><div>bracelet of blue fire</div></div>
         </div>
         <div>
-          <div>Finger</div>
+          <div>Left finger</div>
           <div><div></div><div>ring of infallibility</div></div>
         </div>
         <div>
-          <div>Relic</div>
-          <div><div></div><div>brooch of the elder grandmas</div></div>
+          <div>Right finger</div>
+          <div><div></div><div>ring of fallibility</div></div>
+        </div>
+        <hr/>
+        <div>
+          <div>Backpack</div>
+          <div><div></div><div>gossamer satchel of meatballs</div></div>
         </div>
       </div>
       <div id="invbox">
-        <h3>Quest Items</h3>
+        <h3>Backpack</h3>
         <div><div></div><div>6 tubs of lard</div></div>
         <div><div></div><div>mud brick of destiny</div></div>
+        <h3>Hands</h3>
+      </div>
+      <div id="combatbox" class="scroll">
+        <div id="attrbox">
+          <h3>Attributes</h3>
+          <div><div>Strength</div><div>0</div></div>
+          <div><div>Intellect</div><div>0</div></div>
+          <div><div>Vitality</div><div>0</div></div>
+          <div><div>Toughness</div><div>0</div></div>
+          <div><div>Willpower</div><div>0</div></div>
+          <div><div>Compassion</div><div>0</div></div>
+          <div><div>Precision</div><div>0</div></div>
+          <div><div>Ferocity</div><div>0</div></div>
+          <div><div>Evasion</div><div>0</div></div>
+          <div><div>Accuracy</div><div>0</div></div>
+          <div><div>Spirit</div><div>0</div></div>
+          <div><div>Insight</div><div>0</div></div>
+          <div><div>Resilience</div><div>0</div></div>
+        </div>
+        <div id="modbox">
+          <h3>Modifiers</h3>
+          <div><div>Physical damage done</div><div>0</div></div>
+          <div><div>Magical damage done</div><div>0</div></div>
+          <div><div>Vitality</div><div>0</div></div>
+          <div><div>Toughness</div><div>0</div></div>
+          <div><div>Willpower</div><div>0</div></div>
+          <div><div>Compassion</div><div>0</div></div>
+          <div><div>Precision</div><div>0</div></div>
+          <div><div>Ferocity</div><div>0</div></div>
+          <div><div>Evasion</div><div>0</div></div>
+          <div><div>Accuracy</div><div>0</div></div>
+          <div><div>Spirit</div><div>0</div></div>
+          <div><div>Insight</div><div>0</div></div>
+          <div><div>Resilience</div><div>0</div></div>
+        </div>
+        <div id="immbox">
+          <h3>Immunities</h3>
+          <div><div>Crushing</div><div>0</div></div>
+          <div><div>Piercing</div><div>0</div></div>
+          <div><div>Slashing</div><div>0</div></div>
+          <div><div>Fire</div><div>0</div></div>
+          <div><div>Cold</div><div>0</div></div>
+          <div><div>Acid</div><div>0</div></div>
+          <div><div>Electricity</div><div>0</div></div>
+          <div><div>Arcane</div><div>0</div></div>
+          <div><div>Shadow</div><div>0</div></div>
+        </div>
+      </div>
+      <div id="skillbox">
+        <div><div>Unspent karma points:</div><div>0</div></div>
+        <hr/>
+        <div><div>dagger proficiency</div><div>23&thinsp;/&thinsp;100</div></div>
+        <div><div>magic missile</div><div></div></div>
+        <div><div>two-handed axe proficiency</div><div>87&thinsp;/&thinsp;100</div></div>
       </div>
     </div>
 
