@@ -146,9 +146,10 @@ mine.
 
 (deflocation hideout (mine)
   (brief "Kobold Hideout")
-  (full "The ceiling of this large chamber is supported by rough-hewn timbers.
-    Smoky torches along the walls provide dim, flickering light. Much of the
-    floor is covered with a thick bed of slightly-rotten grass and leaves.")
+  (full "The ceiling of this large chamber is supported by massive, rough-hewn
+    timbers. Smoky torches along the walls provide dim, flickering light. Much
+    of the floor is covered with a thick bed of slightly-rotten grass and
+    leaves.")
   (exits ((rough-tunnel :south antechamber :east storage))))
 
 (deflocation storage (mine)
@@ -161,8 +162,8 @@ mine.
 (deflocation grotto (mine)
   (brief "Mushroom Grotto")
   (full "This appears to be a natural cavern. Stalactites hang from the ceiling;
-    water drips down into numerous pools. The floor is covered with loam and
-    decaying leaves, presumably brought here by the kobolds. Various types of
-    mushrooms grow throughout the chamber.")
+    water drips from their tips into numerous shallow pools. The floor is
+    covered with loam and decaying leaves, presumably brought here by the
+    kobolds. Various types of mushrooms grow throughout the chamber.")
   (surface :dirt)
   (exits ((rough-tunnel :south tunnel-14))))
