@@ -30,16 +30,16 @@
 
 (defparameter *primary-attributes*
   '(:strength ; increases outgoing physical damage
-    :intellect ; increases outgoing magical damage
+    :intellect ; increases outgoing magical and elemental damage
     :vitality ; increases health
-    :toughness)) ; increases armor
+    :toughness)) ; increases armor which decreases incoming physical and elemental damage
 
 ;;; Secondary attributes have a base value of zero and do not increase with
 ;;; level. Like primary attributes they can be modified by race, equipment,
 ;;; traits, and auras.
 
 (defparameter *secondary-attributes*
-  '(:willpower ; increases magic resistance
+  '(:willpower ; increases magic resistance which decreases incoming magical damage
     :compassion ; increases healing output
     :precision ; increases chance of scoring a critical hit
     :ferocity ; increases magnitude of critical hits
