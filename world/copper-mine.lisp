@@ -205,6 +205,9 @@ mine.
 
 ;; grotto
 
+;; TODO: add gatherable nodes of a few mushroom types, the respawn picks a
+;; random type for the next spawn.
+
 (deflocation grotto (mine)
   (brief "Mushroom Grotto")
   (full "This appears to be a natural cavern. Stalactites hang from the ceiling;
