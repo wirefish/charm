@@ -131,6 +131,7 @@
   (pose "sits at a low table in the shade of a large umbrella.")
   (full "The kobold is a tiny humanoid with reptilian features, sparse wiry
     hair, and knobbly gray skin. It is, however, impeccably groomed.")
+  (icon 'kobold)
   (begins-quests '(choose-a-race))
   (ends-quests '(choose-a-race)))
 

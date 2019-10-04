@@ -33,6 +33,7 @@ mine.
 
 (defproto kobold-worker (monster)
   (brief "a kobold worker")
+  (icon 'kobold)
   (level 1)
   (attacks '(kobold-claw))
   (respawn-delay '(30 60)))
@@ -45,6 +46,7 @@ mine.
 
 (defproto kobold-guard (monster)
   (brief "a kobold guard")
+  (icon 'kobold)
   (level 2)
   (attacks '(kobold-shortsword))
   (respawn-delay '(45 90)))
@@ -57,6 +59,7 @@ mine.
 
 (defproto kobold-chieftain (monster)
   (brief "the kobold chieftain")
+  (icon 'kobold)
   (level 3)
   (attacks '(kobold-spear))
   (respawn-delay '(60 120)))
