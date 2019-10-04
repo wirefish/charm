@@ -552,12 +552,11 @@
   (full "The tulip is quite lovely; you can see why Dhalia prizes them.")
   (unique 1)
   (quest 'get-some-clothes)
-  (entry-pose "catches your eye."))
+  (entry-pose "catches your eye.")
+  (respawn-delay 5))
 
 (defmethod do-take-item :after (actor (item white-tulip) origin)
-  (advance-quest actor get-some-clothes)
-  (with-delay (5)
-    (do-enter-location (make-instance 'white-tulip) origin nil)))
+  (advance-quest actor get-some-clothes))
 
 (defproto seamstress (npc)
   (brief "Dhalia")
@@ -867,6 +866,7 @@
 (defproto guard (npc)
   (brief "a burly guard")
   (pose "stands nearby.")
+  (icon 'human-male)
   (begins-quests '(kill-some-plants))
   (ends-quests '(kill-some-plants)))
 
@@ -915,7 +915,8 @@
     somehow gained the ability to move, albeit very slowly. Sharp thorns
     protrude from the ends of its leafy, tentacle-like appendages.")
   (entry-pose "emerges from beneath the weeds.")
-  (level 0))
+  (level 0)
+  (respawn-delay 30))
 
 (defmethod do-kill :after ((actor avatar) (target lashling))
   (advance-quest actor kill-some-plants))
@@ -1058,11 +1059,8 @@
   (icon :seashell)
   (full "The seashell's polished surface is covered with an intricate pattern
     of white and orange whorls.")
-  (alts ("a shiny shell")))
-
-(defmethod do-take-item :after (actor (item shiny-seashell) origin)
-  (with-delay (600)
-    (do-enter-location (make-instance 'shiny-seashell) origin nil)))
+  (alts ("a shiny shell"))
+  (respawn-delay '(300 600)))
 
 (defproto beach-portal (portal)
   (brief "the beach")

@@ -6,7 +6,8 @@
 
 (defmethod do-exit-world (actor location)
   (remove-from-contents location actor)
-  (stop-all-behaviors actor))
+  (stop-all-behaviors actor)
+  (notify-observers location #'did-exit-location actor location nil))
 
 (defmethod do-exit-world ((actor location) location)
   (let ((contents (copy-list (contents actor))))
@@ -57,6 +58,13 @@
   (when dest
     (let ((entry-dir (opposite-direction (direction exit))))
       (find-if #'(lambda (x) (eq (direction x) entry-dir)) (exits dest)))))
+
+(defun respawn (entity location)
+  (when-let ((delay (respawn-delay entity)))
+    (when (listp delay)
+      (setf delay (apply #'uniform-random delay)))
+    (with-delay (delay)
+      (do-enter-location (make-instance (type-of entity)) location nil))))
 
 (defmethod do-exit-location (actor location exit)
   (remove-from-contents location actor))

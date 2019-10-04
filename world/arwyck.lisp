@@ -297,11 +297,8 @@
   (pose "rests on a nearby tabletop.")
   (icon "sliced-bread.png")
   (full "This bread seems a little stale but still adequate for, say, making a
-    sandwich."))
-
-(defmethod do-take-item :after (actor (item slice-of-rye) origin)
-  (with-delay (30)
-    (do-enter-location (make-instance 'slice-of-rye) origin nil)))
+    sandwich.")
+  (respawn-delay 30))
 
 (deflocation inn-kitchen (inn-room)
   (brief "Kitchen")

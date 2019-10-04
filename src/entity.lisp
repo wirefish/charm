@@ -74,6 +74,7 @@
   (entry-pose nil)
   (exit-pose nil)
   (hidden nil)
+  (respawn-delay nil)
   ;;
   (id (incf *next-entity-id*) :instance)
   (location nil :instance)

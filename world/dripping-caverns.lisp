@@ -107,11 +107,8 @@ the reward at the end of this story.
 
 (defproto mature-dewcap (item)
   (brief "a mature dewcap")
-  (pose "draws your attention."))
-
-(defmethod do-take-item :after (actor (item mature-dewcap) origin)
-  (with-delay (30)
-    (do-enter-location (make-instance 'mature-dewcap) origin nil)))
+  (pose "draws your attention.")
+  (respawn-delay 30))
 
 (defproto dewcap-field (cavern)
   (brief "Dewcap Fields")

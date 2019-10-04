@@ -84,12 +84,11 @@
   (full "The strands of this web are especially strong and thick.")
   (alts ("large web"))
   (unique 5)
-  (quest 'find-spiderwebs))
+  (quest 'find-spiderwebs)
+  (respawn-delay 30))
 
 (defmethod do-take-item :after (actor (item large-spiderweb) origin)
-  (advance-quest actor find-spiderwebs 1/5)
-  (with-delay (30)
-    (do-enter-location (make-instance 'large-spiderweb) origin nil)))
+  (advance-quest actor find-spiderwebs 1/5))
 
 (defproto hermit (npc)
   (brief "an old hermit")

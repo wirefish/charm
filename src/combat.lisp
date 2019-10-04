@@ -211,6 +211,9 @@
   (call-next-method)
   (gain-xp actor (* 20 (1+ (level victim)))))
 
+(defmethod do-kill :after (actor target)
+  (respawn target (location actor)))
+
 (defmethod will-kill ((observer avatar) actor victim)
   (show-text observer "~a killed ~a!"
              (if (eq observer actor) "You" (describe-brief actor :capitalize t))

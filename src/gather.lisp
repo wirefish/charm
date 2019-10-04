@@ -33,7 +33,13 @@
 
 (defproto resource-node (entity)
   (required-skill nil)
-  (resources nil)) ;; list of (item probability min max)
+  (resources nil) ;; list of (item probability min max)
+  (respawn-delay '(150 300))
+  (exit-pose "is exhausted.")
+  (attempts-remaining (uniform-random 1 3) :instance))
+
+(defmethod format-give-item ((actor resource-node) item)
+  (format nil "You obtain ~a." (describe-brief item)))
 
 ;;;
 
@@ -46,11 +52,31 @@
                    (resources node))))
 
 (defun gathered-resources (gatherable-resources)
+  "Randomly determines the number of type of resources actually gathered, given
+  the resources that could be gathered."
   (keep-if #'(lambda (resource)
                (destructuring-bind (item probability min max) resource
                  (when (< (random 1.0) probability)
                    (make-instance (type-of item) :stack-size (uniform-random min max)))))
            gatherable-resources))
+
+;;;
+
+(defevent gather-resources (actor resources node))
+
+(defmethod do-gather-resources (actor resources node)
+  (if resources
+      (dolist (item resources)
+        (give-item node item actor))
+      (show-text actor "You obtain nothing of value.")))
+
+(defmethod do-gather-resources :after (actor resources node)
+  (notify-observers (location actor) #'did-gather-resources actor resources node)
+  (when (= 0 (decf (attempts-remaining node)))
+    (exit-world node (location actor))
+    (respawn node (location actor))))
+
+;;;
 
 (defcommand (actor "gather")
   (if-let ((tool (gethash :tool (equipment actor))))
@@ -64,10 +90,7 @@
                      (describe-brief node :article :definite)
                      (describe-brief tool :article nil))
           (with-delay (5)
-            (if-let ((resources (gathered-resources resources)))
-              (dolist (item resources)
-                (give-item node item actor))
-              (show-text actor "You obtain nothing of value."))))
+            (do-gather-resources actor (gathered-resources resources) node)))
         (show-text actor
                    "You do not have the required skill to gather anything from ~a."
                    (describe-brief node :article :definite)))

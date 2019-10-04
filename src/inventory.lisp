@@ -84,6 +84,9 @@
                (describe-brief item)
                (describe-brief container :article nil))))
 
+(defmethod do-take-item :after (actor (item item) origin)
+  (respawn item origin))
+
 (defmethod did-take-item ((observer avatar) actor item origin)
   (when (visible-p item observer)
     (when (not (eq observer actor))
@@ -93,6 +96,12 @@
   (remove-neighbor observer item))
 
 ;;;
+
+(defgeneric format-give-item (actor item)
+  (:method (actor item)
+    (format nil "~a gives you ~a."
+            (describe-brief actor :article :definite :capitalize t)
+            (describe-brief item))))
 
 (defevent give-item (actor item recipient))
 
@@ -113,13 +122,15 @@
   (let* ((slot (find-inventory-slot recipient item))
          (container (gethash slot (equipment recipient))))
     (add-to-contents container item)
-    (show-text recipient "~a gives you ~a.~a"
-                (describe-brief actor :article :definite :capitalize t)
-                (describe-brief item)
+    (show-text recipient
+               (concatenate
+                'string
+                (format-give-item actor item)
                 (if (eq slot :in-hands)
                     ""
-                    (format nil " You place it in your ~a."
-                            (describe-brief container :article nil))))
+                    (format nil " You place ~a in your ~a."
+                            (if (= 1 (stack-size item)) "it" "them")
+                            (describe-brief container :article nil)))))
     item))
 
 ;;;
