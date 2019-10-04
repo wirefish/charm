@@ -24,6 +24,43 @@ mine.
   (domain :underground)
   (surface :stone))
 
+;;; kobold variants
+
+(defproto kobold-claw (natural-weapon)
+  (brief "a dirty claw")
+  (damage-type :slashing)
+  (attack-verb "rakes"))
+
+(defproto kobold-worker (monster)
+  (brief "a kobold worker")
+  (level 1)
+  (attacks '(kobold-claw))
+  (respawn-delay '(30 60)))
+
+(defproto kobold-shortsword (one-handed-weapon)
+  (brief "a rusty shortsword")
+  (level 2)
+  (damage-type :piercing)
+  (attack-verb "pokes"))
+
+(defproto kobold-guard (monster)
+  (brief "a kobold guard")
+  (level 2)
+  (attacks '(kobold-shortsword))
+  (respawn-delay '(45 90)))
+
+(defproto kobold-spear (two-handed-weapon)
+  (brief "a wicked spear")
+  (level 3)
+  (damage-type :piercing)
+  (attack-verb "impales"))
+
+(defproto kobold-chieftain (monster)
+  (brief "the kobold chieftain")
+  (level 3)
+  (attacks '(kobold-spear))
+  (respawn-delay '(60 120)))
+
 ;;; entry
 
 (deflocation entry (mine)
@@ -75,10 +112,11 @@ mine.
 
 (deflocation tunnel-2 (tunnel-room)
   (exits ((rough-tunnel :south tunnel-1)))
-  (contents (copper-deposit)))
+  (contents (copper-deposit kobold-worker)))
 
 (deflocation tunnel-3 (tunnel-room)
-  (exits ((rough-tunnel :northwest tunnel-4 :east tunnel-1 :southwest tunnel-20))))
+  (exits ((rough-tunnel :northwest tunnel-4 :east tunnel-1 :southwest tunnel-20)))
+  (contents (kobold-worker)))
 
 (deflocation tunnel-4 (tunnel-room)
   (exits ((rough-tunnel :southeast tunnel-3 :northeast tunnel-5 :west tunnel-16)))
@@ -95,20 +133,23 @@ mine.
   (contents (copper-deposit)))
 
 (deflocation tunnel-8 (tunnel-room)
-  (exits ((rough-tunnel :northwest tunnel-7 :northeast tunnel-14 :south tunnel-9))))
+  (exits ((rough-tunnel :northwest tunnel-7 :northeast tunnel-14 :south tunnel-9)))
+  (contents (kobold-worker)))
 
 (deflocation tunnel-9 (tunnel-room)
   (exits ((rough-tunnel :west tunnel-10 :north tunnel-8 :southeast tunnel-11))))
 
 (deflocation tunnel-10 (tunnel-room)
-  (exits ((rough-tunnel :west tunnel-1 :east tunnel-9))))
+  (exits ((rough-tunnel :west tunnel-1 :east tunnel-9)))
+  (contents (kobold-worker)))
 
 (deflocation tunnel-11 (tunnel-room)
   (exits ((rough-tunnel :northwest tunnel-9 :northeast tunnel-12)))
   (contents (copper-deposit)))
 
 (deflocation tunnel-12 (tunnel-room)
-  (exits ((rough-tunnel :southwest tunnel-11 :north tunnel-13))))
+  (exits ((rough-tunnel :southwest tunnel-11 :north tunnel-13)))
+  (contents (kobold-worker)))
 
 (deflocation tunnel-13 (tunnel-room)
   (exits ((rough-tunnel :south tunnel-12 :northwest tunnel-14 :east tunnel-15))))
@@ -121,14 +162,16 @@ mine.
   (contents (copper-deposit)))
 
 (deflocation tunnel-16 (tunnel-room)
-  (exits ((rough-tunnel :east tunnel-4 :southwest tunnel-17))))
+  (exits ((rough-tunnel :east tunnel-4 :southwest tunnel-17)))
+  (contents (kobold-worker)))
 
 (deflocation tunnel-17 (tunnel-room)
   (exits ((rough-tunnel :northeast tunnel-16 :south tunnel-18)))
   (contents (copper-deposit)))
 
 (deflocation tunnel-18 (tunnel-room)
-  (exits ((rough-tunnel :north tunnel-17 :east tunnel-19))))
+  (exits ((rough-tunnel :north tunnel-17 :east tunnel-19)))
+  (contents (kobold-worker)))
 
 (deflocation tunnel-19 (tunnel-room)
   (exits ((rough-tunnel :west tunnel-18 :east tunnel-20))))
@@ -143,7 +186,8 @@ mine.
   (brief "Guard Chamber")
   (full "The tunnel broadens here into a good-sized chamber. The floor has been
     worn smooth. Refuse piles fill the shadowed corners.")
-  (exits ((rough-tunnel :south tunnel-6 :north hideout))))
+  (exits ((rough-tunnel :south tunnel-6 :north hideout)))
+  (contents (kobold-guard kobold-guard)))
 
 (deflocation hideout (mine)
   (brief "Kobold Hideout")
@@ -151,7 +195,8 @@ mine.
     timbers. Smoky torches along the walls provide dim, flickering light. Much
     of the floor is covered with a thick bed of slightly-rotten grass and
     leaves.")
-  (exits ((rough-tunnel :south antechamber :east storage))))
+  (exits ((rough-tunnel :south antechamber :east storage)))
+  (contents (kobold-guard kobold-chieftain)))
 
 (deflocation storage (mine)
   (brief "Storage Chamber")
@@ -167,4 +212,5 @@ mine.
     covered with loam and decaying leaves, presumably brought here by the
     kobolds. Various types of mushrooms grow throughout the chamber.")
   (surface :dirt)
-  (exits ((rough-tunnel :south tunnel-14))))
+  (exits ((rough-tunnel :south tunnel-14)))
+  (contents (kobold-worker kobold-guard)))
