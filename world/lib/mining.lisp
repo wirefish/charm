@@ -38,42 +38,59 @@
 (defmethod describe-full ((subject ore))
   (format nil (full subject) (content subject)))
 
+;;; Miners can also collect raw gemstones. An ore deposit typically has one or
+;;; more associated gemstones that have a low percentage chance of being found.
+
+(defproto raw-gemstone (resource)
+  (icon 'gemstone)
+  (stack-limit 100)
+  (required-skill 'mining))
+
+;;; A mining deposit contains ore, raw gemstones, and sometimes other things.
+
+(defproto mining-deposit (resource-node)
+  (required-skill 'mining))
+
+;;; Copper
+
 (defproto copper-ore (ore)
   (content 'copper)
   (required-rank 0))
+
+(defproto raw-azurite (raw-gemstone)
+  (brief "a raw azurite")
+  (required-rank 10))
+
+(defproto raw-turquoise (raw-gemstone)
+  (brief "a raw turquoise[]")
+  (required-rank 20))
+
+(defproto copper-deposit (mining-deposit)
+  (brief "a copper deposit")
+  (resources ((copper-ore 1 1 4)
+              (raw-azurite 1/20 1 1)
+              (raw-turquoise 1/50 1 1))))
+
+;;; Tin
 
 (defproto tin-ore (ore)
   (content 'tin)
   (required-rank 20))
 
+;;; Zinc
+
 (defproto zinc-ore (ore)
   (content 'zinc)
   (required-rank 40))
+
+;;; Iron
 
 (defproto iron-ore (ore)
   (content 'iron)
   (required-rank 60))
 
+;;; Silver
+
 (defproto silver-ore (ore)
   (content 'silver)
   (required-rank 80))
-
-;;; Miners can also collect gemstones.
-
-(defproto gemstone (resource)
-  (icon 'gemstone)
-  (stack-limit 100)
-  (required-skill 'mining))
-
-(defproto azurite (gemstone)
-  (brief "an azurite"))
-
-;;; Mining nodes.
-
-(defproto mining-deposit (resource-node)
-  (required-skill 'mining))
-
-(defproto copper-deposit (mining-deposit)
-  (brief "a copper deposit")
-  (resources ((copper-ore 1 1 4)
-              (azurite 1/20 1 1))))
