@@ -107,19 +107,37 @@
 
 ;;;
 
-(defcommand (actor ("skills" "sk"))
-  "View a list of the skills you have learned."
-  ;; FIXME: sort by level/name/guild?
-  (if (> (hash-table-count (skills actor)) 0)
-      (progn
-        (show-text actor "You have learned the following skills:")
-        (maphash #'(lambda (key rank)
-                     (let ((skill (find-skill key)))
-                       (show-text actor "- ~a~a: ~a"
-                                  (name skill)
-                                  (if (> (max-rank skill) 0)
-                                      (format nil " (rank ~d/~d)" rank (max-rank skill))
-                                      "")
-                                  (summary skill))))
-                 (skills actor)))
-      (show-text actor "You haven't learned any skills yet.")))
+(defcommand (actor ("skills" "sk") :word subcommand :rest skill-name)
+  "View information about the skills you've learned. This command has several
+  subcommands:
+
+  - `skills` or `skills list` lists the skills you have learned.
+
+  - `skills info *skill-name* displays more information about a specific skill.
+
+  For more information see `help:learn` and `help:unlearn`."
+  (cond
+    ((or (null subcommand) (string= subcommand "list"))
+     (with-slots (skills) actor
+       (if (> (hash-table-count skills) 0)
+           (show-links actor "You have learned the following skills:" "skills info"
+                       (sort (mapcar #'(lambda (x) (name (find-skill x)))
+                                     (hash-table-keys skills))
+                             #'string<))
+           (show-text actor "You haven't learned any skills yet."))))
+    ((string= subcommand "info")
+     (if skill-name
+         (let ((matches (match-skills skill-name actor)))
+           (if (null matches)
+               (show-text actor "You have not learned any skills matching that description.")
+               (dolist (skill matches)
+                 (let ((rank (gethash (key skill) (skills actor))))
+                   (show-text actor "- ~a~a: ~a"
+                              (name skill)
+                              (if (> (max-rank skill) 0)
+                                  (format nil " (rank ~d/~d)" (floor rank) (max-rank skill))
+                                  "")
+                              (summary skill))))))
+         (show-text actor "For which skill do you want to see more information?")))
+    (t
+     (show-text actor "Unknown subcommand. Type `help skills` for help."))))

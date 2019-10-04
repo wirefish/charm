@@ -250,3 +250,10 @@
   "Returns the rank of `avatar` in the skill with the given key, or nil if the
   skill has not been learned."
   (gethash skill-key (skills avatar)))
+
+(defun match-skills (tokens avatar)
+  (keep-if #'(lambda (key)
+               (let ((skill (find-skill key)))
+                 (when (match-tokens tokens skill)
+                   skill)))
+           (hash-table-keys (skills avatar))))
