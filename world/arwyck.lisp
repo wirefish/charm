@@ -75,7 +75,7 @@
   (pose "is nearby, poking through a stack of ore.")
   (full "Marigold is a cheerful, rosy-cheeked dwarven woman who looks strong
     enough to crush rocks. Her leather garments are streaked with soot.")
-  (teaches '(mining)))
+  (teaches '(mining smelting)))
 
 (defproto mining-vendor (vendor)
   (brief "Hermetch the Bald")

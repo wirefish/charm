@@ -8,7 +8,15 @@
     have a suitable mining tool equipped.")
   (level 1)
   (max-rank 100)
-  (cost '(:karma 5)))
+  (cost '(:karma 3)))
+
+(defskill smelting
+  (name "smelting")
+  (summary "Allows you to smelt ore, producing pure metal ingots which can be
+    used to craft useful items. You must be near a forge in order to smelt.")
+  (level 1)
+  (max-rank 100)
+  (cost '(:karma 2)))
 
 ;;; Tools.
 
