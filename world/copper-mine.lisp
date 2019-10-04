@@ -70,7 +70,8 @@ mine.
     support the low ceiling."))
 
 (deflocation tunnel-1 (tunnel-room)
-  (exits ((rough-tunnel :south shaft-bottom :west tunnel-3 :east tunnel-10))))
+  (exits ((rough-tunnel :south shaft-bottom :west tunnel-3
+                        :east tunnel-10 :north tunnel-2))))
 
 (deflocation tunnel-2 (tunnel-room)
   (exits ((rough-tunnel :south tunnel-1)))
