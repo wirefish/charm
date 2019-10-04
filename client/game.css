@@ -125,6 +125,10 @@ a:link {
     background-color: #af2f2f;
 }
 
+.energybar .statvalue {
+    background-color: #afa800;
+}
+
 .manabar .statvalue {
     background-color: #2f5caf;
 }
@@ -232,31 +236,35 @@ a:link {
 
 #player_bars {
     position: absolute;
+    display: flex;
+    flex-flow: row nowrap;
     left: 80px;
     top: 28px;
     height: 18px;
 }
 
+#player_bars > div {
+    flex: 0 0 25%;
+}
+
 #player_bars .statbar {
-    display: inline-block;
-    width: 33%;
+    margin: 0 3px;
     height: 18px;
     border-radius: 7px;
+    text-align: center;
+    cursor: pointer;
+    overflow: hidden;
 }
 
 #player_bars .statbar span {
-    font: 9pt artifika;
-    width: 33%;
-    top: 1px;
-    text-align: center;
-    position: absolute;
-    cursor: pointer;
+    position: relative;
+    top: -18px;
+    line-height: 18px;
 }
 
 #player_bars .statvalue {
     width: 0%;
     height: 18px;
-    border-radius: 7px;
 }
 
 /* Other entities in the player's location */

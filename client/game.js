@@ -162,8 +162,9 @@ function setIcon(element, icon)
 function updateBar(id, current, max)
 {
     var p = max ? Math.min(100, 100.0 * current / max) : 0;
-    document.getElementById(id).children[1].style.width = p + "%";
-    document.getElementById(id).children[0].innerHTML = current + "&thinsp;/&thinsp;" + max;
+    var bar = document.getElementById(id);
+    bar.children[0].style.width = p + "%";
+    bar.children[1].innerHTML = current + "&thinsp;/&thinsp;" + max;
 }
 
 function updatePlayerBio(name, icon, level, race)
@@ -272,6 +273,8 @@ MessageHandler.prototype.updateAvatar = function(properties)
                         this.avatar.level, this.avatar.race);
     if (properties.health || properties.max_health)
         updateBar('player_health', this.avatar.health, this.avatar.max_health);
+    if (properties.energy || properties.max_energy)
+        updateBar('player_energy', this.avatar.energy, this.avatar.max_energy);
     if (properties.mana || properties.max_mana)
         updateBar('player_mana', this.avatar.mana, this.avatar.max_mana);
     if (properties.xp || properties.xp_required)
