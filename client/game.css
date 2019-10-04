@@ -237,18 +237,18 @@ a:link {
 #player_bars {
     position: absolute;
     display: flex;
+    justify-content: space-between;
     flex-flow: row nowrap;
     left: 80px;
-    top: 28px;
+    top: 30px;
     height: 18px;
 }
 
 #player_bars > div {
-    flex: 0 0 25%;
+    flex: 0 0 24%;
 }
 
 #player_bars .statbar {
-    margin: 0 3px;
     height: 18px;
     border-radius: 7px;
     text-align: center;
