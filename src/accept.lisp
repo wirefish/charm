@@ -5,7 +5,7 @@
   to `args`."
   (setf (pending-offer actor) (cons fn args)))
 
-(defcommand (actor "accept")
+(defcommand (actor ("accept" "ac"))
   "Accept whatever was most recently offered to you. The offer could be for any
   number of things, such as a quest, a trade, or a party invitation. You can
   have at most one active offer at a time; an offer is canceled when you move or
