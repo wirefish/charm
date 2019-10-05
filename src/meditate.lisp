@@ -6,12 +6,23 @@
 (defevent meditate (actor))
 
 (defmethod do-meditate (actor)
-  (show-text actor "You begin to meditate.")
-  (with-delay (3)
-    (show-text actor "Your meditation is complete.")
-    (notify-observers (location actor) #'did-meditate actor)))
+  (show-text actor "Your meditation is complete."))
+
+(defmethod do-meditate :after (actor)
+  (notify-observers (location actor) #'did-meditate actor))
+
+(defbehavior meditate-behavior (actor)
+    ()
+  (:start
+   (show-text actor "You begin to meditate.")
+   (change-state :finish 3))
+  (:finish
+   (do-meditate actor)
+   (remove-behavior actor :activity))
+  (:stop
+   (show-text actor "Your meditation has been interrupted.")))
 
 (defcommand (actor "meditate")
   "Use the meditate command to spend a few moments focusing your mind. This
   action may have side effects depending on your location."
-  (do-meditate actor))
+  (start-behavior actor :activity #'meditate-behavior))
