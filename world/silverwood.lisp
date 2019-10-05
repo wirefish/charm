@@ -17,7 +17,7 @@
     down upon unsuspecting prey.")
   (icon 'long-legged-spider)
   (level 1)
-  (attacks '(giant-spider-bite))
+  (attacks (giant-spider-bite))
   (entry-pose "drops down from the branches above."))
 
 ;; FIXME: drops [(currency/silver 0.5 1 3)]])

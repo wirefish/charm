@@ -1,35 +1,38 @@
 (in-package :charm)
 
 (defmacro defbehavior (name (actor &rest args) (&rest vars) &body states)
-  "Defines a function `name` with arguments `actor` and `args`. When called, the
+  "Defines a function `name` with arguments `actor . args`. When called, the
   function begins running a behavior on `actor` and returns a closure that can
-  be called to stop the behavior. Each instance of the behavior has local
-  variables `vars` which can be initialized based on `args`. Each state is
+  be called to change the behavior's state. Each instance of the behavior has
+  local variables `vars` which can be initialized based on `args`. Each state is
   similar to a case clause; it comprises a state name (typically a keyword) and
   a sequence of forms to execute when entering that state. Within a state, the
   function `change-state` can be called to transition to a new state; it takes a
-  required `state` argument and an keyword `delay` argument that specifies a
+  required `state` argument and an optional `delay` argument that specifies a
   delay in seconds before entering the new state. The special :stop state is
-  executed when the cancel closure is run, and must not initiate a transition to
-  any other state."
+  entered to stop the behavior; it must not initiate a transition to any other
+  state, and subsequent state change requests will be ignored."
   (let ((event (gensym))
+        (stopped (gensym))
         (state (gensym))
         (delay (gensym)))
     `(defun ,name (,actor ,@args)
-       (let (,@vars ,event)
+       (let (,@vars ,event ,stopped)
          (labels ((change-state (,state &optional ,delay)
-                    (if ,delay
-                        (setf ,event (as:delay
-                                      #'(lambda () (change-state ,state))
-                                      :time ,delay))
-                        (progn
-                          (format-log :debug "~a changing state to ~a" ,actor ,state)
-                          (case ,state ,@states)))))
+                    (when (not ,stopped)
+                      (if ,delay
+                          (setf ,event (as:delay
+                                        #'(lambda () (change-state ,state))
+                                        :time ,delay))
+                          (progn
+                            (format-log :debug "~a changing state to ~a" ,actor ,state)
+                            (case ,state ,@states))))))
            (change-state ,(first (first states)))
-           (lambda (&optional (,state :stop) ,delay)
+           (lambda (,state &optional ,delay)
              (when (and ,event (not (as:event-freed-p ,event)))
                (as:free-event ,event))
-             (change-state ,state ,delay)))))))
+             (change-state ,state ,delay)
+             (when (eq ,state :stop) (setf ,stopped t))))))))
 
 (defun start-behavior (actor key behavior &rest args)
   "Starts running `behavior` for `actor`, associating it with an arbitrary
@@ -46,7 +49,7 @@
   (let ((closures (mapcar #'(lambda (args)
                               (apply behavior actor args))
                           arglists)))
-    (push (cons key #'(lambda (&optional (state :stop) delay)
+    (push (cons key #'(lambda (state &optional delay)
                         (dolist (closure closures)
                           (funcall closure state delay))))
           (behaviors actor))))
@@ -69,13 +72,14 @@
   "Stops running a behavior associated with `key` for `actor`."
   (with-slots (behaviors) actor
     (when-let ((entry (assoc key behaviors)))
-      (format-log :debug "stopping behavior ~a for ~a" key actor)
+      (format-log :info "stopping behavior ~a for ~a" key actor)
       (setf behaviors (delete (car entry) behaviors :key #'car))
-      (funcall (cdr entry) :stop))))
+      (funcall (cdr entry) :stop)
+      key)))
 
 (defun stop-all-behaviors (actor)
   (loop for (key . closure) in (behaviors actor)
         do
-           (format-log :debug "stopping behavior ~a for ~a" key actor)
+           (format-log :info "stopping behavior ~a for ~a" key actor)
            (funcall closure :stop))
   (setf (behaviors actor) nil))

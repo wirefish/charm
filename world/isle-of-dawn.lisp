@@ -914,6 +914,11 @@
   (full "Tangled vines and weeds make it difficult to move through this area.")
   (surface :weeds))
 
+(defproto lashling-tendril (natural-weapon)
+  (brief "a thorny tendril")
+  (damage-type :slashing)
+  (attack-verb "whips"))
+
 (defproto lashling (monster)
   (brief "a lashling")
   (pose "flails its tendrils in a menacing display.")
@@ -922,6 +927,7 @@
     protrude from the ends of its leafy, tentacle-like appendages.")
   (entry-pose "emerges from beneath the weeds.")
   (level 0)
+  (attacks (lashling-tendril))
   (respawn-delay 30))
 
 (defmethod do-kill :after ((actor avatar) (target lashling))

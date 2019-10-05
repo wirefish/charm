@@ -100,7 +100,17 @@
 (defmethod do-exit-location :after ((actor combatant) location exit)
   ;; FIXME: where should this go? Should target/opponents be part of the
   ;; autoattack/combat behavior?
-  (setf (opponents actor) nil))
+  (when (opponents actor)
+    (show-text actor "You are no longer in combat.")
+    (setf (opponents actor) nil)))
+
+(defmethod did-exit-location ((observer combatant) actor location exit)
+  (when (member actor (opponents observer))
+    (deletef (opponents observer) actor)
+    (when (eq actor (attack-target observer))
+      ;; FIXME: should be more general so monsters can switch targets and keep
+      ;; attacking.
+      (stop-behavior observer :activity))))
 
 (defmethod did-exit-location ((observer avatar) actor location exit)
   ;; TODO: handle exit-specific messages.
@@ -112,7 +122,8 @@
                    (if exit
                        (format nil "exits to the ~(~a~)." (direction exit))
                        "disappears into thin air!")))
-    (remove-neighbor observer actor)))
+    (remove-neighbor observer actor))
+  (call-next-method))
 
 ;;;
 

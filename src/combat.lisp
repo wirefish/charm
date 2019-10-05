@@ -31,16 +31,6 @@
 ;;; Functions that determine the actual effect of combat modifiers when applied
 ;;; to an attack.
 
-(defun relative-level-ratio (attacker-level target-level)
-  (- 1
-     (/ (- target-level attacker-level)
-        (max 1 (+ target-level attacker-level)))))
-
-(defun opposed-modifier-ratio (attack-modifier defend-modifier)
-  (- 1
-     (/ (- defend-modifier attack-modifier)
-        (max 1 (+ defend-modifier attack-modifier)))))
-
 (defun offense-modifier (attacker attack)
   "Returns the amount by which damage from `attack` is increased based on the
   associated attribute of `attacker`."
@@ -104,13 +94,6 @@
   ;; base 5%, 20 evasion -> 1% increase, up to 10% at 150 evasion
   (* 0.05 (1+ (diminish (* 0.01 evasion)))))
 
-(defun reduce-health (target amount)
-  (setf (health target)
-        (max 0 (- (health target) amount))))
-
-(defun deadp (target)
-  (= (health target) 0))
-
 ;;; Functions that announce combat events to observers.
 
 (defun announce-miss (attacker target attack)
@@ -165,6 +148,25 @@
                  (describe-brief attack)
                  amount))))
 
+;;;
+
+(defun in-combat-p (actor)
+  (opponents actor))
+
+(defun deadp (actor)
+  (= (health actor) 0))
+
+(defun exit-combat-with-target (attacker target)
+  (deletef (opponents attacker) target)
+  (format-log :info "exit-combat ~a ~a ~a" attacker target (opponents attacker))
+  (if (opponents attacker)
+      (progn
+        (setf (attack-target attacker) (select-target attacker))
+        (change-behavior-state attacker :activity :select-attack))
+      (progn
+        (setf (attack-target attacker) nil)
+        (stop-behavior attacker :activity))))
+
 ;;; Several events are associated with combat. The `kill` event occurs when
 ;;; `actor` kills `victim`. This can be via direct damage or condition damage,
 ;;; e.g. damage over time associated with an aura. Note that `did-kill`
@@ -179,13 +181,12 @@
     (replace-in-contents (location actor) victim corpse)
     (notify-observers (location actor) #'did-kill actor corpse)))
 
-(defmethod do-kill (actor victim)
-  (when (eq (attack-target actor) victim)
-    ;; TODO: Select another opponent if possible.
-    (setf (attack-target actor) nil))
-  (setf (attack-target victim) nil)
-  (setf (assist-target victim) nil)
-  (setf (opponents victim) nil))
+(defmethod do-kill (attacker victim)
+  (exit-combat-with-target attacker victim)
+  (setf (attack-target victim) nil
+        (assist-target victim) nil
+        (opponents victim) nil)
+  (stop-all-behaviors victim))
 
 (defmethod do-kill ((actor avatar) victim)
   (call-next-method)
@@ -202,6 +203,20 @@
 (defmethod did-kill ((observer avatar) actor corpse)
   (update-neighbor observer corpse))
 
+;;; The `inflict-damage` event occurs when `actor` causes `amount` damage to
+;;; `target` due to `attack`.
+
+(defevent inflict-damage (actor target attack amount))
+
+(defmethod do-inflict-damage (actor target attack amount)
+  (announce-hit actor target attack amount)
+  (setf (health target) (max 0 (- (health target) amount)))
+  (when (deadp target)
+    (kill actor target)))
+
+(defmethod do-inflict-damage :after (actor (target avatar) attack amount)
+  (update-avatar target :health (health target)))
+
 ;;; The `attack` event occurs when `actor` uses a harmful `attack` against
 ;;; `target`.
 
@@ -210,6 +225,7 @@
   (and (not (eq actor target))
        (typep target 'combatant)
        (not (deadp target))
+       (eq (location target) (location actor))
        (or (eq (attitude actor) :neutral)
            (not (eq (attitude actor) (attitude target))))))
 
@@ -235,11 +251,7 @@
            ;; A hit for zero damage is a resist.
            (announce-resist attacker target attack)
            ;; Apply damage to the target.
-           (let ((amount (round-random amount)))
-             (announce-hit attacker target attack amount)
-             (reduce-health target amount)
-             (when (deadp target)
-               (kill attacker target))))))))
+           (inflict-damage attacker target attack amount))))))
 
 (defmethod do-attack :around (actor target attack)
   (when (query-observers (location actor) #'can-attack actor target attack)
@@ -248,36 +260,47 @@
     (notify-observers (location actor) #'did-attack actor target attack)))
 
 (defmethod do-attack (actor target attack)
+  (format-log :debug "~a attacks ~a with ~a" actor target attack)
   (resolve-attack actor target attack))
+
+;;; The combat behavior is running whenever a combatant is in combat.
+
+(defbehavior combat (actor)
+    (next-attack)
+
+  ;; Select the next attack to execute against the current target. If there is
+  ;; no target or no attack, re-enter this state after a short delay.
+  (:select-attack
+   (format-log :info "select-attack ~a ~a" actor (attack-target actor))
+   (let ((target (attack-target actor)))
+     (setf next-attack (and target (select-attack actor target)))
+     (if next-attack
+         (change-state :attack (attack-delay next-attack))
+         (change-state :select-attack 5))))
+
+  ;; Attacks the current target with the previously-selected attack, then
+  ;; selects the next attack.
+  (:attack
+   (when-let ((target (attack-target actor)))
+     (attack actor target next-attack))
+   (change-state :select-attack))
+
+  ;; Exit combat.
+  (:stop
+   (show-text actor "You are no longer in combat.")))
+
+;;;
+
+(defmethod do-attack :after (actor (target monster) attack)
+  (when (and (not (deadp target))
+             (not (in-combat-p target)))
+    (stop-behavior target :activity)
+    (add-opponent target actor)
+    (setf (attack-target target) actor)
+    (start-behavior target :activity #'combat)))
 
 ;;; The `attack` command sets the default target for subsequent attacks and
 ;;; begins autoattacking the target.
-
-(defbehavior autoattack (actor)
-    ()
-  (:autoattack
-   (when-let ((target (attack-target actor)))
-     (let ((attack (select-attack actor target)))
-       (attack actor target attack)
-       (change-state :autoattack (attack-delay attack)))))
-  (:stop
-   (when-let ((target (attack-target actor)))
-     (show-text actor "You stop attacking ~a." (describe-brief target))
-     (setf (attack-target actor) nil))))
-
-(defun begin-attacking (actor target)
-  "Called when `actor` switches its attack-target to `target`."
-  (if (eq target (attack-target actor))
-      (show-text actor "You are already attacking ~a." (describe-brief target))
-      (progn
-        ;; Cancel any previous activity, such as autoattacking a different target.
-        (stop-behavior actor :activity)
-        ;; Change targets and make sure the new target is an opponent.
-        (setf (attack-target actor) target)
-        (setf (opponents actor) (adjoin target (opponents actor)))
-        ;; Start a new autoattack activity.
-        (show-text actor "You begin attacking ~a." (describe-brief target))
-        (start-behavior actor :activity #'autoattack))))
 
 (defcommand (actor ("attack" "at") target)
   "Begin attacking an enemy and make it your default target for special attacks.
@@ -288,7 +311,18 @@
                                          (contents (location actor))))))
     (case (length matches)
       (0 (show-text actor "You don't see anything like that to attack."))
-      (1 (begin-attacking actor (first matches)))
+      (1
+       (let ((target (first matches)))
+         (if (eq target (attack-target actor))
+             (show-text actor "You are already attacking ~a." (describe-brief target))
+             (progn
+               (show-text actor "You begin attacking ~a." (describe-brief target))
+               (add-opponent actor target)
+               (let ((prev-target (attack-target actor)))
+                 (setf (attack-target actor) target)
+                 (if prev-target
+                     (change-behavior-state actor :activity :select-attack)
+                     (start-behavior actor :activity #'combat)))))))
       (t (show-text actor "Do you want to attack ~a?"
                     (format-list (mapcar #'describe-brief matches) :conjunction "or"))))))
 
@@ -329,3 +363,13 @@
       (1 (set-assist-target actor (first matches)))
       (t (show-text actor "Do you want to assist ~a?"
                     (format-list (mapcar #'describe-brief matches) :conjunction "or"))))))
+
+(defcommand (actor "opp")
+  (if (attack-target actor)
+      (show-text actor "Your current attack target is ~a."
+                 (describe-brief (attack-target actor)))
+      (show-text actor "You have no current attack target."))
+  (if (opponents actor)
+      (show-text actor "You are currently in combat with ~a."
+                 (format-list (mapcar #'describe-brief (opponents actor))))
+      (show-text actor "You are not currently in combat with anything.")))

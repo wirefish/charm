@@ -20,8 +20,18 @@
   (auras nil :instance) ; list of (aura . expiration-time)
   (attack-target nil :instance)
   (assist-target nil :instance)
-  (opponents nil :instance)
-  (looters nil :instance))
+  (opponents nil :instance))
+
+;;;
+
+(defmethod encode-slot ((name (eql 'attack-target)) value)
+  nil)
+
+(defmethod encode-slot ((name (eql 'assist-target)) value)
+  nil)
+
+(defmethod encode-slot ((name (eql 'opponents)) value)
+  nil)
 
 ;;; Primary attributes have a base value that increases automatically with
 ;;; level. They can be modified by race, equipment, traits, and auras.
@@ -122,3 +132,17 @@
     against `target`.")
   (:method (attacker target)
     nil))
+
+(defgeneric select-target (attacker)
+  (:documentation "Called to select the next target for attacks from
+    `attacker`.")
+  (:method (attacker)
+    nil))
+
+(defgeneric add-opponent (actor opponent)
+  (:documentation "Called when `actor` enters combat with `opponent`."))
+
+;; FIXME: monsters will keep threat
+
+(defmethod add-opponent ((actor combatant) opponent)
+  (setf (opponents actor) (adjoin opponent (opponents actor))))

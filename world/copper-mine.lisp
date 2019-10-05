@@ -35,7 +35,7 @@ mine.
   (brief "a kobold worker")
   (icon 'kobold)
   (level 1)
-  (attacks '(kobold-claw))
+  (attacks (kobold-claw))
   (respawn-delay '(30 60)))
 
 (defproto kobold-shortsword (one-handed-weapon)
@@ -48,7 +48,7 @@ mine.
   (brief "a kobold guard")
   (icon 'kobold)
   (level 2)
-  (attacks '(kobold-shortsword))
+  (attacks (kobold-shortsword))
   (respawn-delay '(45 90)))
 
 (defproto kobold-spear (two-handed-weapon)
@@ -61,7 +61,7 @@ mine.
   (brief "the kobold chieftain")
   (icon 'kobold)
   (level 3)
-  (attacks '(kobold-spear))
+  (attacks (kobold-spear))
   (respawn-delay '(60 120)))
 
 ;;; entry

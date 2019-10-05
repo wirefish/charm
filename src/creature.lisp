@@ -9,6 +9,10 @@
 
 ;;;
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defmethod transform-slot-init-form (def-name (slot-name (eql 'attacks)) init-form)
+    `(list ,@(mapcar #'(lambda (class) `(make-instance ',class)) init-form))))
+
 (defproto monster (combatant creature)
   (attacks nil))
 

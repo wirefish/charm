@@ -228,10 +228,11 @@
      (when (or (< health max-health)
                (< energy max-energy)
                (< mana max-mana))
-       (let ((regen (floor (/ (get-modifier :resilience avatar) 20))))
-         (setf health (min (+ health (base-health race) regen) max-health)
-               energy (min (+ energy 10 regen) max-energy)
-               mana (min (+ mana (base-mana race) regen) max-mana))
+       (let ((bonus (floor (/ (get-modifier :resilience avatar) 20)))
+             (scale (if (opponents avatar) 1/4 1)))
+         (setf health (min max-health (+ health (floor (* scale (+ (base-health race) bonus)))))
+               energy (min max-energy (+ energy 10 bonus))
+               mana (min max-mana (+ mana (floor (* scale (+ (base-mana race) bonus))))))
          (update-avatar avatar
                         :health health
                         :energy energy

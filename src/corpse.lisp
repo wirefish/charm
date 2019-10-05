@@ -2,15 +2,15 @@
 
 (defproto corpse (entity container)
   (brief "a corpse of ")
-  (pose "lies quietly nearby.")
+  (pose "lies nearby.")
   (full "The corpse is decaying rather quickly.")
-  (icon :tombstone)
+  (icon 'tombstone)
   (of nil :instance))
 
 (defun make-corpse (deceased)
-  (make-instance 'corpse :id (id deceased) :of deceased))
+  (make-instance 'corpse :id (id deceased) :of (describe-brief deceased)))
 
 (defmethod describe-brief ((entity corpse) &rest args)
   (concatenate 'string
                (apply #'format-noun (brief entity) args)
-               (describe-brief (of entity))))
+               (of entity)))
