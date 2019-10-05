@@ -8,7 +8,6 @@
   (base-energy 100)
   (base-mana 0) ; per level
   (level 0)
-  (attacks nil)
   (modifiers (make-hash-table))
   (attitude :neutral)
   ;;
@@ -22,8 +21,7 @@
   (attack-target nil :instance)
   (assist-target nil :instance)
   (opponents nil :instance)
-  (looters nil :instance)
-  (attack-timer nil :instance))
+  (looters nil :instance))
 
 ;;; Primary attributes have a base value that increases automatically with
 ;;; level. They can be modified by race, equipment, traits, and auras.
@@ -102,11 +100,25 @@
         (max-mana entity) (compute-max-mana entity)
         (mana entity) (max-mana entity)))
 
-;;; Combatants execute attacks in order to damage other combatants.
+;;; Combatants execute attacks in order to damage other combatants. An object
+;;; that represents an attack must have corresponding methods for the following
+;;; functions:
 
 (defgeneric attack-damage (attack attacker)
   (:documentation "Returns a cons (min . max) representing the inherent damage
     of `attack` when executed by `attacker`."))
 
+(defgeneric attack-delay (attack)
+  (:documentation "Returns the number of seconds to delay before executing
+    `attack`."))
+
 (defgeneric damage-type (attack)
   (:documentation "Returns the type of damage caused by `attack`."))
+
+;;;
+
+(defgeneric select-attack (attacker target)
+  (:documentation "Called to select the next attack that `attacker` will execute
+    against `target`.")
+  (:method (attacker target)
+    nil))

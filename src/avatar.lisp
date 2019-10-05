@@ -120,9 +120,6 @@
 (defmethod encode-slot ((name (eql 'session)) value)
   nil)
 
-(defmethod encode-slot ((name (eql 'attack-timer)) value)
-  nil)
-
 ;;; Define how an avatar is described.
 
 (defmethod describe-brief ((subject avatar) &rest args)
@@ -269,3 +266,17 @@
       (show-notice avatar "Your rank in ~a has increased to ~d!"
                    (name skill)
                    (floor (+ new-rank))))))
+
+;;; Select an avatar's next (auto) attack.
+
+(defproto fist (natural-weapon)
+  (brief "a fist")
+  (damage-type :crushing)
+  (attack-verb "bashes")
+  (damage-scale 0.5))
+
+(defparameter *default-attack* (make-instance 'fist))
+
+(defmethod select-attack ((attacker avatar) target)
+  (or (gethash :main-hand (equipment attacker))
+      *default-attack*))

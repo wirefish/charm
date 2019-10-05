@@ -165,26 +165,6 @@
                  (describe-brief attack)
                  amount))))
 
-;;; Called to allow `attacker` to select the next attack to use against `target`.
-
-(defgeneric select-attack (attacker target))
-
-(defproto fist (natural-weapon)
-  (brief "a fist")
-  (damage-type :crushing)
-  (attack-verb "bashes")
-  (damage-scale 0.5))
-
-(defparameter *default-attack* (make-instance 'fist))
-
-(defmethod select-attack ((attacker combatant) target)
-  (or (first (attacks attacker))
-      *default-attack*))
-
-(defmethod select-attack ((attacker avatar) target)
-  (or (gethash :main-hand (equipment attacker))
-      *default-attack*))
-
 ;;; Several events are associated with combat. The `kill` event occurs when
 ;;; `actor` kills `victim`. This can be via direct damage or condition damage,
 ;;; e.g. damage over time associated with an aura. Note that `did-kill`
