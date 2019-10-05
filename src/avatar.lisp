@@ -226,7 +226,7 @@
 
 (defbehavior regenerate (avatar)
     ()
-  (:start
+  (:regenerate
    (with-slots (race health max-health energy max-energy mana max-mana) avatar
      (when (or (< health max-health)
                (< energy max-energy)
@@ -239,7 +239,7 @@
                         :health health
                         :energy energy
                         :mana mana))))
-   (change-state :start 3)))
+   (change-state :regenerate 3)))
 
 (defmethod do-enter-world :after ((avatar avatar) location)
   (start-behavior avatar :regenerate #'regenerate))
