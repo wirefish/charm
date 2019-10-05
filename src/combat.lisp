@@ -273,22 +273,31 @@
 ;;; The `attack` command sets the default target for subsequent attacks and
 ;;; begins autoattacking the target.
 
-(defun autoattack (actor)
-  (when-let ((target (attack-target actor)))
-    (attack actor target (select-attack actor target))
-    (setf (attack-timer actor) (as:delay #'(lambda () (autoattack actor)) :time 3))))
+(defbehavior autoattack (actor)
+    ()
+  (:autoattack
+   (when-let ((target (attack-target actor)))
+     (let ((attack (select-attack actor target)))
+       (attack actor target attack)
+       (change-state :autoattack (attack-delay attack)))))
+  (:stop
+   (when-let ((target (attack-target actor)))
+     (show-text actor "You stop attacking ~a." (describe-brief target))
+     (setf (attack-target actor) nil))))
 
 (defun begin-attacking (actor target)
   "Called when `actor` switches its attack-target to `target`."
   (if (eq target (attack-target actor))
       (show-text actor "You are already attacking ~a." (describe-brief target))
       (progn
+        ;; Cancel any previous activity, such as autoattacking a different target.
+        (stop-behavior actor :activity)
+        ;; Change targets and make sure the new target is an opponent.
         (setf (attack-target actor) target)
         (setf (opponents actor) (adjoin target (opponents actor)))
-        (when (and (attack-timer actor) (not (as:event-freed-p (attack-timer actor))))
-          (as:free-event (attack-timer actor)))
-        (setf (attack-timer actor) (as:delay #'(lambda () (autoattack actor)) :time 3))
-        (show-text actor "You begin attacking ~a." (describe-brief target)))))
+        ;; Start a new autoattack activity.
+        (show-text actor "You begin attacking ~a." (describe-brief target))
+        (start-behavior actor :activity #'autoattack))))
 
 (defcommand (actor ("attack" "at") target)
   "Begin attacking an enemy and make it your default target for special attacks.

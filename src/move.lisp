@@ -98,10 +98,9 @@
   (did-exit-location exit actor location exit))
 
 (defmethod do-exit-location :after ((actor combatant) location exit)
-  (when (attack-target actor)
-    (show-text actor "You stop attacking ~a." (describe-brief (attack-target actor)))
-    (setf (attack-target actor) nil)
-    (setf (opponents actor) nil)))
+  ;; FIXME: where should this go? Should target/opponents be part of the
+  ;; autoattack/combat behavior?
+  (setf (opponents actor) nil))
 
 (defmethod did-exit-location ((observer avatar) actor location exit)
   ;; TODO: handle exit-specific messages.

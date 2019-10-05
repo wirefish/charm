@@ -38,6 +38,25 @@
   (format-log :debug "starting behavior ~a (~a) for ~a" key behavior actor)
   (push (cons key (apply behavior actor args)) (behaviors actor)))
 
+(defun start-parallel-behaviors (actor key behavior &rest arglists)
+  "Starts running multiple parallel instances of `behavior`, where each arglist
+  defines the arguments for one instance. The closure stored under `key` will
+  change the state of all instances when called."
+  (format-log :debug "starting parallel behaviors ~a (~a) for ~a" key behavior actor)
+  (let ((closures (mapcar #'(lambda (args)
+                              (apply behavior actor args))
+                          arglists)))
+    (push (cons key #'(lambda (&optional (state :stop) delay)
+                        (dolist (closure closures)
+                          (funcall closure state delay))))
+          (behaviors actor))))
+
+(defun change-behavior-state (actor key state &optional delay)
+  "Changes the state of a behavior from outside the behavior's normal state
+  machine."
+  (when-let ((entry (assoc key (behaviors actor))))
+    (funcall (cdr entry) state delay)))
+
 (defun remove-behavior (actor key)
   "Removes a behavior associated with `key` for `actor` without sending it any
   state change. This is typically used from within the behavior itself to
