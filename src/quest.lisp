@@ -184,7 +184,9 @@ Four events occur during the lifetime of a quest:
 
 (defun advance-quest (avatar quest &optional (amount 1))
   (let ((state (quest-active-p avatar quest)))
-    (when (and state (>= (incf (cdr state) amount) 1))
+    (when (and state
+               (< (cdr state) 1)
+               (>= (incf (cdr state) amount) 1))
       (show-notice avatar "You have completed the objectives for the quest ~s!" (name quest))
       t)))
 
