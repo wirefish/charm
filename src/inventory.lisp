@@ -360,9 +360,9 @@
     (call-next-method)))
 
 (defmethod do-unequip-item :around (actor (item container) equipment-slot)
-  (if (> (length (contents container)) 0)
+  (if (> (length (contents item)) 0)
       (show-text actor "You cannot unequip ~a until it is empty."
-                 (describe-brief container :article :definite))
+                 (describe-brief item :article :definite))
       (call-next-method)))
 
 (defmethod do-unequip-item (actor item equipment-slot)
