@@ -4,33 +4,31 @@ TO DO:
 
 - add command to leave game
 
-- add drop command
+- generalize entry/exit messages to allow for e.g. a "X drops Y." message if Y
+  enters due to having been dropped
 
-- combat
+- generalize skill rank up, e.g. for proficiencies, using same model as
+  gathering
 
-- skills
+- deduct karma cost when learning skills
 
-- guilds / guildmasters
+- allow unlearning skills at the trainers who teach them
 
-- port other regions
+- vendors
 
-- map icons e.g. for ship
+- add combat abilities and spells via learning skills
 
-- update left pane when entities enter/exit
-
-- update health/spirit/xp bars
-
-- equip items
+- crafting
 
 ========================================
 
 COMBAT
 
-Combat is a mode. When an entity enters combat, its allowed set of actions is
-limited until it leaves combat. There are three ways to leave combat: (1) die,
-(2) flee, or (3) all your opponents leave combat.
+Combat is an :activity. When an entity enters combat, its allowed set of actions
+is limited until it leaves combat. There are three ways to leave combat: (1)
+die, (2) flee, or (3) all your opponents leave combat.
 
-While in combat, an avatar has the following fields set:
+While in combat, a combatant has the following fields set:
 
 - `attack-target` is the ID of the entity currently being targeted by
   autoattacks, and the default target for special attacks.
@@ -39,88 +37,77 @@ While in combat, an avatar has the following fields set:
   helpful abilities.
 
 - `opponents` is a list of the IDs of all enemies with whom the avatar is in
-  combat.
+  combat. For a monster it is a list of (target-id . threat-level).
 
-- `attack-timer` is a non-nil timer event used to perform autoattacks.
+In addition, the combatant's :activity behavior implements its periodic attacks.
+For an avatar these are auto-attacks with the main-hand weapon.
 
-While in combat, a mob has the following fields set:
-
-- `opponents` is an alist of pairs (target-id . threat-level), sorted by
-  decreasing threat-level. The mob decides which opponent to target with each
-  attack, by default choosing the one with the highest threat. Every entity with
-  whom the mob is in combat will appear in this list.
-
-- `attack-timer` is a non-nil timer event used to perform attacks. At each tick
-  the mob decides which of its attacks to perform.
-
-- `looters` is a list of the IDs of actors who may loot the mob's corpse after
-  it dies. This includes everyone who has been in combat with the mob since it
-  spawned or reset.
+For a monster, during each auto-attack cycle the monster may select a different
+target (based on threat-level) and/or a different attack, based on how it
+implements the select-attack generic function.
 
 An avatar enters combat using either the `attack` command or the `assist`
-command, or when an aggressive mob attacks on its own.
+command, or when an aggressive monster attacks on its own.
 
 The `attack` command sets `attack-target`, adds the target to `opponents` if it
-isn't already there, and starts `attack-timer` if it is nil.
+isn't already there, and starts the combat behavior if it isn't already running.
 
 The `assist` command sets `assist-target`, sets `attack-target` (if not already
 set) to that of the assisted entity, and merges the assisted entity's
-`opponents` into the avatar's `opponents`. It also starts `attack-timer` if it
-is nil.
+`opponents` into the avatar's `opponents`. It also starts the combat behavior if
+necessary.
 
 When any entity exits combat:
 
-- Its `attack-timer` is canceled and set to nil.
+- Its :activity behavior is stopped.
 
 - For each entity in its `opponents` list, it is removed from that entity's
   `opponents`.
 
 - Its `opponents`, `attack-target`, and `assist-target` are cleared.
 
-When a mob dies, it exits combat as described aboce. If an avatar's `opponents`
-becomes empty, the avatar exits combat as well. Otherwise a new attack target is
-selected from its remaining opponents.
+When a monster dies, it exits combat as described above. If an avatar's
+`opponents` becomes empty, the avatar exits combat as well. Otherwise a new
+attack target is selected from its remaining opponents.
 
-When an avatar goes unconscious (i.e. reaches 0 health), it exits combat as
-described above. It a mob's `opponents` becomes empty, that mob exits combat as
-well.
+When an avatar dies, it exits combat as described above. It a monster's
+`opponents` becomes empty, that monster exits combat as well.
 
-When an avatar exits the room, every mob in its `opponents` gets a free "attack
+When an avatar attempts to exit a location, monsters in its opponents list have
+the opportunity to block its way via the usual can-exit-location hook. If the
+avatar is allowed to leave, every monster in its `opponents` gets a free "attack
 of opportunity" with bonuses (no block, no dodge, increased crit chance?) before
-the avatar exits combat. (Mobs may block the exit attempt entirely.)
+the avatar actually leaves and exits combat.
 
-Some actions cannot be used in combat:
+Some actions cannot be used in combat (actually, when any :activity behavior is
+running):
 
 - NPC interactions like talk, skill, buy, sell, ...
 
 Performing an action (other than help and social actions like say, yell, chat)
 while in combat:
 
-- uses spirit, based on the action
+- uses energy or mana, based on the action
 
-- triggers a GCD, a cooldown before another combat action can be performed.
+- triggers a cooldown before another combat action can be performed.
 
 Many actions are instant, others take time (e.g. a spell with a cast time)
-before they complete. The GCD begins once the action completes.
+before they complete. The cooldown begins once the action completes. Also,
+auto-attacks are paused during a non-instant action.
 
-The GCD is shown using a small pie/clock widget at the right end of the command
-entry box, or maybe a yellow bar above it? Once it expires maybe a message like
-"You are now ready to perform another action."
+The cooldown is shown using a small pie/clock widget at the right end of the
+command entry box, or maybe a yellow bar above it? Once it expires, maybe show a
+message like "You are now ready to perform another action."
 
-For an avatar, each tick of `attack-timer` performs basic attacks with each
-equipped weapon. The timer is based on the speed of the main-hand weapon. The
-number of attacks per tick for the off-hand weapon is based on its speed
-relative to the main-hand weapon.
+For an avatar with an off-hand weapon, the combat :activity could also perform
+off-hand attacks but using the delay of the main-hand weapon. Or just use the
+larger of the two delays.
 
-A mob defines a basic attack and a set of special attacks. Each special attack
-has an associated cooldown; after being used it cannot be used again until the
-cooldown expires.
+A monster's attacks slot defines a set of possible attacks, each with a
+probability and a cooldown. Each tick it selects its next attack based on the
+probabilities of those that are off cooldown.
 
-For a mob, each tick of `attack-timer` randomly selects either its basic attack
-or a special attack that is off cooldown. It then performs that attack against a
-selected target, which by default is its highest-threat opponent.
-
-Combat actions can be invoked via skill-specific commands (e.g. kick, punch,
+Combat abilities can be invoked via skill-specific commands (e.g. kick, punch,
 bash, ...) or, if spells, via the "cast" command, alias "!". Actually maybe
 everything can be used either way, spells might have a command equivalent (e.g.
 "magmis" for "magic missile"). Also, in "cast", normal token matching rules
@@ -134,46 +121,50 @@ Skill-specific commands don't know up in the generic "help" output, at least
 until you learn them. But the skills appear in "skill list" and typing "help
 <skill>" works.
 
-The spirit cost of a skill is expressed as a fraction of base spirit. Base
-spirit is calculated based on race and level, without accounting for modifiers
-due to auras or equipment. Efficacy is also scaled by level.
+The mana cost of an ability is expressed as a fraction of base mana. Base mana
+is calculated based on race and level, without accounting for modifiers due to
+auras or equipment. Efficacy is also scaled by level.
 
-The idea is that spirit is a generic resource for all actions, physical or
-magical. It could be split into, say, energy for physical and mana for magicial.
-But because of the classless, skill-based system that would make it very
-difficult to gear for a hybrid build with a mix of physical and magical skills.
+Energy cost is a fixed amount, since max energy doesn't scale with level.
 
 ========================================
 
-COMBAT STATS
-
-The overall feel is more toward D&D and less toward WoW. Specifically, the goal
-is to avoid exponential scaling and an overwhelming gear treadmill. Also, keep
-it simple.
+COMBAT ATTRIBUTES
 
 Combat relies on three resources:
 
-- health: Hit points. When they hit zero, a mob dies and an avatar goes
-  unconscious. Regenerates slowly in combat, faster out of combat. Computed
-  based on base-health, level, endurance, traits, and auras.
+- health: Hit points. When they hit zero, you die.Regenerates slowly in combat,
+  faster out of combat. Computed based on base-health, level, and vitality.
 
 - energy: A resource used to perform physical actions, including movement.
-  Regenerates quickly in or out of combat. Computed based on traits and auras.
+  Regenerates quickly in or out of combat. Computed based on base-energy and
+  spirit.
 
 - mana: A resource used to cast spells and perform actions. Regenerates slowly
-  in or out of combat. Computed based on base-mana, level, intellect, traits,
-  and auras.
+  in or out of combat. Computed based on base-mana, level, and insight.
 
-It also relies on a number of modifiers that influence how attacks are resolved:
+In addition to the above resources, armor is a key attribute. It Reduces damage
+from physical and elemental attacks. It is computed by combining (racial)
+natural armor with the armor modifiers of equipment.
 
-- armor: Reduces damage from physical and elemental (a subset of magical)
-  attacks. Computed by summing (racial) natural armor and contributions from
-  equipment, traits, and auras.
+Primary attributes that naturally scale with level:
 
 - strength: Increases physical damage done.
 
-- precision: Increases chance of a critical hit with any physical or magical
-  attack or heal. Defaults to 5%.
+- intellect: Increases elemental and magical damage done.
+
+- vitality: Increases health.
+
+- toughness: Increases armor.
+
+Secondary attributes that do not scale with level:
+
+- willpower: Decreases incoming magical damage.
+
+- compassion: Increases healing done.
+
+- precision: Increases chance of a critical hit with any attack or heal.
+  Defaults to 5%.
 
 - ferocity: Increases multiplier applied to a critical effect. Defaults to 1.5.
 
@@ -181,43 +172,120 @@ It also relies on a number of modifiers that influence how attacks are resolved:
 
 - accuracy: Reduces miss chance. Defaults to 5%.
 
+- spirit: Increases energy.
+
+- insight: Increases mana.
+
 - resilience: Increases regen rate for health, energy, and mana.
 
-- intellect: Increases elemental and magical damage done.
+Attributes occur on equipment and may be modified based on race, traits, and
+auras.
 
-- piety: Increases healing done.
+Each attribute is simply scaled and added to its associated value or modifier,
+sometimes with a cap. For example, every 20 precision increase critical chance
+by 1%, capped at a total of 25% (at 400 precision).
 
-- resistances: damage reduction against different types of attacks. Each value
-  determines the amount of damage nullified from each attack.
+Instead of a hard cap, there could be diminishing returns past some point.
 
-For some modifiers that increase damage done or reduce damage taken, the value
-is computed by just scaling the modifier by some constant. Modifier values
-naturally increase with level, as does damage. Armor, strength, resilience,
-intellect, and piety fall into this group.
+Finally, a combatant may have immunities to different damage types. These are
+just values taken "off the top" from each incoming attack, like DR in D&D.
 
-Armor is just a convenient synonym for "resistance to physical and elemental
-damage" and is broken out because it is so common on armor, and probably needs a
-different scaling factor.
+Armor is different than other attributes for a couple reasons. First, it is
+directly found on armor pieces in quantities directly based on item type (e.g.
+light or heavy armor) and level. Second, toughness (which directly increases
+armor) is subject to the usual modifier bodget for items and it is convenient to
+allow it to scale differently than armor.
 
-The magnitude of a modifier's effect depends on its value and the level of the
-entity to be effected. This means that an item which grants 10 intellect might
-increase damage against level 1 creatures by 10%, but against level 10 creatures
-its effect is diminished.
+========================================
 
------
+CRAFTING
 
-- respawn timer instead of manually doing an event handler, triggers on
-  did-take-item for items or did-kill for creatures.
+Crafting skills have ranks. Crafting something increases your rank, just as with
+gathering.
 
-- monster = creature + combatant
+Each crafting skill includes recipes that are automatically gained based on rank.
 
-- npc = creature + friendly?
+There are also recipes you can discover in the world, e.g. find and read a book,
+if you have high enough rank. So an avatar needs to track these learned recipes
+separately from skill rank.
 
-- remove defentity, use deflocation, defrace, defskill? there won't be many of
-  these and at least defskill is not an entity anyway.
+Crafting skills can chain to allow specialization, e.g.
 
-- clean up slot transforms so they are grouped more naturally with the slot they
-  transform
+    weaponsmithing (100/100 ranks) -> sword crafting
 
-- as above for describe-*. basically split entity subclasses and their core
-  behavior into separate files
+In this case higher-level swords require the specialized skill, whereas
+weaponsmithing lets you make all kinds of (lower-level) weapons.
+
+The actual act of crafting requires an appropriate crafting station, which
+itself must have a high enough "rank" for the recipe to be crafted. Crafting
+stations are scattered around the world; the higher-rank ones may be in
+harder-to-reach places.
+
+Crafting also requires that an appropriate tool be equipped, just as with
+gathering.
+
+The "craft" command lets you say what you want to create, which determines the
+base materials required, and what optional materials you want to add in order to
+increase quality or control attributes of the final item. Learning the effects
+of optional materials is a trial-and-error process, maybe with some hints from
+crafting trainers and the like.
+
+For example:
+
+    "craft iron ingot" -- requires smelting skill, uses 3 iron ore
+
+    "craft iron shortsword with fire shard" -- requires weaponsmithing skill,
+      uses 2 iron ingot and 1 pine lumber as required materials; the fire shard
+      adds fire immunity
+
+    "craft diamond ring with amethyst and turquoise" -- requires jewelcrafting
+      skill, uses a diamond and a gold ingot, the two added materials add e.g.
+      precision and compassion.
+
+Note that multiple additional materials are allowed, each adds some attribute
+according to the item budget. Some added materials instead increase quality.
+(Perhaps a quality increase is required in order to add attributes, if 0-quality
+items have no attribute budget?)
+
+The parser needs to be extended to support "and"- and ","-separated lists in a
+command argument, as in the "with/using" clause of the "craft" command.
+
+After typing "craft", you see a message like "Your attempt to craft ~a will use
+~a. You have a ~d% chance of success. Type `accept` to begin crafting." The
+message lists all the materials used. The success chance is based on your rank
+relative to the required rank, and decreases with each added material. Failure
+has a chance of losing materials.
+
+If you are missing materials, the message says "You are missing the following
+materials needed to craft ~a: ~a." and doesn't offer the craft attempt.
+
+You can use a quantity to craft multiple items, e.g. "craft 99 iron ingots".
+When you do so, the message shows all materials used/missing. The success chance
+is applied for each single item. The time taken scales linearly, or maybe you
+get a speed-up for each item past the first up to some limit. You see a result
+message after each individual item.
+
+When you type "accept" your :activity changes to crafting, which takes a few
+seconds and fails if interrupted. You can use "stop" to stop without failure.
+While crafting, show a "cooldown" bar/widget as with other non-instant tasks.
+
+You can (rarely) proc a free quality upgrade, based on your rank relative to the
+required rank and perhaps attributes of your tool. Your tool can also reduce the
+crafting time.
+
+The materials needed for quality/attributes vary based on item level and general
+type. They are typically crafted items themselves, e.g. a jewel cut from a raw
+gemstone. For example, for accessories you might have a matrix like:
+
+level    quality-1    quality-2    quality-3    quality-4    quality-5
+ 1-10    X
+11-20    X            X
+21-30    X            X            X
+31-40    X            X            X            X
+41-50    X            X            X            X            X
+
+Where X denotes some added material. Note that higher qualities are not
+necessarily available at lower levels. Also, materials for higher qualities
+become *much* harder and more expensive to obtain. Often the material for
+quality N is crafted using, in part, one or more of the material for quality
+N-1.
