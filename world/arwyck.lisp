@@ -83,11 +83,10 @@
   (full "Hermetch lives up to his apellation; his head shines almost as brightly
     as the polished blades of the pickaxes on the rack behind him."))
 
-(defproto simple-forge (entity)
-  (brief "a simple forge")
+(defproto simple-furnace (entity)
+  (brief "a simple furnace")
   (pose "stands in the southeast corner of the room.")
-  (full "The forge can be used by miners to smelt common ore and by blacksmiths
-    to craft simple items."))
+  (full "The furnace can be used to smelt common ore into ingots."))
 
 (deflocation miners-guild (location)
   (brief "Miners' Guild")
@@ -97,7 +96,7 @@
   (domain :indoor)
   (surface :wood)
   (exits ((exit-doorway :west harbor-road-1)))
-  (contents (mining-guildmaster mining-vendor simple-forge copper-pickaxe)))
+  (contents (mining-guildmaster mining-vendor simple-furnace copper-pickaxe)))
 
 ;;; village-square
 

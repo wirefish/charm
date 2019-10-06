@@ -47,8 +47,10 @@
       known.")
    (abilities
     :initform nil :initarg :abilities :reader abilities
-    :documentation "Abilities enabled when this skill is known. These can be
-      spells (for use with the cast command) or standalone commands.")))
+    :documentation "Abilities enabled when this skill is known. This is a list
+      of lists. Each sublist can be one of (:command symbol &optional
+      rank), (:spell symbol &optional rank), or (:recipe item materials-plist
+      &optional rank).")))
 
 ;;; The `defskill` macro creates an instance of class `skill`.
 

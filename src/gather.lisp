@@ -1,13 +1,13 @@
 (in-package :charm)
 
-;;;
+;;; FIXME: move generic tool stuff elsewhere.
 
-(defproto gathering-tool (equipment)
+(defproto tool (equipment)
   (slot :tool)
   (required-skill nil)
   (required-rank 0))
 
-(defmethod do-equip-item :around (actor (item gathering-tool) inventory-slot equipment-slot)
+(defmethod do-equip-item :around (actor (item tool) inventory-slot equipment-slot)
   (let ((rank (skill-rank actor (required-skill item))))
     (cond
       ((null rank)
@@ -19,6 +19,8 @@
                   (name (find-skill (required-skill item)))))
       (t
        (call-next-method)))))
+
+;;;
 
 (defproto resource (stackable-item)
   (required-rank 0))
