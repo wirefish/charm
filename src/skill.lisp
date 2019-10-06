@@ -66,3 +66,33 @@
 
 (defmethod match-tokens (tokens (target skill))
   (match-tokens tokens (name target)))
+
+;;; An ability is something an avatar becomes able do upon learning a skill and
+;;; optionally achieving a required rank. Abilities fall into three categories:
+;;; actions (standalone commands), spells (for use with the `cast` command), and
+;;; recipes (for use with the `craft` command).
+
+(defclass ability ()
+  ((skill
+    :initarg :skill :reader skill
+    :documentation "The key of the skill required in order to use the ability.")
+   (rank
+    :initform nil :initarg :rank :reader rank
+    :documentation "If non-nil, the minimum rank required in order to use the
+      ability.")))
+
+(defgeneric command (ability)
+  (:documentation "Returns the command object associated with `ability`."))
+
+(defclass action (ability)
+  ((command
+    :initarg :command :reader command
+    :documentation "The command enabled by the ability.")))
+
+;;; TODO: move this
+
+(defclass spell (ability)
+  ())
+
+(defmethod command ((ability spell))
+  (find-command "cast"))

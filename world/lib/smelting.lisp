@@ -48,5 +48,7 @@
   (level 1)
   (max-rank 100)
   (cost '(:karma 2))
-  (abilities '((:recipe copper-ingot (copper-ore 3) 0)
-               (:recipe tin-ingot (tin-ore 3) 20))))
+  (abilities
+   (recipe-list smelting
+     (0 copper-ingot (copper-ore 3))
+     (20 tin-ingot (tin-ore 3)))))

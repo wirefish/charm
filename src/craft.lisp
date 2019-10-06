@@ -2,8 +2,28 @@
 
 ;;; A recipe describes the requirements for crafting an item.
 
-(defstruct recipe
-  item skill rank materials)
+(defclass recipe (ability)
+  ((item
+    :initarg :item :reader item
+    :documentation "The item produced by the recipe.")
+   (materials
+    :initarg :materials :reader materials
+    :documentation "The materials required to craft the recipe.")))
+
+(defmethod command ((ability recipe))
+  (find-command "craft"))
+
+(defmacro recipe-list (skill &body specs)
+  "A convenience macro to help create a list of recipes."
+  `(list ,@(mapcar (lambda (spec)
+                     (destructuring-bind (rank item materials) spec
+                       `(make-instance 'recipe
+                                       :skill ',skill
+                                       :rank ,rank
+                                       :item ',item
+                                       :materials ',(loop for (material count) on materials by #'cddr
+                                                          collect (cons material count)))))
+                   specs)))
 
 ;;; A material is an intermediate crafted item.
 
@@ -38,4 +58,5 @@
   without any chance of failure by using the `help:stop` command. Note that, if
   your attempt fails, there is a chance you will lose some of the crafting
   materials you used."
+  (declare (ignore item extra-materials))
   (show-text actor "TBD"))

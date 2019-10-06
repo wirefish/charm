@@ -73,7 +73,7 @@
                        (:file "armor")
                        (:file "vehicle")
                        (:file "mining")
-                       (:file "smelting"))
+                       (:file "smelting")))
              (:file "arwyck")
              (:file "copper-mine")
              (:file "dripping-caverns")

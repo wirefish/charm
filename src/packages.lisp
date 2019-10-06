@@ -20,6 +20,7 @@
    ;;
    :skill :defskill
    :required-race :required-skills :exclusive-skills :cost :max-rank
+   :rank :command :recipe-list
    ;;
    :show-text :show-say :announce :maybe-show-tutorial
    :update-map-nearby
