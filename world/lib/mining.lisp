@@ -12,7 +12,7 @@
 
 ;;; Tools.
 
-(defproto mining-tool (tool)
+(defproto mining-tool (gathering-tool)
   (required-skill 'mining))
 
 (defproto copper-pickaxe (mining-tool)

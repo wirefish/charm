@@ -64,6 +64,8 @@ there was no such value, returns `default`."
 (defun find-if-type (type sequence)
   (find-if #'(lambda (x) (eq (type-of x) type)) sequence))
 
+(defun require-type (object type)
+  (and (typep object type) object))
 
 ;;; Allow reading hash tables using { key value ... }
 

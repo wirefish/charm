@@ -1,14 +1,17 @@
 (in-package :charm)
 
+(defproto crafting-tool (tool))
+
 ;;; A recipe describes the requirements for crafting an item.
 
 (defclass recipe (ability)
   ((item
     :initarg :item :reader item
-    :documentation "The item produced by the recipe.")
+    :documentation "An instance of the item produced by the recipe.")
    (materials
     :initarg :materials :reader materials
-    :documentation "The materials required to craft the recipe.")))
+    :documentation "The types and amounts of materials required to craft the
+      recipe.")))
 
 (defmethod command ((ability recipe))
   (find-command "craft"))
@@ -20,16 +23,31 @@
                        `(make-instance 'recipe
                                        :skill ',skill
                                        :rank ,rank
-                                       :item ',item
+                                       :item (make-instance ',item)
                                        :materials ',(loop for (material count) on materials by #'cddr
                                                           collect (cons material count)))))
                    specs)))
 
-;;; A material is an intermediate crafted item.
+;;; A material is a crafted item that can in turn be used to craft another item.
 
 (defproto material (stackable-item))
 
 ;;;
+
+(defun craftable-recipes (avatar skill)
+  "Returns a list of the recipes requiring `skill` that are craftable by
+  `avatar`. Considers recipes granted by gaining ranks in `skill` and those
+  learned from other sources."
+  (when-let ((rank (gethash (key skill) (skills avatar))))
+    (labels ((craftable-recipe-p (ability)
+               (and (typep ability 'recipe)
+                    (<= (rank ability) rank))))
+      (concatenate 'list
+                   (remove-if-not #'craftable-recipe-p (abilities skill))
+                   (remove-if-not #'craftable-recipe-p (abilities avatar))))))
+
+(defmethod match-tokens (tokens (target recipe))
+  (match-tokens tokens (item target)))
 
 (defcommand (actor "craft" item ("with" "using") extra-materials)
   "Attempt to craft *item*, optionally adding *extra-materials* to enhance the
@@ -58,5 +76,17 @@
   without any chance of failure by using the `help:stop` command. Note that, if
   your attempt fails, there is a chance you will lose some of the crafting
   materials you used."
-  (declare (ignore item extra-materials))
-  (show-text actor "TBD"))
+  ;; TODO: require a crafting station at (location actor)
+  (declare (ignore extra-materials))
+  (if-let ((tool (require-type (gethash :tool (equipment actor)) 'crafting-tool)))
+    (let* ((skill (find-skill (required-skill tool)))
+           (recipes (if item (match-objects item (craftable-recipes actor skill)))))
+      (case (length recipes)
+        (0 (show-text actor "You cannot craft any such item."))
+        (1 (show-text actor "~{~a~}" recipes))
+        (t (show-text actor "Do you want to craft ~a?"
+                      (format-list (mapcar #'(lambda (recipe)
+                                               (describe-brief (item recipe)))
+                                           recipes)
+                                   :conjunction "or")))))
+    (show-text actor "You do not have a crafting tool equipped.")))

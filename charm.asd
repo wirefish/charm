@@ -41,6 +41,7 @@
              (:file "armor")
              (:file "skill")
              (:file "avatar")
+             (:file "tool")
              (:file "event")
 
              (:file "config")
