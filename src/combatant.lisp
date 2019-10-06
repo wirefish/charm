@@ -1,7 +1,11 @@
 (in-package :charm)
 
+;;; An aura is a temporary effect placed on an entity.
+
 (defstruct aura
   name description icon modifier amount)
+
+;;; A prototype for an entity that can participate in combat.
 
 (defproto combatant ()
   (base-health 10) ; per level
@@ -22,7 +26,7 @@
   (assist-target nil :instance)
   (opponents nil :instance))
 
-;;;
+;;; Disable encoding of slots non-persistent slots.
 
 (defmethod encode-slot ((name (eql 'attack-target)) value)
   nil)
