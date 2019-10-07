@@ -124,7 +124,9 @@
 
 (defun tokenize-input (input)
   "Returns a list containing the sequence of tokens in a user input string."
-  (let ((tokens (cl-ppcre:split "\\s+" input)))
+  ;; Split the input into an optional leading special character; runs of
+  ;; non-space, non-separators; and individual separators.
+  (let ((tokens (cl-ppcre:all-matches-as-strings "(^[^\\w])|[^\\s,.:;?!]+|[,.:;?!]" input)))
     (when (and tokens (string= (first tokens) ""))
       ;; Remove leading whitespace.
       (pop tokens))
