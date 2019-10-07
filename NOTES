@@ -22,6 +22,8 @@ TO DO:
 
 - clean up functions for containers/inventory to be more consistent
 
+- command parser: and/comma-separated lists; extract count prefix
+
 ========================================
 
 COMBAT
