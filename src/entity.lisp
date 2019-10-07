@@ -92,6 +92,21 @@
   (:method (modifier entity)
     0))
 
+;;; Stacking.
+
+(defgeneric stackable-p (stack entity)
+  (:documentation "Some entitites can be stacked together. For example, two
+    identical coins might combine into a stack of two coins. This function
+    returns t if `entity` can be merged into `stack`. By default entities cannot
+    stack.")
+  (:method (stack entity)
+    nil))
+
+(defgeneric stack-size (entity)
+  (:documentation "By default an entity is considered to be in a stack of size 1.")
+  (:method (entity)
+    1))
+
 ;;; Don't encode an entity's unique ID, and instead assign it a new one when it
 ;;; is decoded.
 

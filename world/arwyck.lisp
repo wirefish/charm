@@ -96,7 +96,8 @@
   (domain :indoor)
   (surface :wood)
   (exits ((exit-doorway :west harbor-road-1)))
-  (contents (mining-guildmaster mining-vendor simple-furnace copper-pickaxe)))
+  (contents (mining-guildmaster mining-vendor simple-furnace
+                                copper-pickaxe copper-smelting-hammer)))
 
 ;;; village-square
 

@@ -13,7 +13,7 @@
 
 ;;;
 
-(defparameter *inventory-slot-order* '(:backpack :sack :in-hands))
+(defparameter *inventory-slot-order* '(:backpack :in-hands))
 
 (defun find-inventory-slot (actor item &key preferred-slot)
   ;; Find a slot that can contain the item.
@@ -27,11 +27,15 @@
                         (can-contain-item container item))))
              slots)))
 
-(defun find-items-if (avatar pred)
+(defun find-inventory-items-if (pred avatar)
+  "Returns `(slot . item)` for every item in the inventory of `avatar` for which
+  `pred` evaluates to t."
   (loop for slot in *inventory-slot-order*
-        append (let ((container (gethash slot (equipment avatar))))
-                 (when container
-                   (mapcar pred (contents container))))))
+        append (when-let ((container (gethash slot (equipment avatar))))
+                 (keep-if #'(lambda (item)
+                              (when (funcall pred item)
+                                (cons slot item)))
+                          (contents container)))))
 
 (defun remove-items-if (avatar pred)
   "Removes all items from the inventory of `avatar` for which `pred` evaluates

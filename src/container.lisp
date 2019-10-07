@@ -1,5 +1,7 @@
 (in-package :charm)
 
+;;; FIXME: rename functions contents -> container
+
 ;;;
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -18,10 +20,13 @@
 
 ;;;
 
-(defun remove-from-contents (container object)
+(defun remove-from-contents (container object &key count)
   (with-slots (contents) container
-    (setf contents (delete object contents))
-    (setf (location object) nil)
+    (if (or (null count) (= count (stack-size object)))
+        (progn
+          (setf contents (delete object contents))
+          (setf (location object) nil))
+        (decf (stack-size object) count))
     object))
 
 (defun remove-from-contents-if (container pred)
@@ -38,14 +43,7 @@
   (with-slots (contents) container
     (setf contents (nsubstitute new old contents))))
 
-;;; Some entities can be combined together into stacks. For example, two
-;;; identical coins might combine into a stack of two coints that take one slot
-;;; in a container, rather than two separate slots. Entities that can stack must
-;;; implement `stackable-p` and `add-to-stack`.
-
-(defgeneric stackable-p (stack entity))
-
-(defmethod stackable-p (stack entity))
+;;; FIXME: is this needed?
 
 (defgeneric add-to-stack (stack entity))
 

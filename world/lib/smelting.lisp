@@ -2,7 +2,7 @@
 
 ;;; Tools.
 
-(defproto smelting-tool (tool)
+(defproto smelting-tool (crafting-tool)
   (required-skill 'smelting))
 
 (defproto copper-smelting-hammer (smelting-tool)
@@ -17,7 +17,7 @@
 ;;; Ingots are produced by smelting ore.
 
 (defproto ingot (material)
-  (brief "a ~a ingot")
+  (brief "a ~(~a~) ingot")
   (full "The ingot is a small bar of pure ~(~a~), ready to be used as a crafting
     material.")
   (icon 'ore)
