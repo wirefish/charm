@@ -7,16 +7,64 @@ modern browser and includes an integrated HTML5 client.
 ## Installation
 
 Charm is written in [Common Lisp](https://common-lisp.net). Specifically it is
-developed using the [SBCL](http://sbcl.org) implementation of the language. If
-you're not familiar with Common Lisp,
-[this page](https://lisp-lang.org/learn/getting-started/) provides a good guide
-to getting started.
+developed using the [SBCL](http://sbcl.org) implementation of the language.
 
 Charm also requires the following:
 
 * [sqlite3](https://www.sqlite.org/) version 3.11 or later.
 
 * [nginx](https://www.nginx.com/) version 1.10.3 or later.
+
+## Aside: Getting Started with Common Lisp
+
+Here's a quick guide to getting a Common Lisp development environment running on
+macOS, along with the dependencies needed by Charm. Although the steps would
+differ slightly for other OSes, the general idea is the same.
+
+* Install [homebrew](https://brew.sh).
+
+* Install [SBCL]: `brew install sbcl`.
+
+* Install [Emacs](https://emacsformacosx.com).
+
+* Install [Slime](https://common-lisp.net/project/slime/), which is a Common
+  Lisp development environment for Emacs. You should be able to install it from
+  within Emacs with `M-x package-install RET slime RET`.
+
+* Configure Slime by adding the following to your Emacs init file:
+
+    (setq inferior-lisp-program "/usr/local/bin/sbcl")
+    (require 'slime-autoloads)
+    (setq slime-contribs '(slime-asdf slime-repl slime-fancy))
+
+* By default, ASDF (which is the de facto build system for Common Lisp) expects
+  to find projects in a subdirectory of "~/common-lisp". Create a symlink with
+  that name to a directory where you prefer to keep your projects.
+
+* You can now fire up SBCL within Emacs using `M-x slime`. This will dump you
+  into the Slime REPL where you can evaluate Lisp forms.
+
+* Install [Quicklisp](https://www.quicklisp.org/beta/), which is a library
+  manager for common lisp. Download the `quicklisp.lisp` file and then, from
+  within the REPL, type:
+
+    (load "quicklisp.lisp")
+    (quicklisp-quickstart:install)
+    (ql:add-to-init-file)
+
+The following steps are specific to Charm:
+
+* Install [libuv](https://libuv.org): `brew install libuv`.
+
+* Install the libraries upon which charm depends. From within the REPL, type:
+
+    (ql:quickload "cl-ppcre")
+    (ql:quickload "cl-async")
+    (ql:quickload "cl-base64")
+    (ql:quickload "ironclad")
+    (ql:quickload "sqlite")
+
+That's a lot of steps! But you only have to do them once.
 
 ## Usage
 
@@ -54,9 +102,8 @@ information, player avatars, etc.
 
 ### Run the Server
 
-During development, the most convenient way to run the server is within the SBCL
-REPL. The easiest way to do this for Emacs users is via
-[Slime](https://github.com/slime/slime).
+During development, the most convenient way to run the server is within the
+Slime REPL:
 
     M-x slime ; starts the REPL
     ,load-system charm ; loads charm.asd
