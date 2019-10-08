@@ -126,16 +126,8 @@
   "Returns a list containing the sequence of tokens in a user input string."
   ;; Split the input into an optional leading special character; runs of
   ;; non-space, non-separators; and individual separators.
-  (let ((tokens (cl-ppcre:all-matches-as-strings "(^[^\\w])|[^\\s,.:;?!]+|[,.:;?!]" input)))
-    (when (and tokens (string= (first tokens) ""))
-      ;; Remove leading whitespace.
-      (pop tokens))
-    (when (and tokens (> (length (first tokens)) 1) (special-token-p (char (first tokens) 0)))
-      ;; Split the leading non-alpha char into its own token.
-      (let ((prefix (subseq (first tokens) 0 1)))
-        (setf (first tokens) (subseq (first tokens) 1))
-        (push prefix tokens)))
-    tokens))
+  (let ((trimmed (string-trim #(#\Space #\Tab #\Return #\Newline) input)))
+    (cl-ppcre:all-matches-as-strings "(^[^\\w\\s])|[^\\s,.:;?!]+|[,.:;?!]" trimmed)))
 
 (defun parse-quantity (s)
   (cond
