@@ -4,26 +4,22 @@ Charm is a framework for creating text-based multiplayer role-playing games. You
 could say it is an updated take on a MUD. Charm is designed to be played in a
 modern browser and includes an integrated HTML5 client.
 
-## Installation
+## Installation (or, Getting Started with Common Lisp)
 
-Charm is written in [Common Lisp](https://common-lisp.net). Specifically it is
-developed using the [SBCL](http://sbcl.org) implementation of the language.
+Charm is written in [Common Lisp](https://common-lisp.net), which is perhaps not
+the most widely-used of languages. As such, this section details the process of
+setting up a functional Common Lisp development environment in addition to
+describing the specific requirements for running Charm itself.
 
-Charm also requires the following:
+For a more general introduction, see e.g.
+[lisp-lang.org](https://lisp-lang.org/learn/getting-started/).
 
-* [sqlite3](https://www.sqlite.org/) version 3.11 or later.
-
-* [nginx](https://www.nginx.com/) version 1.10.3 or later.
-
-## Aside: Getting Started with Common Lisp
-
-Here's a quick guide to getting a Common Lisp development environment running on
-macOS, along with the dependencies needed by Charm. Although the steps would
-differ slightly for other OSes, the general idea is the same.
+The steps below are specific to macOS. They will differ for other OSes but the
+general outline is the same.
 
 * Install [homebrew](https://brew.sh).
 
-* Install [SBCL]: `brew install sbcl`.
+* Install [SBCL](http://sbcl.org): `brew install sbcl`.
 
 * Install [Emacs](https://emacsformacosx.com).
 
@@ -52,11 +48,16 @@ differ slightly for other OSes, the general idea is the same.
     (quicklisp-quickstart:install)
     (ql:add-to-init-file)
 
-The following steps are specific to Charm:
+The following steps are specific to dependencies required by Charm:
+
+* Install [nginx](https://www.nginx.com/): `brew install nginx`.
+
+* Install [sqlite3](https://www.sqlite.org/): `brew install sqlite3`.
 
 * Install [libuv](https://libuv.org): `brew install libuv`.
 
-* Install the libraries upon which charm depends. From within the REPL, type:
+* Install the Lisp libraries upon which charm depends. From within the REPL,
+  type:
 
     (ql:quickload "cl-ppcre")
     (ql:quickload "cl-async")
@@ -68,8 +69,8 @@ That's a lot of steps! But you only have to do them once.
 
 ## Usage
 
-In this section, `$CHARM` is assumed to refer to the root directory of the Charm
-source repository.
+In this section, `$CHARM` is assumed to refer to the root directory on your
+machine of the Charm source code, i.e. the directory that contains "charm.asd".
 
 ### Create the Data Directory
 
