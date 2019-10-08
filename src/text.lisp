@@ -159,3 +159,20 @@
       (1 (car items))
       (2 (format nil "~a ~a ~a" (car items) conjunction (cadr items)))
       (t (format nil "~{~a~^, ~}, ~a ~a" (butlast items) conjunction (car (last items)))))))
+
+(defun split-list (tokens)
+  "Given a sequence of tokens that represents one or more objects separated by
+  commas or 'and', returns a list where each item is the subsequence of tokens
+  associated with a single object."
+  (do (objects)
+      ((null tokens) (nreverse objects))
+    (if-let ((sep (position-if #'(lambda (token)
+                                   (or (string-equal token "and")
+                                       (string= token ",")))
+                               tokens)))
+      (progn
+        (push (subseq tokens 0 sep) objects)
+        (setf tokens (subseq tokens (1+ sep))))
+      (progn
+        (push tokens objects)
+        (setf tokens nil)))))
