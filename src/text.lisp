@@ -1,7 +1,8 @@
 (in-package :charm)
 
-(defun is-article-p (text)
-  (some #'(lambda (s) (string-equal text s)) '("a" "an" "the")))
+(defun article-p (token)
+  "Returns t if `token` is an article."
+  (some #'(lambda (s) (string-equal token s)) '("a" "an" "the")))
 
 (defun split-article (text)
   "Given a string `text` that represents a noun phrase, returns two values that
@@ -9,7 +10,7 @@
   the string."
   (let* ((sep (position #\space text))
          (prefix (subseq text 0 sep)))
-    (if (is-article-p prefix)
+    (if (article-p prefix)
         (values prefix (subseq text (+ sep 1)))
         (values nil text))))
 
@@ -129,24 +130,32 @@
   (let ((trimmed (string-trim #(#\Space #\Tab #\Return #\Newline) input)))
     (cl-ppcre:all-matches-as-strings "(^[^\\w\\s])|[^\\s,.:;?!]+|[,.:;?!]" trimmed)))
 
-(defun parse-quantity (s)
-  (cond
-    ((null (cl-ppcre:split "\\d+" s)) (parse-integer s))
-    ((is-article-p s) 1)
-    ((or (string-equal s "all") (string-equal s "every")) :all)))
+(defun parse-quantity (token)
+  "Interprets `token` as a possible quantity. Returns either an integer, :all,
+  or nil if the token does not describe a quantity."
+  (multiple-value-bind (num length) (parse-integer token :junk-allowed t)
+    (cond
+      ((= length (length token)) num)
+      ((article-p token) 1)
+      ((or (string-equal token "all") (string-equal token "every")) :all))))
 
 (defun split-quantity (tokens)
+  "Returns two values: the quantity described by the first token or nil if that
+  token is not a quantity, and the remaining non-quantity tokens."
   (if (null tokens)
       (values 0 nil)
       (let ((quantity (parse-quantity (car tokens))))
         (if (null quantity)
-            (values 1 tokens)
+            (values nil tokens)
             (values quantity (cdr tokens))))))
 
-(defun format-list (items &key (conjunction "and"))
-  (let ((num-items (length items)))
-    (cond
-      ((= num-items 0) "")
-      ((= num-items 1) (car items))
-      ((= num-items 2) (format nil "~a ~a ~a" (car items) conjunction (cadr items)))
+(defun format-list (items &key fn (conjunction "and"))
+  "Returns a string that formats `items` as a comma-separated list, using
+  `conjunction` before the last item with an Oxford comma as appropriate. If
+  `fn` is not null, it is applied to each item before formatting."
+  (let ((items (if fn (mapcar fn items) items)))
+    (case (length items)
+      (0 "")
+      (1 (car items))
+      (2 (format nil "~a ~a ~a" (car items) conjunction (cadr items)))
       (t (format nil "~{~a~^, ~}, ~a ~a" (butlast items) conjunction (car (last items)))))))
