@@ -43,7 +43,7 @@ general outline is the same.
   into the Slime REPL where you can evaluate Lisp forms.
 
 * Install [Quicklisp](https://www.quicklisp.org/beta/), which is a library
-  manager for common lisp. Download the `quicklisp.lisp` file and then, from
+  manager for Common Lisp. Download the `quicklisp.lisp` file and then, from
   within the REPL, type:
 
 ```
