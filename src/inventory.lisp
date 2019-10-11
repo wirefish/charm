@@ -45,17 +45,20 @@
                 (when container
                   (remove-from-contents-if container pred)))))
 
+(defmethod match-tokens (tokens (target cons))
+  (match-tokens tokens (cdr target)))
+
 (defun match-in-inventory (avatar tokens &optional filter-fn)
   "Returns a list of (slot . item) for all items in inventory that match
   `tokens`."
-  (let ((matches nil))
-    (dolist (slot *inventory-slot-order*)
-      (when-let ((container (gethash slot (equipment avatar))))
-        (dolist (item (contents container))
-          (when (and (or (null filter-fn) (funcall filter-fn item))
-                     (match-tokens tokens item))
-            (push (cons slot item) matches)))))
-    matches))
+  (match-objects
+   tokens
+   (loop for slot in *inventory-slot-order*
+         nconc (when-let ((container (gethash slot (equipment avatar))))
+                 (keep-if #'(lambda (item)
+                              (when (or (null filter-fn) (funcall filter-fn item))
+                                (cons slot item)))
+                          (contents container))))))
 
 (defun remove-from-inventory (avatar item slot)
   (remove-from-contents (gethash slot (equipment avatar)) item))
@@ -191,13 +194,21 @@
 
 (defevent drop-item (actor item inventory-slot))
 
+(defstruct drop-entry (actor))
+
+(defmethod describe-entry (observer item location (entry drop-entry))
+  (with-slots (actor) entry
+    (if (eq observer actor)
+        (format nil "You drop ~a." (describe-brief item))
+        (format nil "~a drops ~a."
+                (describe-brief actor :capitalize t)
+                (describe-brief item)))))
+
 (defmethod do-drop-item (actor item inventory-slot)
   (let ((container (gethash inventory-slot (equipment actor)))
         (location (location actor)))
     (remove-from-contents container item)
-    (show-text actor "You drop ~a." (describe-brief item))
-    ;; TODO: need a proper entry message.
-    (enter-location item location nil)))
+    (enter-location item location (make-drop-entry :actor actor))))
 
 (defcommand (actor "drop" item)
   "Drop one or more items, removing them from your inventory and placing them on
@@ -205,16 +216,21 @@
   everything you are holding in your hands."
   (if item
       ;; Drop matching items.
-      (let ((matches (match-in-inventory actor item)))
-        (case (length matches)
-          (0 (show-text actor "You don't have anything matching \"~{~a~^ ~}\" that you can drop."
-                        item))
-          (1 (destructuring-bind (slot . item) (first matches)
-               (drop-item actor item slot)))
-          (otherwise
-           (show-text actor "Do you want to drop ~a?"
-                      (format-list (mapcar #'(lambda (x) (describe-brief (cdr x))) matches)
-                                   :conjunction "or")))))
+      (multiple-value-bind (quantity tokens) (split-quantity item)
+        (multiple-value-bind (matches match-multiple) (match-in-inventory actor tokens)
+          (format-log :info "~a ~a ~a ~a" quantity tokens matches match-multiple)
+          (cond
+            ((null matches)
+             (show-text actor "You don't have anything matching \"~{~a~^ ~}\" that you can drop."
+                        tokens))
+            (t
+             (do ((quantity (or quantity (and (not match-multiple) 1))))
+                 ((or (null matches) (and quantity (= quantity 0))))
+               ;; FIXME: handle quantity properly
+               (destructuring-bind (slot . item) (first matches)
+                 (drop-item actor item slot)
+                 (when quantity (decf quantity))
+                 (pop matches)))))))
       ;; Drop all items carried in hands.
       (let ((container (gethash :in-hands (equipment actor))))
         (loop while (contents container)

@@ -149,9 +149,7 @@
                (parse-integer id-token :start 1 :junk-allowed t))))
     (if-let ((id (find-id-token tokens)))
       (when (= (id target) id) :exact)
-      (apply #'best-match
-             (match-tokens tokens (brief target))
-             (mapcar #'(lambda (x) (match-tokens tokens x)) (alts target))))))
+      (apply #'match-targets tokens (brief target) (alts target)))))
 
 ;;;
 
