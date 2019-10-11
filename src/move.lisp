@@ -116,7 +116,7 @@
   ;; TODO: handle exit-specific messages.
   (when (and (not (eq observer actor))
              (visible-p actor observer))
-    (show-text observer (describe-exit actor location exit))
+    (show-text observer (describe-exit observer actor location exit))
     (remove-neighbor observer actor))
   (call-next-method))
 
@@ -147,7 +147,7 @@
   ;; TODO: handle entry-specific messages.
   (when (and (not (eq observer actor))
              (visible-p actor observer))
-    (show-text observer (describe-entry actor location entry))
+    (show-text observer (describe-entry observer actor location entry))
     (update-neighbor observer actor)))
 
 (defun traverse-portal (actor exit)
