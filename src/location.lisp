@@ -35,9 +35,9 @@
   (brief "a portal")
   (pose "leads ~a.")
   (size :gigantic)
-  (message nil)
-  (exit-message "~a heads ~a.")
-  (enter-message "~a enters from ~a.")
+  (message nil) ; seen by actor traversing portal
+  (entry-pose nil) ; seen by observers when an actor enters via portal
+  (exit-pose nil) ; seen by observers when an actor exits via portal
   (direction nil :instance)
   (destination nil :instance))
 
@@ -53,6 +53,41 @@
     (best-match (match-tokens tokens (direction-name dir))
                 (match-tokens tokens (direction-abbrev dir))
                 (call-next-method))))
+
+(defgeneric describe-exit (actor location exit)
+  (:documentation "Returns a sentence to be displayed when `actor` leaves
+    `location` via `exit.`"))
+
+(defmethod describe-exit ((actor entity) location (exit portal))
+  (format nil (or (exit-pose exit) "~a heads ~a.")
+          (describe-brief actor :capitalize t)
+          (case (direction exit)
+            (:in "inside")
+            (:out "outside")
+            (otherwise (direction-name (direction exit))))))
+
+(defmethod describe-exit ((actor entity) location (exit null))
+  (format nil (or (exit-pose actor) "~a disappears!")
+          (describe-brief actor :capitalize t)))
+
+(defgeneric describe-entry (actor location entry)
+  (:documentation "Returns a sentence to be displayed when `actor` enters
+    `location` via `entry`."))
+
+(defmethod describe-entry ((actor entity) location (entry portal))
+  (format nil (or (entry-pose entry) "~a enters from ~a.")
+          (describe-brief actor :capitalize t)
+          (let ((dir (opposite-direction (direction entry))))
+            (case dir
+              (:in "inside")
+              (:out "outside")
+              (:up "above")
+              (:down "below")
+              (otherwise (format nil "the ~a" (direction-name dir)))))))
+
+(defmethod describe-entry ((actor entity) location (entry null))
+  (format nil (or (entry-pose actor) "~a appears!")
+          (describe-brief actor :capitalize t)))
 
 ;;; A location is a place in the world.
 

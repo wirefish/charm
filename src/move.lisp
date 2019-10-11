@@ -116,12 +116,7 @@
   ;; TODO: handle exit-specific messages.
   (when (and (not (eq observer actor))
              (visible-p actor observer))
-    (show-text observer "~a ~a"
-               (describe-brief actor :capitalize t)
-               (or (exit-pose actor)
-                   (if exit
-                       (format nil "exits to the ~(~a~)." (direction exit))
-                       "disappears into thin air!")))
+    (show-text observer (describe-exit actor location exit))
     (remove-neighbor observer actor))
   (call-next-method))
 
@@ -152,12 +147,7 @@
   ;; TODO: handle entry-specific messages.
   (when (and (not (eq observer actor))
              (visible-p actor observer))
-    (show-text observer "~a ~a"
-               (describe-brief actor :capitalize t)
-               (or (entry-pose actor)
-                   (if entry
-                       (format nil "enters from the ~(~a~)." (direction entry))
-                       "appears from thin air!")))
+    (show-text observer (describe-entry actor location entry))
     (update-neighbor observer actor)))
 
 (defun traverse-portal (actor exit)

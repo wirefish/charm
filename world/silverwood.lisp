@@ -220,7 +220,9 @@
 
 (defproto cabin-door (portal)
   (brief "a gaily painted door")
-  (pose "leads into the cabin."))
+  (pose "leads into the cabin.")
+  (exit-pose "heads into the cabin.")
+  (entry-pose "arrives from inside the cabin."))
 
 (deflocation forest-2-3 (forest)
   (brief "Clearing")
