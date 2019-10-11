@@ -1066,7 +1066,7 @@
 
 ;;; beach
 
-(defproto shiny-seashell (item)
+(defproto shiny-seashell (stackable-item)
   (brief "a shiny seashell")
   (icon :seashell)
   (full "The seashell's polished surface is covered with an intricate pattern
