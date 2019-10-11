@@ -140,14 +140,15 @@
       ((or (string-equal token "all") (string-equal token "every")) :all))))
 
 (defun split-quantity (tokens)
-  "Returns two values: the quantity described by the first token or nil if that
-  token is not a quantity, and the remaining non-quantity tokens."
+  "Returns two values. If the first token indicates a quantity, the primary
+  value is the rest of the tokens, and the secondary is the indicated quantity.
+  Otherwise, the primary value is `tokens` and the secondary value is nil."
   (if (null tokens)
-      (values 0 nil)
+      nil
       (let ((quantity (parse-quantity (car tokens))))
         (if (null quantity)
-            (values nil tokens)
-            (values quantity (cdr tokens))))))
+            tokens
+            (values (cdr tokens) quantity)))))
 
 (defun format-list (items &key fn (conjunction "and"))
   "Returns a string that formats `items` as a comma-separated list, using

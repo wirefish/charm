@@ -12,7 +12,8 @@
   (stack-limit 100))
 
 (defmethod describe-brief ((subject item) &rest args)
-  (apply #'format-noun (brief subject) :count (stack-size subject) args))
+  (let ((count (or (getf args :count) (stack-size subject))))
+    (apply #'format-noun (brief subject) :count count (remove-from-plist args :count))))
 
 (defmethod describe-pose ((subject item))
   (format-verb (pose subject) :count (stack-size subject)))
@@ -20,7 +21,3 @@
 (defmethod stackable-p ((stack item) (item item))
   (and (eq (type-of stack) (type-of item))
        (<= (+ (stack-size stack) (stack-size item)) (stack-limit stack))))
-
-(defmethod add-to-stack ((stack item) (item item))
-  (incf (stack-size stack) (stack-size item))
-  stack)

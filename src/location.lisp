@@ -128,11 +128,6 @@
 (defmethod initialize-instance :after ((location location) &key)
   (setf (region location) *current-region*))
 
-(defmethod add-to-contents ((location location) entity)
-  (prog1
-      (call-next-method)
-      (setf (location entity) location)))
-
 (defun find-exit (location direction)
   (find-if #'(lambda (x) (eq (direction x) direction)) (exits location)))
 

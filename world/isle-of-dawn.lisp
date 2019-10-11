@@ -561,7 +561,7 @@
   (entry-pose "catches your eye.")
   (respawn-delay 5))
 
-(defmethod do-take-item :after (actor (item white-tulip) origin)
+(defmethod do-take-item :after (actor quantity (item white-tulip) origin)
   (advance-quest actor get-some-clothes))
 
 (defproto seamstress (npc)

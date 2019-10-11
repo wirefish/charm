@@ -177,9 +177,8 @@
 (defmethod do-kill :around (actor victim)
   (notify-observers (location actor) #'will-kill actor victim)
   (call-next-method)
-  (let ((corpse (make-corpse victim)))
-    (replace-in-contents (location actor) victim corpse)
-    (notify-observers (location actor) #'did-kill actor corpse)))
+  ;; FIXME: remove corpses, give direct loot.
+  (notify-observers (location actor #'did-kill actor victim)))
 
 (defmethod do-kill (attacker victim)
   (exit-combat-with-target attacker victim)

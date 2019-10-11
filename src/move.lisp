@@ -5,7 +5,7 @@
 (defevent exit-world (actor location))
 
 (defmethod do-exit-world (actor location)
-  (remove-from-contents location actor)
+  (remove-from-container actor location)
   (stop-all-behaviors actor)
   (notify-observers location #'did-exit-location actor location nil))
 
@@ -68,7 +68,7 @@
 
 (defmethod do-exit-location (actor location exit)
   (stop-behavior actor :activity)
-  (remove-from-contents location actor))
+  (remove-from-container actor location))
 
 (defmethod do-exit-location :around (actor location exit)
   (let* ((dest (resolve-destination exit))
@@ -123,7 +123,7 @@
 ;;;
 
 (defmethod do-enter-location (actor location entry)
-  (add-to-contents location actor))
+  (add-to-container actor location))
 
 (defmethod do-enter-location ((actor avatar) location entry)
   (call-next-method)

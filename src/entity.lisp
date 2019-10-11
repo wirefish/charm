@@ -102,6 +102,13 @@
   (:method (stack entity)
     nil))
 
+(defgeneric stack-limit (entity)
+  (:documentation "Returns the maximum number of entities that can be merged
+    into a single stack. By default entities cannot stack and so have a stack
+    limit of 1.")
+  (:method (entity)
+    1))
+
 (defgeneric stack-size (entity)
   (:documentation "By default an entity is considered to be in a stack of size 1.")
   (:method (entity)

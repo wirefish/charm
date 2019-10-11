@@ -87,7 +87,7 @@
   (quest 'find-spiderwebs)
   (respawn-delay 30))
 
-(defmethod do-take-item :after (actor (item large-spiderweb) origin)
+(defmethod do-take-item :after (actor quantity (item large-spiderweb) origin)
   (advance-quest actor find-spiderwebs 1/5))
 
 (defproto hermit (npc)
