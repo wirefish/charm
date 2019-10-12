@@ -178,7 +178,7 @@
   (notify-observers (location actor) #'will-kill actor victim)
   (call-next-method)
   ;; FIXME: remove corpses, give direct loot.
-  (notify-observers (location actor #'did-kill actor victim)))
+  (notify-observers (location actor) #'did-kill actor victim))
 
 (defmethod do-kill (attacker victim)
   (exit-combat-with-target attacker victim)

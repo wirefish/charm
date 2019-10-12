@@ -17,6 +17,11 @@
   (nonempty-pose "contains ~a.")
   (contents () :instance))
 
+(defmethod decode-object ((object container) args)
+  (call-next-method)
+  (dolist (entity (contents object))
+    (setf (location entity) object)))
+
 ;;;
 
 (defun count-quantity (objects)

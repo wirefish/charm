@@ -7,7 +7,7 @@
 (defparameter *session-idle-seconds* 1800)
 
 (defun send-response (socket request status reason &key body headers cookies)
-  "Sends an HTTP response and, once the send completes, closes the socket."
+  "Sends an HTTP response and closes the socket once the send completes."
   (let ((response (make-http-response :status status :reason reason
                                       :body body :headers headers
                                       :version (http-request-version request))))
@@ -40,8 +40,8 @@
 
 (defun handle-auth-request (socket request)
   "Checks the session key in the request. If it is present and valid, returns a
-200 response with the associated username in the body. Otherwise return a 401
-response."
+  200 response with the associated username in the body. Otherwise return a 401
+  response."
   (let ((session (get-session-for-request request)))
     (if session
         ;; The client's session key is still valid; return success with the
@@ -53,41 +53,29 @@ response."
 
 (setf (gethash "/auth" *request-handlers*) #'handle-auth-request)
 
-(defun create-session (socket request username)
-  (let* ((session (make-session :username username)))
+(defun create-session (socket request account-id username)
+  (let* ((session (make-session :account-id account-id :username username)))
     (setf (gethash (session-key session) *sessions*) session)
     (format-log :info "created session ~a for user ~a" (session-key session) username)
     (send-response socket request 200 "OK"
                    :cookies (list (cons *session-key-cookie* (session-key session)))
                    :body (format nil "{\"username\": ~s}" username))))
 
-(defun start-session (socket session)
-  "Called when the user creates a websocket connection associated with a
-  specific session. This can occur multiple times for a single session."
-  ;; TODO: load avatar if not already present in session. Send intro text, map
-  ;; update, room description and contents, etc.
-  (format-log :info "starting session ~a for user ~a"
-              (session-key session) (session-username session))
-  ;; NOTE: This write serves only to change the read callback.
-  (as:write-socket-data socket "" :read-cb #'read-websocket-message)
-  (send-client-command session "setAvatar" 12345)  ; FIXME:
-  (connect-session session socket))
-
 (defun handle-login-request (socket request)
   "If the request contains an Authorization header, extracts the username and
-password and attempts to create a new session for the user. On success, sends a
-200 response with the username in the body; otherwise, sends a 401 response. If
-no Authorization header is present, sends a 400 response."
+  password and attempts to create a new session for the user. On success, sends
+  a 200 response with the username in the body; otherwise, sends a 401 response.
+  If no Authorization header is present, sends a 400 response."
   (let ((auth (get-authorization-for-request request)))
     (if auth
         ;; Check the username and password.
         (destructuring-bind (username password) auth
-          (if (authenticate username password)
-              ;; Create a new session.
-              (create-session socket request username)
-              ;; Authentication failed.
-              (send-response socket request 401 "Unauthorized"
-                             :body "Invalid username or password.")))
+          (if-let ((account-id (authenticate username password)))
+            ;; Create a new session.
+            (create-session socket request account-id username)
+            ;; Authentication failed.
+            (send-response socket request 401 "Unauthorized"
+                           :body "Invalid username or password.")))
         ;; The request is invalid.
         (send-response socket request 400 "Bad Request"))))
 
@@ -106,19 +94,16 @@ no Authorization header is present, sends a 400 response."
     (if auth
         ;; The request contains a proposed username and password.
         (destructuring-bind (username password) auth
-          (let ((problem (or (validate-username username) (validate-password password))))
-            (cond
-              (problem
-               ;; The username and/or password is structurally invalid.
-               (send-response socket request 401 "Unauthorized" :body problem))
-              ((create-account username password (create-avatar))
-               ;; Try account was created. Create a new session.
-               (create-session socket request username))
-              (t
-               ;; The account could not be created, generally because the
-               ;; account name is already in use.
-               (send-response socket request 401 "Unauthorized"
-                              :body "Username already exists.")))))
+          (if-let ((problem (or (validate-username username) (validate-password password))))
+            ;; The username and/or password is structurally invalid.
+            (send-response socket request 401 "Unauthorized" :body problem)
+            (if-let ((account-id (create-account username password (create-avatar))))
+              ;; The account was created. Create a new session.
+              (create-session socket request account-id username)
+              ;; The account could not be created, generally because the
+              ;; account name is already in use.
+              (send-response socket request 401 "Unauthorized"
+                             :body "Username already exists."))))
         ;; The request is invalid.
         (send-response socket request 400 "Bad Request"))))
 
@@ -132,6 +117,18 @@ no Authorization header is present, sends a 400 response."
     (send-response socket request 200 "OK")))
 
 (setf (gethash "/logout" *request-handlers*) #'handle-logout-request)
+
+(defun start-session (socket session)
+  "Called when the user creates a websocket connection associated with a
+  specific session. This can occur multiple times for a single session."
+  ;; TODO: load avatar if not already present in session. Send intro text, map
+  ;; update, room description and contents, etc.
+  (format-log :info "starting session ~a for user ~a"
+              (session-key session) (session-username session))
+  ;; NOTE: This write serves only to change the read callback.
+  (as:write-socket-data socket "" :read-cb #'read-websocket-message)
+  (send-client-command session "setAvatar" 12345)  ; FIXME:
+  (connect-session session socket))
 
 (defun handle-session-request (socket request)
   "Validates the request headers to ensure this is a websocket handshake. If
@@ -158,7 +155,7 @@ no Authorization header is present, sends a 400 response."
                 (when (null (session-avatar session))
                   ;; This is the first connection to this section. Load the
                   ;; avatar object and place it into the world.
-                  (let ((avatar (load-avatar (session-username session))))
+                  (let ((avatar (load-avatar (session-account-id session))))
                     (format-log :info "loaded avatar ~s" avatar)
                     (setf (session-avatar session) avatar)
                     (setf (session avatar) session)

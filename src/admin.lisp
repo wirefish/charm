@@ -7,5 +7,5 @@
                         actor))))
 
 (defcommand (actor "save")
-  (save-avatar (session-username (session actor)) actor)
+  (save-avatar (session-account-id (session actor)) actor)
   (show-text actor "Your avatar has been saved."))

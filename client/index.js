@@ -51,11 +51,11 @@ function createUser(event)
     var pass1 = document.getElementById("cpass1").value.strip();
     var pass2 = document.getElementById("cpass2").value.strip();
 
-    if (/^[\w.,@+-]{3,20}$/.test(user) == false) {
+    if (/^[\w.,@+-]{3,40}$/.test(user) == false) {
         document.getElementById("cuser").value = "";
         setPrompt(
             "cprompt",
-            "Your username must be between 3 and 20 characters long. Please try again.",
+            "Your username must be between 3 and 40 characters long. Please try again.",
             true);
         return;
     }
@@ -65,12 +65,12 @@ function createUser(event)
         setPrompt("cprompt", "Passwords do not match. Please try again.", true);
         return;
     }
-    else if (pass1.length < 8 || pass1.length > 128) {
+    else if (pass1.length < 8 || pass1.length > 100) {
         document.getElementById("cpass1").value = "";
         document.getElementById("cpass2").value = "";
         setPrompt(
             "cprompt",
-            "Passwords must be at between 8 and 128 characters long. Please try again.",
+            "Passwords must be at between 8 and 100 characters long. Please try again.",
             true);
         return;
     }

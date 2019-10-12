@@ -104,10 +104,7 @@
 ;;; Control serialization of slots.
 
 (defmethod encode-slot ((name (eql 'location)) value)
-  (and value (type-of value)))
-
-(defmethod decode-slot ((name (eql 'location)) value)
-  (and value (symbol-value value)))
+  nil)
 
 (defmethod encode-slot ((name (eql 'race)) value)
   (key value))

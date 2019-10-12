@@ -12,16 +12,13 @@
 
 (defstruct session
   (key (make-session-key))
-  (username nil)
-  (avatar nil)
-  (socket nil)
-  (input-buffer nil)
+  account-id
+  username
+  remote-ip
+  avatar
+  socket
+  input-buffer
   (output-queue (make-queue)))
-
-(defvar *sessions* (make-hash-table :test 'equal)) ; username -> session
-
-(defun find-session (username)
-  (gethash username *sessions*))
 
 (defun connect-session (session socket)
   "Associates a socket with a session and sends any queued output messages."
