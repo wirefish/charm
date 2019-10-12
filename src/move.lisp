@@ -147,9 +147,9 @@
 
 (defun traverse-portal (actor exit)
   "This is a wrapper around the exit-location and enter-location events."
-  (multiple-value-bind (dest entry) (do-exit-location actor (location actor) exit)
+  (multiple-value-bind (dest entry) (exit-location actor (location actor) exit)
     (when dest
-      (do-enter-location actor dest entry))))
+      (enter-location actor dest entry))))
 
 (defcommand (actor "go" direction)
   "Move in a specified direction; for example, `go north`. See `help:movement`
