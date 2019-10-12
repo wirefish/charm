@@ -86,7 +86,8 @@
   (let (matches best match-multiple)
     (dolist (list object-lists)
       (dolist (object list)
-        (multiple-value-bind (match multiple) (match-tokens tokens object)
+        (multiple-value-bind (match multiple)
+            (if tokens (match-tokens tokens object) (values :partial nil))
           (when match
             (when multiple (setf match-multiple t))
             (push (cons object match) matches)
