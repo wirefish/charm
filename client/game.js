@@ -718,16 +718,18 @@ MessageHandler.prototype.showLinks = function(heading, prefix, topics)
 
 MessageHandler.prototype.describeRoom = function(brief, description, exits, contents)
 {
-    var exit_links = [makeTextElement('span', 'Exits:')].concat(
-        exits.map(function (dir) {
-            var link = makeTextElement('span', dir, 'link list');
-            link.onclick = function() { sendInput(dir); };
-            return link;
-        }));
-
     var elements = [makeTextElement('h1', brief)];
     Array.prototype.push.apply(elements, formatText(description));
-    elements.push(wrapElements('p', exit_links));
+
+    if (exits) {
+        var exit_links = [makeTextElement('span', 'Exits:')].concat(
+            exits.map(function (dir) {
+                var link = makeTextElement('span', dir, 'link list');
+                link.onclick = function() { sendInput(dir); };
+                return link;
+            }));
+        elements.push(wrapElements('p', exit_links));
+    }
 
     if (contents) {
         for (var i = 0; i < contents.length; ++i) {
