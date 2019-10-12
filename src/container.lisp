@@ -166,3 +166,9 @@
             (push object changed-stacks)
             (push object contents))
           changed-stacks)))))
+
+;;;
+
+(defun replace-in-container (new old container)
+  (with-slots (contents) container
+    (setf contents (nsubstitute new old contents))))

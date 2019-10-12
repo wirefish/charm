@@ -237,7 +237,7 @@
                         :mana mana))))
    (change-state :regenerate 3)))
 
-(defmethod do-enter-world :after ((avatar avatar) location)
+(defmethod do-enter-world :after ((avatar avatar) location entry)
   (start-behavior avatar :regenerate #'regenerate))
 
 ;;;

@@ -165,6 +165,36 @@
         (change-behavior-state attacker :activity :select-attack))
       (stop-behavior attacker :activity)))
 
+;;;
+
+(defevent die (actor))
+
+(defstruct death-exit (corpse))
+
+(defmethod describe-exit (observer actor location (exit death-exit))
+  (cond
+    ((eq observer actor)
+     (format nil "You die."))
+    ((death-exit-corpse exit)
+     (format nil "~a dies, leaving behind a rotting corpse."
+             (describe-brief actor :capitalize t)))
+    (t
+     (format nil "~a dies." (describe-brief actor :capitalize t)))))
+
+(defmethod do-die (actor)
+  (setf (attack-target actor) nil
+        (assist-target actor) nil
+        (opponents actor) nil)
+  (stop-all-behaviors actor)
+  (let ((corpse (make-corpse actor))
+        (location (location actor)))
+    (notify-observers location #'will-die actor)
+    (exit-world actor location (make-death-exit :corpse corpse))
+    (notify-observers location #'did-die actor)
+    (when corpse
+      (enter-world corpse location nil))
+    (respawn actor location)))
+
 ;;; Several events are associated with combat. The `kill` event occurs when
 ;;; `actor` kills `victim`. This can be via direct damage or condition damage,
 ;;; e.g. damage over time associated with an aura. Note that `did-kill`
@@ -175,30 +205,20 @@
 (defmethod do-kill :around (actor victim)
   (notify-observers (location actor) #'will-kill actor victim)
   (call-next-method)
-  ;; FIXME: remove corpses, give direct loot.
-  (notify-observers (location actor) #'did-kill actor victim))
+  (notify-observers (location actor) #'did-kill actor victim)
+  (die victim))
 
 (defmethod do-kill (attacker victim)
-  (exit-combat-with-target attacker victim)
-  (setf (attack-target victim) nil
-        (assist-target victim) nil
-        (opponents victim) nil)
-  (stop-all-behaviors victim))
+  (exit-combat-with-target attacker victim))
 
 (defmethod do-kill ((actor avatar) victim)
   (call-next-method)
   (gain-xp actor (* 20 (1+ (level victim)))))
 
-(defmethod do-kill :after (actor target)
-  (respawn target (location actor)))
-
 (defmethod will-kill ((observer avatar) actor victim)
   (show-text observer "~a killed ~a!"
              (if (eq observer actor) "You" (describe-brief actor :capitalize t))
              (describe-brief victim)))
-
-(defmethod did-kill ((observer avatar) actor corpse)
-  (update-neighbor observer corpse))
 
 ;;; The `inflict-damage` event occurs when `actor` causes `amount` damage to
 ;;; `target` due to `attack`.

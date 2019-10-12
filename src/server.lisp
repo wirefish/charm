@@ -159,7 +159,7 @@
                     (format-log :info "loaded avatar ~s" avatar)
                     (setf (session-avatar session) avatar)
                     (setf (session avatar) session)
-                    (do-enter-world avatar (location avatar))))
+                    (enter-world avatar (location avatar) nil)))
                 (start-session socket session))
               ;; The session key is missing or invalid; the player needs to
               ;; authenticate.
@@ -243,13 +243,13 @@
 (defun start-world ()
   (format-log :info "starting ~d locations" (hash-table-count *locations*))
   (maphash-values #'(lambda (location)
-                      (enter-world location nil))
+                      (enter-world location nil nil))
                   *locations*))
 
 (defun stop-world ()
   (format-log :info "stopping ~d locations" (hash-table-count *locations*))
   (maphash-values #'(lambda (location)
-                      (exit-world location nil))
+                      (exit-world location nil nil))
                   *locations*))
 
 (defun run-event-loop ()

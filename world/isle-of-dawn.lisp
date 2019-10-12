@@ -1022,7 +1022,7 @@
   (domain :outdoor)
   (contents (sailor)))
 
-(defmethod do-enter-world :after ((actor the-siren) location)
+(defmethod do-enter-world :after ((actor the-siren) location entry)
   (start-behavior actor :move-the-siren #'lib::move-vehicle
                   '((gangplank :west pier)
                     (gangplank :south arwyck::west-dock))))

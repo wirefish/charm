@@ -2,34 +2,37 @@
 
 ;;;
 
-(defevent exit-world (actor location))
+(defevent exit-world (actor location exit))
 
-(defmethod do-exit-world (actor location)
-  (remove-from-container actor location)
+(defmethod do-exit-world (actor location exit)
+  ;; NOTE: Can't just call `exit-location` here because that checks that `exit`
+  ;; actually leads somewhere.
+  (notify-observers location #'will-exit-location actor location exit)
   (stop-all-behaviors actor)
-  (notify-observers location #'did-exit-location actor location nil))
+  (remove-from-container actor location)
+  (notify-observers location #'did-exit-location actor location exit))
 
-(defmethod do-exit-world ((actor location) location)
+(defmethod do-exit-world ((actor location) location exit)
   (let ((contents (copy-list (contents actor))))
     (dolist (entity contents)
-      (exit-world entity actor))
+      (exit-world entity actor exit))
     (setf (contents actor) contents))
   (stop-all-behaviors actor))
 
 ;;;
 
-(defevent enter-world (actor location))
+(defevent enter-world (actor location entry))
 
-(defmethod do-enter-world (actor location)
-  (do-enter-location actor location nil))
+(defmethod do-enter-world (actor location entry)
+  (enter-location actor location entry))
 
-(defmethod do-enter-world ((actor location) location)
+(defmethod do-enter-world ((actor location) location entry)
   (let ((contents (contents actor)))
     (setf (contents actor) nil)
     (dolist (entity contents)
-      (enter-world entity actor))))
+      (enter-world entity actor entry))))
 
-(defmethod do-enter-world ((actor avatar) location)
+(defmethod do-enter-world ((actor avatar) location entry)
   ;; TODO: Show intro if new player. Or maybe intro, delay, then enter world.
   (update-avatar actor :name (name actor)
                        :level (level actor)
@@ -64,7 +67,7 @@
     (when (listp delay)
       (setf delay (apply #'uniform-random delay)))
     (with-delay (delay)
-      (do-enter-location (make-instance (type-of entity)) location nil))))
+      (enter-world (make-instance (type-of entity)) location nil))))
 
 (defmethod do-exit-location (actor location exit)
   (stop-behavior actor :activity)

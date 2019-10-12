@@ -138,7 +138,7 @@
      (show-text observer "The shaggy dog lies down and closes its eyes."))
    (change-state :stretch 20)))
 
-(defmethod do-enter-world :after ((actor shaggy-dog) location)
+(defmethod do-enter-world :after ((actor shaggy-dog) location entry)
   (start-behavior actor :wander-square #'wander 'village-square-portal))
 
 (defmethod do-talk (actor (target shaggy-dog) subject)

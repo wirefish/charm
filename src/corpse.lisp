@@ -1,6 +1,6 @@
 (in-package :charm)
 
-(defproto corpse (entity container)
+(defproto corpse (container entity)
   (brief "a corpse of ")
   (pose "lies nearby.")
   (full "The corpse is decaying rather quickly.")
@@ -8,7 +8,7 @@
   (of nil :instance))
 
 (defun make-corpse (deceased)
-  (make-instance 'corpse :id (id deceased) :of (describe-brief deceased)))
+  (make-instance 'corpse :of (describe-brief deceased)))
 
 (defmethod describe-brief ((entity corpse) &rest args)
   (concatenate 'string
