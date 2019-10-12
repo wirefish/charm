@@ -50,8 +50,22 @@
   (exits ((bayside-plaza-portal :west bayside-plaza-3 :east bayside-plaza-5)
           (gravel-path :north east-dock))))
 
+(defproto troll-maul (two-handed-weapon)
+  (brief "an enormous maul")
+  (damage-type :crushing)
+  (level 3)
+  (attack-verb "flattens"))
+
+(defproto killer-troll (monster)
+  (brief "a killer troll")
+  (pose "looks out over the bay.")
+  (full "This massive creature seems calm at the moment. Best not provoke it.")
+  (level 3)
+  (attacks (troll-maul)))
+
 (deflocation bayside-plaza-5 (bayside-plaza-location)
-  (exits ((bayside-plaza-portal :west bayside-plaza-4))))
+  (exits ((bayside-plaza-portal :west bayside-plaza-4)))
+  (contents (killer-troll)))
 
 ;;; harbor-road
 
