@@ -54,14 +54,17 @@
                 (match-tokens tokens (direction-abbrev dir))
                 (call-next-method))))
 
+;;;
+
 (defgeneric describe-exit (observer actor location exit)
   (:documentation "Returns a sentence to be displayed to `observer` when `actor`
     leaves `location` via `exit`, or nil if no message should be displayed."))
 
 (defmethod describe-exit (observer (actor entity) location (exit portal))
   (when (not (eq actor observer))
-    (format nil (or (exit-pose exit) "~a heads ~a.")
+    (format nil "~a ~@?"
             (describe-brief actor :capitalize t)
+            (or (exit-pose exit) "heads ~a.")
             (case (direction exit)
               (:in "inside")
               (:out "outside")
@@ -69,8 +72,11 @@
 
 (defmethod describe-exit (observer (actor entity) location (exit null))
   (when (not (eq actor observer))
-    (format nil (or (exit-pose actor) "~a disappears!")
-            (describe-brief actor :capitalize t))))
+    (format nil "~a ~a"
+            (describe-brief actor :capitalize t)
+            (or (exit-pose actor) "disappears!"))))
+
+;;;
 
 (defgeneric describe-entry (observer actor location entry)
   (:documentation "Returns a sentence to be displayed to `observer` when `actor`
@@ -78,20 +84,22 @@
 
 (defmethod describe-entry (observer (actor entity) location (entry portal))
   (when (not (eq actor observer))
-    (format nil (or (entry-pose entry) "~a enters from ~a.")
+    (format nil "~a ~@?"
             (describe-brief actor :capitalize t)
+            (or (entry-pose entry) "enters from ~a.")
             (let ((dir (opposite-direction (direction entry))))
               (case dir
                 (:in "inside")
                 (:out "outside")
                 (:up "above")
                 (:down "below")
-                (otherwise (format nil "the ~a" (direction-name dir))))))))
+                (otherwise (concatenate 'string "the " (direction-name dir))))))))
 
 (defmethod describe-entry (observer (actor entity) location (entry null))
   (when (not (eq actor observer))
-    (format nil (or (entry-pose actor) "~a appears!")
-            (describe-brief actor :capitalize t))))
+    (format nil "~a ~a"
+            (describe-brief actor :capitalize t)
+            (or (entry-pose actor) "appears!"))))
 
 ;;; A location is a place in the world.
 
