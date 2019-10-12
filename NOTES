@@ -4,9 +4,6 @@ TO DO:
 
 - add command to leave game
 
-- generalize entry/exit messages to allow for e.g. a "X drops Y." message if Y
-  enters due to having been dropped
-
 - generalize skill rank up, e.g. for proficiencies, using same model as
   gathering
 
@@ -19,10 +16,6 @@ TO DO:
 - add combat abilities and spells via learning skills
 
 - crafting
-
-- clean up functions for containers/inventory to be more consistent
-
-- command parser: and/comma-separated lists; extract count prefix
 
 ========================================
 
