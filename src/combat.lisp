@@ -163,9 +163,7 @@
       (progn
         (setf (attack-target attacker) (select-target attacker))
         (change-behavior-state attacker :activity :select-attack))
-      (progn
-        (setf (attack-target attacker) nil)
-        (stop-behavior attacker :activity))))
+      (stop-behavior attacker :activity)))
 
 ;;; Several events are associated with combat. The `kill` event occurs when
 ;;; `actor` kills `victim`. This can be via direct damage or condition damage,
@@ -286,6 +284,7 @@
 
   ;; Exit combat.
   (:stop
+   (setf (attack-target actor) nil (opponents actor) nil)
    (show-text actor "You are no longer in combat.")))
 
 ;;;
@@ -363,12 +362,24 @@
       (t (show-text actor "Do you want to assist ~a?"
                     (format-list (mapcar #'describe-brief matches) :conjunction "or"))))))
 
-(defcommand (actor "opp")
-  (if (attack-target actor)
-      (show-text actor "Your current attack target is ~a."
-                 (describe-brief (attack-target actor)))
-      (show-text actor "You have no current attack target."))
-  (if (opponents actor)
-      (show-text actor "You are currently in combat with ~a."
-                 (format-list (mapcar #'describe-brief (opponents actor))))
-      (show-text actor "You are not currently in combat with anything.")))
+;;; FIXME: for testing
+
+(defcommand (actor "opp" subject)
+  (let ((matches (if subject
+                     (match-objects subject (remove-if-not #'(lambda (x) (typep x 'combatant))
+                                                           (contents (location actor))))
+                     (list actor))))
+    (dolist (entity matches)
+      (with-slots (attack-target assist-target opponents) entity
+      (show-text actor "~a (#~d): attack-target = ~a, assist-target = ~a, opponents = ~a"
+                 (describe-brief entity)
+                 (id entity)
+                 (and attack-target (describe-brief attack-target))
+                 (and assist-target (describe-brief assist-target))
+                 (mapcar #'describe-brief opponents))))))
+
+(defcommand (actor "ooc")
+  (setf (attack-target actor) nil
+        (assist-target actor) nil
+        (opponents actor) nil)
+  (show-text actor "Targets and opponents have been cleared."))

@@ -97,13 +97,6 @@
   (notify-observers location #'did-exit-location actor location exit)
   (did-exit-location exit actor location exit))
 
-(defmethod do-exit-location :after ((actor combatant) location exit)
-  ;; FIXME: where should this go? Should target/opponents be part of the
-  ;; autoattack/combat behavior?
-  (when (opponents actor)
-    (show-text actor "You are no longer in combat.")
-    (setf (opponents actor) nil)))
-
 (defmethod did-exit-location ((observer combatant) actor location exit)
   (when (member actor (opponents observer))
     (deletef (opponents observer) actor)
@@ -113,7 +106,6 @@
       (stop-behavior observer :activity))))
 
 (defmethod did-exit-location ((observer avatar) actor location exit)
-  ;; TODO: handle exit-specific messages.
   (when (and (not (eq observer actor))
              (visible-p actor observer))
     (show-text observer (describe-exit observer actor location exit))
