@@ -169,13 +169,14 @@
 
 (defevent die (actor))
 
-(defstruct death-exit (corpse))
+(defproto death-exit (portal)
+  (corpse nil :instance))
 
 (defmethod describe-exit (observer actor location (exit death-exit))
   (cond
     ((eq observer actor)
      (format nil "You die."))
-    ((death-exit-corpse exit)
+    ((corpse exit)
      (format nil "~a dies, leaving behind a rotting corpse."
              (describe-brief actor :capitalize t)))
     (t
@@ -186,11 +187,11 @@
         (assist-target actor) nil
         (opponents actor) nil)
   (stop-all-behaviors actor)
-  (let ((corpse (make-corpse actor))
-        (location (location actor)))
-    (notify-observers location #'will-die actor)
-    (exit-world actor location (make-death-exit :corpse corpse))
+  (let* ((corpse (make-corpse actor))
+         (location (location actor))
+         (portal (make-instance 'death-exit :corpse corpse)))
     (notify-observers location #'did-die actor)
+    (exit-world actor location portal)
     (when corpse
       (enter-world corpse location nil))
     (respawn actor location)))
@@ -325,8 +326,8 @@
   You will enter combat with the enemy and its allies. See `help:combat` for
   details."
   (let ((matches (match-objects target
-                                (keep-if #'(lambda (x) (when (attackable-p actor x) x))
-                                         (contents (location actor))))))
+                                (remove-if-not #'(lambda (x) (attackable-p actor x))
+                                               (contents (location actor))))))
     (case (length matches)
       (0 (show-text actor "You don't see anything like that to attack."))
       (1

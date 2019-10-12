@@ -60,7 +60,7 @@
   (:documentation "Returns a sentence to be displayed to `observer` when `actor`
     leaves `location` via `exit`, or nil if no message should be displayed."))
 
-(defmethod describe-exit (observer (actor entity) location (exit portal))
+(defmethod describe-exit (observer actor location (exit portal))
   (when (not (eq actor observer))
     (format nil "~a ~@?"
             (describe-brief actor :capitalize t)
@@ -70,7 +70,7 @@
               (:out "outside")
               (otherwise (direction-name (direction exit)))))))
 
-(defmethod describe-exit (observer (actor entity) location (exit null))
+(defmethod describe-exit (observer actor location (exit null))
   (when (not (eq actor observer))
     (format nil "~a ~a"
             (describe-brief actor :capitalize t)

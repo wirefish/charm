@@ -9,6 +9,10 @@
   (damage-type :piercing)
   (attack-verb "bites"))
 
+(defproto silky-spiderweb (stackable-item)
+  (brief "a silky spiderweb")
+  (full "This spiderweb can be turned into thread by a skilled weaver."))
+
 (defproto giant-spider (monster)
   (brief "a giant forest spider")
   (pose "hangs from a nearby branch.")
@@ -18,9 +22,8 @@
   (icon 'long-legged-spider)
   (level 1)
   (attacks (giant-spider-bite))
-  (entry-pose "drops down from the branches above."))
-
-;; FIXME: drops [(currency/silver 0.5 1 3)]])
+  (entry-pose "drops down from the branches above.")
+  (loot '((0.5 silky-spiderweb))))
 
 ;;; prototypes
 

@@ -4,7 +4,7 @@
   (:import-from :cl-async :with-delay)
   (:export
    :defproto :deflocation :defregion :transform-slot-init-form
-   :describe-brief :describe-pose :describe-full
+   :describe-brief :describe-pose :describe-full :describe-exit :describe-entry
    :format-noun :format-verb
    :same-location-p
    ;;
@@ -22,7 +22,7 @@
    :required-race :required-skills :exclusive-skills :cost :max-rank
    :rank :command :recipe-list
    ;;
-   :show-text :show-say :announce :maybe-show-tutorial
+   :show-text :show-say :show-notice :announce :maybe-show-tutorial
    :update-map-nearby
    :change-race :change-gender :change-name :valid-name-p
    :with-delay :format-log
@@ -39,6 +39,7 @@
       :dripping-caverns
       :copper-mine
       :isle-of-dawn
+      :shadowlands
       :silverwood))
 
   (dolist (name *region-packages*)

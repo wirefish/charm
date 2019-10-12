@@ -14,6 +14,7 @@
   (level 0)
   (modifiers (make-hash-table))
   (attitude :neutral)
+  (loot nil)
   ;;
   (max-health nil :instance)
   (health nil :instance)
@@ -150,3 +151,18 @@
 
 (defmethod add-opponent ((actor combatant) opponent)
   (setf (opponents actor) (adjoin opponent (opponents actor))))
+
+;;; A loot table is a list of (probability . items), where each item is either a
+;;; type or (min max type).
+
+(defun create-loot (loot-table)
+  (do (loot)
+      ((null loot-table) (nreverse loot))
+    (destructuring-bind (probability . items) (pop loot-table)
+      (when (< (random 1.0) probability)
+        (let ((item (random-elt items)))
+          (if (listp item)
+              (destructuring-bind (min max type) item
+                (push (make-instance type :stack-count (uniform-random min max))
+                      loot))
+              (push (make-instance item) loot)))))))

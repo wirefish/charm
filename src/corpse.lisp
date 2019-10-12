@@ -8,7 +8,8 @@
   (of nil :instance))
 
 (defun make-corpse (deceased)
-  (make-instance 'corpse :of (describe-brief deceased)))
+  (when-let ((loot (create-loot (loot deceased))))
+    (make-instance 'corpse :of (describe-brief deceased) :contents loot)))
 
 (defmethod describe-brief ((entity corpse) &rest args)
   (concatenate 'string

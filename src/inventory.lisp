@@ -202,6 +202,31 @@ There are a number of verbs/events that interact with inventory in this way:
           (dolist (match matches)
             (destructuring-bind (item . quantity) match
               (take-item actor quantity item origin)))))))
+;;;
+
+
+(defcommand (actor "loot" container)
+  (let ((containers (match-objects container
+                                   (remove-if-not #'(lambda (x)
+                                                      (and (visible-p x actor)
+                                                           (typep x 'container)))
+                                                  (contents (location actor))))))
+    (cond
+      (containers
+       (dolist (container containers)
+         (do ()
+             ((null (contents container)))
+           (let* ((item (pop (contents container)))
+                  (inv-container (add-to-inventory item actor :force t)))
+             (show-text actor "You loot ~a from ~a and place ~a in your ~a."
+                        (describe-brief item)
+                        (describe-brief container)
+                        (if (= 1 (stack-size item)) "it" "them")
+                        (describe-brief inv-container :article nil))))))
+      (container
+       (show-text actor "There is nothing here like that you can loot."))
+      (t
+       (show-text actor "There is nothing here you can loot.")))))
 
 ;;; The `give-item` event occurs when `actor` gives a newly-created entity to
 ;;; `recipient`.
@@ -228,7 +253,7 @@ There are a number of verbs/events that interact with inventory in this way:
      (call-next-method))))
 
 (defmethod do-give-item (actor item (recipient avatar))
-  (when-let ((container (add-to-inventory item recipient)))
+  (when-let ((container (add-to-inventory item recipient :force t)))
     (show-text recipient
                (concatenate
                 'string
