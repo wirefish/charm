@@ -63,10 +63,10 @@ Four events occur during the lifetime of a quest:
   "Removes all items associated with `quest` from the inventory of `avatar`. If
   `npc` is not nil, makes it appear that items are given to `npc`; otherwise,
   `message` is used to construct feedback to the player."
-  (let ((items (remove-items-if avatar
-                                #'(lambda (item)
-                                    (and (typep item 'quest-item)
-                                         (eq (quest item) (key quest)))))))
+  (let ((items (remove-from-inventory-if #'(lambda (item)
+                                             (and (typep item 'quest-item)
+                                                  (eq (quest item) (key quest))))
+                                         avatar)))
     (dolist (item items)
       (if npc
           (show-text avatar "You give ~a to ~a."
