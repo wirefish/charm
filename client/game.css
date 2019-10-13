@@ -434,7 +434,6 @@ a:link {
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-blend-mode: multiply;
-    background-image: url('icons/cube.png');
 }
 
 #equipbox > div > div:nth-child(2) > div:nth-child(2) {

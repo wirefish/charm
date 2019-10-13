@@ -492,6 +492,7 @@
 
 (defproto simple-shirt (clothing)
   (brief "a simple cotton shirt")
+  (icon 'common-clothing)
   (full "The shirt is well-made and comfortable.")
   (slot :torso))
 
@@ -502,12 +503,14 @@
 
 (defproto leather-shoes (clothing)
   (brief "a pair of leather shoes")
+  (icon 'shoes)
   (full "These low shoes have a sturdy sole, suitable for walking long
     distances.")
   (slot :feet))
 
 (defproto small-backpack (equipment container) ; FIXME: lib::small-backpack etc.
   (brief "a small canvas backpack")
+  (icon 'bag-small)
   (full "The backpack has wide leather straps and a drawstring closure.")
   (slot :backpack)
   (capacity 20))
@@ -831,6 +834,7 @@
 
 (defproto worn-dagger (lib::dagger)
   (brief "a worn copper dagger")
+  (icon 'knives-02)
   (full "The dagger has a slender blade and a smooth wooden handle."))
 
 (defquest kill-some-plants

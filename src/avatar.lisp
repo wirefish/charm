@@ -243,6 +243,22 @@
 
 ;;;
 
+(defun update-equipment (actor &optional slots)
+  "Sends a structured update to the client describing the items equipped by
+  `actor`. If `slots` is provided, the update describes only those slots."
+  (with-slots (equipment) actor
+    (let ((update (alist-hash-table
+                   (mapcar #'(lambda (slot)
+                               (let ((item (gethash slot equipment)))
+                                 (cons slot (and item
+                                                 (list (describe-icon item)
+                                                       (describe-brief item :article nil))))))
+                           (or slots
+                               (remove :in-hands (hash-table-keys *equipment-slots*)))))))
+      (send-client-command (session actor) "updateEquipment" update))))
+
+;;;
+
 (defun skill-rank (avatar skill-key)
   "Returns the rank of `avatar` in the skill with the given key, or nil if the
   skill has not been learned."

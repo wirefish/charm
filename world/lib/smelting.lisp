@@ -3,6 +3,7 @@
 ;;; Tools.
 
 (defproto smelting-tool (crafting-tool)
+  (icon 'hammer)
   (required-skill 'smelting))
 
 (defproto copper-smelting-hammer (smelting-tool)

@@ -13,3 +13,6 @@
 (defcommand (actor "save")
   (save-avatar (session-account-id (session actor)) actor)
   (show-text actor "Your avatar has been saved."))
+
+(defcommand (actor "update")
+  (update-equipment actor))

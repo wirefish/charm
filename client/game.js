@@ -201,6 +201,10 @@ function MessageHandler()
     // The cached properties for the player's avatar.
     this.avatar = {};
 
+    // The cached equipment for the avatar is a map from slot name to a brief
+    // item description.
+    this.equipment = {};
+
     // Enemies that are currently in combat with the player.
     this.enemies = new Set();
 
@@ -409,6 +413,28 @@ MessageHandler.prototype.updateInventory = function(inventory)
             entry.appendChild(name_div);
 
             invbox.appendChild(entry);
+        }
+    }
+}
+
+MessageHandler.prototype.updateEquipment = function(equipment)
+{
+    // Update the cached equipment.
+    this.equipment = Object.assign({}, this.equipment, equipment);
+
+    // Update the UI elements.
+    for (var slot in equipment) {
+        var div = document.getElementById('equip_' + slot);
+        var item = equipment[slot];
+        if (item) {
+            var [icon, brief] = item;
+            div.children[0].style.backgroundImage = 'url("icons/{0}.png")'.format(icon);
+            div.children[0].style.visibility = 'visible';
+            div.children[1].innerHTML = brief;
+        }
+        else {
+            div.children[0].style.visibility = 'hidden';
+            div.children[1].innerHTML = null;
         }
     }
 }

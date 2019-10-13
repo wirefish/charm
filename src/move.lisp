@@ -45,6 +45,7 @@
                        :max-mana (max-mana actor)
                        :xp (xp actor)
                        :xp-required (xp-required-for-next-level actor))
+  (update-equipment actor)
   (call-next-method))
 
 ;;;

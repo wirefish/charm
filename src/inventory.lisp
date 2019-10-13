@@ -361,24 +361,27 @@ There are a number of verbs/events that interact with inventory in this way:
   (with-slots (equipment) actor
     (stop-behavior actor :activity)
     (remove-from-inventory inventory-slot item actor)
-    ;; If there's already an item equipped in the slot, move it to inventory.
-    ;; Make sure this never fails by always allowing the item to be held in the
-    ;; avatar's hands.
-    (when-let ((prev-item (gethash equipment-slot equipment)))
-      (let ((container (add-to-inventory prev-item actor :force t)))
-        (show-text actor "You place ~a in your ~a."
-                   (describe-brief prev-item)
-                   (describe-brief container :article nil))))
-    ;; If the item's slot is :both-hands, also clear the :off-hand slot in the
-    ;; same way.
-    (when-let ((off-hand (and (eq (slot item) :both-hands) (gethash :off-hand equipment))))
-      (let ((container (add-to-inventory off-hand actor :force t)))
-        (show-text actor "You place ~a in your ~a."
-                   (describe-brief off-hand)
-                   (describe-brief container :article nil))))
-    ;; Equip the item.
-    (setf (gethash equipment-slot equipment) item)
-    (show-text actor "You equip ~a." (describe-brief item))))
+    (let ((changed-slots (list equipment-slot)))
+      ;; If there's already an item equipped in the slot, move it to inventory.
+      ;; Make sure this never fails by always allowing the item to be held in the
+      ;; avatar's hands.
+      (when-let ((prev-item (gethash equipment-slot equipment)))
+        (let ((container (add-to-inventory prev-item actor :force t)))
+          (show-text actor "You place ~a in your ~a."
+                     (describe-brief prev-item)
+                     (describe-brief container :article nil))))
+      ;; If the item's slot is :both-hands, also clear the :off-hand slot in the
+      ;; same way.
+      (when-let ((off-hand (and (eq (slot item) :both-hands) (gethash :off-hand equipment))))
+        (let ((container (add-to-inventory off-hand actor :force t)))
+          (show-text actor "You place ~a in your ~a."
+                     (describe-brief off-hand)
+                     (describe-brief container :article nil))
+          (push :off-hand changed-slots)))
+      ;; Equip the item.
+      (setf (gethash equipment-slot equipment) item)
+      (show-text actor "You equip ~a." (describe-brief item))
+      (update-equipment actor changed-slots))))
 
 (defun select-equipment-slot (item avatar)
   "Returns the actual slot that will be used to equip `item`."
@@ -468,7 +471,8 @@ There are a number of verbs/events that interact with inventory in this way:
       (show-text actor "You unequip ~a and place it in your ~a."
                  (describe-brief item)
                  (describe-brief container :article nil))
-      (setf (gethash equipment-slot (equipment actor)) nil))))
+      (setf (gethash equipment-slot (equipment actor)) nil)
+      (update-equipment actor (list equipment-slot)))))
 
 (defcommand (actor ("unequip" "uneq") item)
   "Unequip an item and move it to your inventory. The item is placed into any
