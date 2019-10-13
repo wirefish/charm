@@ -415,8 +415,9 @@ a:link {
 #equipbox > div div {
     display: inline-block;
     vertical-align: middle;
-    white-space: nowrap;
     text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
 }
 
 #equipbox > div > div:nth-child(1) {
@@ -442,41 +443,37 @@ a:link {
 
 /* Inventory */
 
-/* shdfsdf */
-
 #invbox {
     display: none;
 }
 
 #invbox > div {
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row wrap;
+}
+
+#invbox > div > h3 {
+    flex: 0 0 100%;
+    font: 10pt artifika;
+    border-bottom: 1px solid #9a9a9a;
     margin-top: 5px;
+    text-align: center;
 }
 
 #invbox > div > div {
-    display: inline-block;
-    vertical-align: middle;
-}
-
-#invbox > div > div:nth-child(1) {
-    width: 20px;
+    flex: 0 0 50%;
+    max-width: 50%;
     height: 20px;
-    margin-right: 4px;
-    background-size: 100% 100%;
+    margin-top: 3px;
+    text-indent: 25px;
+    background-size: 20px 20px;
     background-repeat: no-repeat;
     background-blend-mode: multiply;
     background-image: url('icons/cube.png');
-}
-
-#invbox > div > div:nth-child(2) {
-    vertical-align: middle;
-    text-align: left;
-}
-
-#invbox > h3 {
-    font: 10pt artifika;
-    border-bottom: 1px solid #9a9a9a;
-    margin: 5px 0;
-    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 /* Combat modifiers */

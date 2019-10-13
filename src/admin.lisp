@@ -15,4 +15,5 @@
   (show-text actor "Your avatar has been saved."))
 
 (defcommand (actor "update")
-  (update-equipment actor))
+  (update-equipment actor)
+  (update-inventory actor))

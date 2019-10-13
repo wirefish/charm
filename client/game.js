@@ -201,10 +201,6 @@ function MessageHandler()
     // The cached properties for the player's avatar.
     this.avatar = {};
 
-    // The cached equipment for the avatar is a map from slot name to a brief
-    // item description.
-    this.equipment = {};
-
     // Enemies that are currently in combat with the player.
     this.enemies = new Set();
 
@@ -388,41 +384,38 @@ function joinClauses(clauses) {
 
 MessageHandler.prototype.updateInventory = function(inventory)
 {
-    var invbox = document.getElementById('invbox');
-    while (invbox.firstChild)
-        invbox.removeChild(invbox.firstChild);
-
-    var groups = Array.from(Object.keys(inventory)).sort();
-    for (let group of groups) {
-        var heading = document.createElement('h3');
-        heading.innerHTML = group;
-        invbox.appendChild(heading);
-
-        var items = inventory[group];
-        for (var i = 0; i < items.length; ++i) {
-            var [brief, icon, color] = items[i];
-            var entry = document.createElement('div');
-
-            var icon_div = document.createElement('div');
-            icon_div.style.backgroundImage = 'url("icons/{0}")'.format(icon);
-            icon_div.style.backgroundColor = color;
-            entry.appendChild(icon_div);
-
-            var name_div = document.createElement('div');
-            name_div.innerHTML = formatBlock(look(brief));
-            entry.appendChild(name_div);
-
-            invbox.appendChild(entry);
+    for (var slot in inventory) {
+        var slot_header = document.getElementById('inv_' + slot);
+        var container = inventory[slot];
+        console.log(slot, container);
+        for (var id in container) {
+            var div = document.getElementById('inv_' + id);
+            var item = container[id];
+            console.log(id, item);
+            if (item) {
+                // Add or update item.
+                var [icon, brief] = item;
+                if (div) {
+                    div.innerHTML = brief;
+                }
+                else {
+                    div = document.createElement('div');
+                    div.style.backgroundImage = 'url("icons/{0}.png")'.format(icon);
+                    div.innerHTML = brief;
+                    slot_header.parentNode.insertBefore(div, slot_header.nextSibling);
+                }
+            }
+            else {
+                // Remove item.
+                if (div)
+                    div.parentNode.removeChild(div);
+            }
         }
     }
 }
 
 MessageHandler.prototype.updateEquipment = function(equipment)
 {
-    // Update the cached equipment.
-    this.equipment = Object.assign({}, this.equipment, equipment);
-
-    // Update the UI elements.
     for (var slot in equipment) {
         var div = document.getElementById('equip_' + slot);
         var item = equipment[slot];
@@ -437,66 +430,6 @@ MessageHandler.prototype.updateEquipment = function(equipment)
             div.children[1].innerHTML = null;
         }
     }
-}
-
-MessageHandler.prototype.showInventory = function(inventory, equipment)
-{
-    var out = [];
-
-    this.updateInventory(inventory);
-
-    var weapons = [null, null];
-    var attire = [];
-    for (var i = 0; i < equipment.length; ++i) {
-        var [slot, item] = equipment[i];
-        if (slot == 'main_hand')
-            weapons[0] = item;
-        else if (slot == 'off_hand')
-            weapons[1] = item;
-        else if (slot == 'both_hands')
-            weapons[0] = weapons[1] = item;
-        else
-            attire.push('{0} ({1})'.format(look(item), slot));
-    }
-
-    if (weapons[0]) {
-        if (weapons[0] == weapons[1])
-            out.push('You are wielding {0} in both hands.'.format(look(weapons[0])));
-        else if (weapons[1])
-            out.push('You are wielding {0} in your main hand and {1} in your off hand.'.format(
-                look(weapons[0]), look(weapons[1])));
-        else
-            out.push('You are wielding {0} in your main hand.'.format(look(weapons[0])));
-    }
-    else if (weapons[1]) {
-        out.push('You are wielding {0} in your off hand.'.format(look(weapons[1])));
-    }
-    else {
-        out.push('You are not wielding any weapons.');
-    }
-
-    if (attire.length == 0) {
-        out.push('You are not wearing anything.');
-    }
-    else {
-        out.push('You are wearing ' + joinClauses(attire) + '.');
-    }
-
-    if (inventory.length == 0) {
-        out.push('You are not carrying anything.');
-    }
-    else {
-        var list_items = [];
-        for (let i = 0; i < inventory.length; ++i) {
-            var [group, items] = inventory[i];
-            var links = items.map(function (item) { return look(item[0]); });
-            list_items.push(group + ': ' + joinClauses(links));
-        }
-        out.push('You are carrying:');
-        out.push(makeList(list_items));
-    }
-
-    appendBlock(wrapElements('div', formatStrings('p', out)));
 }
 
 MessageHandler.prototype.startPlayerCast = function(name, duration)

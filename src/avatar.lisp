@@ -241,7 +241,7 @@
 (defmethod do-enter-world :after ((avatar avatar) location entry)
   (start-behavior avatar :regenerate #'regenerate))
 
-;;;
+;;; FIXME: move these?
 
 (defun update-equipment (actor &optional slots)
   "Sends a structured update to the client describing the items equipped by
@@ -256,6 +256,19 @@
                            (or slots
                                (remove :in-hands (hash-table-keys *equipment-slots*)))))))
       (send-client-command (session actor) "updateEquipment" update))))
+
+(defun update-inventory (actor)
+  (let ((update (make-hash-table)))
+    (dolist (slot '(:backpack :in-hands))
+      (when-let ((container (gethash slot (equipment actor))))
+        (setf (gethash slot update)
+              (alist-hash-table
+               (mapcar #'(lambda (item)
+                           (cons (write-to-string (id item))
+                                 (list (describe-icon item)
+                                       (describe-brief item :article nil))))
+                       (contents container))))))
+    (send-client-command (session actor) "updateInventory" update)))
 
 ;;;
 
