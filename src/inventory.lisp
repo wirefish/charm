@@ -150,7 +150,8 @@ There are a number of verbs/events that interact with inventory in this way:
     (when (not (eq observer actor))
       (show-text observer "~a takes ~a."
                  (describe-brief actor :capitalize t)
-                 (describe-brief item :count quantity)))))
+                 (describe-brief item :count quantity)))
+    (remove-neighbor observer item)))
 
 (defun find-containers (actor tokens containers pose &optional default)
   (if tokens
