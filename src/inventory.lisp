@@ -308,9 +308,11 @@ There are a number of verbs/events that interact with inventory in this way:
                  (pop matches)))))))
       ;; Drop all items carried in hands.
       (let ((container (gethash :in-hands (equipment actor))))
-        (loop while (contents container)
-              do
-                 (drop-item actor (first (contents container)) :in-hands)))))
+        (if (contents container)
+            (loop while (contents container)
+                  do
+                     (drop-item actor (first (contents container)) :in-hands))
+            (show-text actor "You aren't carrying anything in your hands.")))))
 
 ;;; Display items in the avatar's inventory, which is the contents of any
 ;;; containers in its :backpack, :in-hands, and :coin-purse slots.
