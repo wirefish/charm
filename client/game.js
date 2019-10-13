@@ -400,6 +400,7 @@ MessageHandler.prototype.updateInventory = function(inventory)
                 }
                 else {
                     div = document.createElement('div');
+                    div.id = 'inv_' + id;
                     div.style.backgroundImage = 'url("icons/{0}.png")'.format(icon);
                     div.innerHTML = brief;
                     slot_header.parentNode.insertBefore(div, slot_header.nextSibling);
