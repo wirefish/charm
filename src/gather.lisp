@@ -70,7 +70,7 @@
 (defmethod do-gather-resources :after (actor resources node)
   (notify-observers (location actor) #'did-gather-resources actor resources node)
   (when (= 0 (decf (attempts-remaining node)))
-    (exit-world node (location actor))
+    (exit-world node (location actor) nil)
     (respawn node (location actor))))
 
 ;;;
