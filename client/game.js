@@ -420,13 +420,12 @@ MessageHandler.prototype.updateEquipment = function(equipment)
         var item = equipment[slot];
         if (item) {
             var [icon, brief] = item;
-            div.children[0].style.backgroundImage = 'url("icons/{0}.png")'.format(icon);
-            div.children[0].style.visibility = 'visible';
-            div.children[1].innerHTML = brief;
+            div.style.backgroundImage = 'url("icons/{0}.png")'.format(icon);
+            div.innerHTML = brief;
         }
         else {
-            div.children[0].style.visibility = 'hidden';
-            div.children[1].innerHTML = null;
+            div.style.backgroundImage = 'none';
+            div.innerHTML = null;
         }
     }
 }
