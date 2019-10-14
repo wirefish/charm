@@ -15,6 +15,12 @@
   (level 10)
   (required-rank 20))
 
+;;; A furnace is the crafting station required for smelting.
+
+(defproto furnace (entity)
+  (brief "a furnace")
+  (icon 'furnace))
+
 ;;; Ingots are produced by smelting ore.
 
 (defproto ingot (material)

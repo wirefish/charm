@@ -97,7 +97,7 @@
   (full "Hermetch lives up to his apellation; his head shines almost as brightly
     as the polished blades of the pickaxes on the rack behind him."))
 
-(defproto simple-furnace (entity)
+(defproto simple-furnace (furnace)
   (brief "a simple furnace")
   (pose "stands in the southeast corner of the room.")
   (full "The furnace can be used to smelt common ore into ingots."))
