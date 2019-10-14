@@ -97,6 +97,8 @@ function load()
         ["ship", "icons/sailboat.png"],
         ["house", "icons/transparent_house.png"],
         ["hearts", "icons/hearts.png"],
+        ["vendor", "icons/map_vendor.png"],
+        ["trainer", "icons/map_trainer.png"],
     ]);
     map.render();
 

@@ -39,7 +39,8 @@
                          (describe-brief location)
                          (describe-icon location)
                          (location-quest-state location avatar)
-                         :false ; (npc-state location)
+                         (when (find-type-in-container 'vendor location) t)
+                         (when (find-type-in-container 'trainer location) t)
                          (mapcar #'direction
                                  (remove-if-not #'(lambda (x) (portal-visible-p x avatar)) (exits location)))
                          (surface location)

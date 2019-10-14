@@ -93,6 +93,7 @@ Map.prototype.update = function(radius, rooms)
     // - icon
     // - quest state
     // - vendor?
+    // - trainer?
     // - exit directions
     // - surface
     // - domain
@@ -182,7 +183,7 @@ Map.prototype.render = function()
     context.lineWidth = 16;
     context.lineCap = 'butt';
     for (var j = 0; j < this.rooms.length; ++j) {
-        var [x, y, name, icon, quest_state, vendor, exits, surface, domain] = this.rooms[j];
+        var [x, y, name, icon, quest_state, vendor, trainer, exits, surface, domain] = this.rooms[j];
 
         context.save();
         context.translate(left + (x + this.radius) * cell_size,
@@ -224,7 +225,7 @@ Map.prototype.render = function()
     context.lineCap = 'round';
     context.strokeStyle = 'black';
     for (var j = 0; j < this.rooms.length; ++j) {
-        var [x, y, name, icon, quest_state, vendor, exits, surface, domain] = this.rooms[j];
+        var [x, y, name, icon, quest_state, vendor, trainer, exits, surface, domain] = this.rooms[j];
 
         context.save();
         context.translate(left + (x + this.radius) * cell_size,
@@ -302,9 +303,16 @@ Map.prototype.render = function()
 
         // Draw a symbol if there's a vendor.
         if (vendor) {
-            context.fillStyle = "#efcf3f";  // gold
-            this.drawSymbol(context, "\u2666",
-                            inset + room_size / 2 - 2, inset, room_size / 2 + 2)
+            var image = this.images.images["vendor"];
+            var size = room_size / 2;
+            context.drawImage(image, inset + size, inset, size, size);
+        }
+
+        // Draw a symbol if there's a trainer.
+        if (trainer) {
+            var image = this.images.images["trainer"];
+            var size = room_size / 2;
+            context.drawImage(image, inset, inset + size, size, size);
         }
 
         context.restore();
