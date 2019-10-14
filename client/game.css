@@ -448,12 +448,15 @@ a:link {
 }
 
 #invbox > div {
+}
+
+#invbox > div > div {
     display: flex;
     justify-content: space-between;
     flex-flow: row wrap;
 }
 
-#invbox > div > h3 {
+#invbox > div > div > h3 {
     flex: 0 0 100%;
     font: 10pt artifika;
     border-bottom: 1px solid #9a9a9a;
@@ -461,7 +464,7 @@ a:link {
     text-align: center;
 }
 
-#invbox > div > div {
+#invbox > div > div > div {
     flex: 0 0 50%;
     max-width: 50%;
     height: 20px;
@@ -474,6 +477,11 @@ a:link {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
+}
+
+#invbox > div > div > p {
+    text-align: center;
+    font-style: italic;
 }
 
 /* Combat modifiers */

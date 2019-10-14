@@ -385,13 +385,11 @@ function joinClauses(clauses) {
 MessageHandler.prototype.updateInventory = function(inventory)
 {
     for (var slot in inventory) {
-        var slot_header = document.getElementById('inv_' + slot);
+        var container_div = document.getElementById('inv_' + slot);
         var container = inventory[slot];
-        console.log(slot, container);
         for (var id in container) {
             var div = document.getElementById('inv_' + id);
             var item = container[id];
-            console.log(id, item);
             if (item) {
                 // Add or update item.
                 var [icon, brief] = item;
@@ -403,7 +401,7 @@ MessageHandler.prototype.updateInventory = function(inventory)
                     div.id = 'inv_' + id;
                     div.style.backgroundImage = 'url("icons/{0}.png")'.format(icon);
                     div.innerHTML = brief;
-                    slot_header.parentNode.insertBefore(div, slot_header.nextSibling);
+                    container_div.insertBefore(div, null);
                 }
             }
             else {
