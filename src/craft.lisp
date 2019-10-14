@@ -12,6 +12,9 @@
     :initarg :materials :reader materials
     :documentation "Instances of the materials required to craft the recipe.")))
 
+(defun create-recipe-item (recipe)
+  (make-instance (type-of (item recipe))))
+
 (defmethod command ((ability recipe))
   (find-command "craft"))
 
@@ -92,11 +95,18 @@
        (start-behavior actor :activity #'craft item recipe found)))))
 
 (defmethod do-craft-item (actor item recipe)
-  (show-text actor "You successfully craft ~a." (describe-brief item)))
+  (show-text actor "You successfully craft ~a." (describe-brief item))
+  (add-to-inventory (create-recipe-item recipe) actor :force t))
 
 (defbehavior craft (actor item recipe materials)
     ((tool (gethash :tool (equipment actor))))
   (:start
+   (dolist (material materials)
+     (destructuring-bind (container item count) material
+       (show-text actor "You remove ~a from your ~a."
+                  (describe-brief item :count count)
+                  (describe-brief container :article nil))
+       (remove-from-inventory (slot container) item actor :quantity count)))
    (show-text actor "You begin crafting ~a with your ~a."
               (describe-brief item)
               (describe-brief tool :article nil))
@@ -141,14 +151,26 @@
   (declare (ignore extra-materials))
   (if-let ((tool (require-type (gethash :tool (equipment actor)) 'crafting-tool)))
     (let* ((skill (find-skill (required-skill tool)))
-           (recipes (if item (match-objects item (craftable-recipes actor skill)))))
-      (case (length recipes)
-        (0 (show-text actor "You cannot craft any such item."))
-        (1 (let ((recipe (first recipes)))
-             (craft-item actor (item recipe) recipe)))
-        (t (show-text actor "Do you want to craft ~a?"
-                      (format-list (mapcar #'(lambda (recipe)
-                                               (describe-brief (item recipe)))
-                                           recipes)
-                                   :conjunction "or")))))
+           (recipes (match-objects item (craftable-recipes actor skill))))
+      (cond
+        ((null item)
+         (show-links actor
+                     (format nil "You can craft the following items using your ~a skill:"
+                             (name skill))
+                     "craft"
+                     (sort (mapcar #'(lambda (recipe)
+                                       (describe-brief (item recipe) :article nil))
+                                   recipes)
+                           #'string<)))
+        ((null recipes)
+         (show-text actor "You cannot craft any such item."))
+        ((> (length recipes) 1)
+         (show-text actor "Do you want to craft ~a?"
+                    (format-list (mapcar #'(lambda (recipe)
+                                             (describe-brief (item recipe)))
+                                         recipes)
+                                 :conjunction "or")))
+        (t
+         (let ((recipe (first recipes)))
+           (craft-item actor (item recipe) recipe)))))
     (show-text actor "You do not have a crafting tool equipped.")))

@@ -24,16 +24,10 @@
 ;;; Ingots are produced by smelting ore.
 
 (defproto ingot (material)
-  (brief "a ~(~a~) ingot")
   (full "The ingot is a small bar of pure ~(~a~), ready to be used as a crafting
     material.")
-  (icon 'ore)
   (content nil)
   (required-skill 'smelting))
-
-(defmethod describe-brief ((subject ingot) &rest args)
-  (declare (ignore args))
-  (format nil (call-next-method) (content subject)))
 
 (defmethod describe-full ((subject ingot))
   (format nil (full subject) (content subject)))
@@ -41,9 +35,13 @@
 ;;; Types of ingots.
 
 (defproto copper-ingot (ingot)
+  (brief "a copper ingot")
+  (icon 'metal-2-ingot)
   (content 'copper))
 
 (defproto tin-ingot (ingot)
+  (brief "a tin ingot")
+  (icon 'metal-3-ingot)
   (content 'tin))
 
 ;;; Skills.
