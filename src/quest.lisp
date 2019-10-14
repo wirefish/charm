@@ -104,7 +104,8 @@ Four events occur during the lifetime of a quest:
 (defmethod do-accept-quest :around (avatar quest npc)
   (push (cons (key quest) 0) (active-quests avatar))
   (show-notice avatar "You have accepted the quest ~s." (name quest))
-  (call-next-method))
+  (call-next-method)
+  (show-map avatar))
 
 ;;; An event that triggers when `actor` talks to `npc` while `quest` is
 ;;; incomplete.
@@ -121,6 +122,7 @@ Four events occur during the lifetime of a quest:
   (remove-quest-items actor quest :npc npc)
   (call-next-method)
   (show-notice actor "You have finished the quest ~s." (name quest))
+  (show-map actor)
   (setf (gethash (key quest) (finished-quests actor)) (get-universal-time))
   (gain-xp actor (quest-xp-reward quest)))
 
@@ -182,12 +184,32 @@ Four events occur during the lifetime of a quest:
               (when (quest-complete-p avatar quest) quest)))
         (ends-quests npc)))
 
+(defun location-quest-state (location avatar)
+  "Returns one of nil, :available, :incomplete, or :complete based on the most
+  advanced quest state for any questgiver in `location`."
+  ;; FIXME: remove explicit type check
+  (let ((state nil))
+    (dolist (entity (contents location))
+      (when (typep entity 'creature)
+        (cond
+          ((and (or (null state) (eq state :available) (eq state :incomplete))
+                (find-complete-quest avatar entity))
+           (setf state :complete))
+          ((and (or (null state) (eq state :available))
+                (find-incomplete-quest avatar entity))
+           (setf state :incomplete))
+          ((and (null state)
+                (find-available-quest avatar entity))
+           (setf state :available)))))
+    state))
+
 (defun advance-quest (avatar quest &optional (amount 1))
   (let ((state (quest-active-p avatar quest)))
     (when (and state
                (< (cdr state) 1)
                (>= (incf (cdr state) amount) 1))
       (show-notice avatar "You have completed the objectives for the quest ~s!" (name quest))
+      (show-map avatar)
       t)))
 
 (defun summarize-quest-state (quest-state)
@@ -236,9 +258,10 @@ Four events occur during the lifetime of a quest:
            (case (length quests)
              (0 (show-text actor "You do not have any active quests matching that description."))
              (1
-              (destructuring-bind (quest . progress) (first quests)
+              (let ((quest (car (first quests))))
                 (remove-active-quest actor quest)
                 (remove-quest-items actor quest)
+                (show-map actor)
                 (show-notice actor "You are no longer on the quest ~s." (name quest))))
              (t (show-text actor "Which quest do you want to drop: ~a?"
                            (format-list (mapcar #'car quests) :conjunction "or")))))

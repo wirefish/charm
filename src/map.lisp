@@ -38,7 +38,7 @@
                    (list x y
                          (describe-brief location)
                          (describe-icon location)
-                         :false ; (quest-state avatar location)
+                         (location-quest-state location avatar)
                          :false ; (npc-state location)
                          (mapcar #'direction
                                  (remove-if-not #'(lambda (x) (portal-visible-p x avatar)) (exits location)))
