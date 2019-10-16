@@ -158,6 +158,51 @@ Map.prototype.drawUpDown = function(context, inset, room_size)
     context.stroke();
 }
 
+function makeDefaultMap(map, defaultValue)
+{
+    return new Proxy(
+        map,
+        {
+            get: function(object, property) {
+                return object.hasOwnProperty(property) ? object[property] : defaultValue;
+            }
+        });
+}
+
+var surfaceSortOrder = makeDefaultMap(
+    {
+        'deep_water': 1,
+        'shallow_water': 2,
+        'stone': 3,
+        'wood': 4,
+        'tile': 5,
+        'dirt': 6,
+        'sand': 7,
+        'rocks': 8,
+        'grass': 9,
+        'weeds': 10,
+        'flowers': 11,
+        'forest': 12,
+    },
+    0);
+
+var domainSortOrder = makeDefaultMap(
+    {
+        'outdoor': 1,
+        'indoor': 2,
+        'underground': 3,
+    },
+    0);
+
+function compareLocations(a, b)
+{
+    var surfaceA = a[8], surfaceB = b[8];
+    var domainA = a[9], domainB = b[9];
+
+    var d = domainSortOrder[domainA] - domainSortOrder[domainB];
+    return d ? d : surfaceSortOrder[surfaceA] - surfaceSortOrder[surfaceB];
+}
+
 Map.prototype.render = function()
 {
     if (!this.finishedLoading() || !this.rooms)
@@ -179,6 +224,8 @@ Map.prototype.render = function()
     context.textAlign = 'center';
     context.textBaseline = 'middle';
 
+    this.rooms.sort(compareLocations);
+
     // Fill the backgrounds for the rooms based on their domain.
     context.lineWidth = 16;
     context.lineCap = 'butt';
@@ -190,12 +237,21 @@ Map.prototype.render = function()
                           top + (y + this.radius) * cell_size);
 
         // Fill the cell.
-        var c = this.domainColors[domain];
-        if (c != undefined) {
-            context.beginPath();
-            context.fillStyle = c;
-            context.rect(-1, -1, cell_size + 2, cell_size + 2);
-            context.fill();
+        if (domain == 'outdoor') {
+            var bg = this.images.images[surface];
+            if (bg) {
+                var offset = cell_size / 5;
+                context.drawImage(bg, -offset, -offset, cell_size + 2 * offset, cell_size + 2 * offset);
+            }
+        }
+        else {
+            var c = this.domainColors[domain];
+            if (c != undefined) {
+                context.beginPath();
+                context.fillStyle = c;
+                context.rect(-1, -1, cell_size + 2, cell_size + 2);
+                context.fill();
+            }
         }
 
         // For an underground room, draw a wider line along the exit.
@@ -223,7 +279,7 @@ Map.prototype.render = function()
     // Render the foreground of each room.
     context.lineWidth = 4;
     context.lineCap = 'round';
-    context.strokeStyle = 'black';
+    context.strokeStyle = '#1f1f1f'; // 'black';
     for (var j = 0; j < this.rooms.length; ++j) {
         var [x, y, name, icon, quest_state, vendor, trainer, exits, surface, domain] = this.rooms[j];
 
@@ -242,13 +298,32 @@ Map.prototype.render = function()
         }
 
         // Fill the room interior based on the surface.
-        var surface_color = this.surfaceColors[surface];
-        if (!surface_color)
-            surface_color = this.defaultSurfaceColor;
-        context.beginPath();
-        context.fillStyle = surface_color;
-        context.rect(inset, inset, room_size, room_size);
-        context.fill();
+        if (domain == 'outdoor') {
+            context.globalCompositeOperation = 'screen';
+            context.beginPath();
+            context.fillStyle = '#4f4f4f';
+            context.rect(inset, inset, room_size, room_size);
+            context.fill();
+            context.globalCompositeOperation = 'source-over';
+        }
+        else {
+            var bg = this.images.images[surface];
+            if (bg) {
+                // FIXME:
+                context.drawImage(bg,
+                                  0, 0, 128, 128,
+                                  inset, inset, room_size, room_size);
+            }
+            else {
+                var surface_color = this.surfaceColors[surface];
+                if (!surface_color)
+                    surface_color = this.defaultSurfaceColor;
+                context.beginPath();
+                context.fillStyle = surface_color;
+                context.rect(inset, inset, room_size, room_size);
+                context.fill();
+            }
+        }
 
         // Draw an icon if one is defined.
         if (icon) {
