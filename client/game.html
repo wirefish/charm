@@ -10,228 +10,194 @@
   </head>
 
   <body>
-    <!-- Player icon, name, title, health/energy/mana/xp bars, auras -->
-    <div class="box" id="vitals">
-      <div class="portrait" id="player_portrait"></div>
-      <div class="name" id="player_name"></div>
-      <div id="player_bars">
-        <div>
-          <div class="statbar healthbar" title="Health" id="player_health">
-            <div class="statvalue"></div>
-            <span>0 / 0</span>
+    <div id="container">
+      <div class="header box" id="header">
+        <div id="player_name">&emsp;</div>
+        <div id="player_bars">
+          <div class="statbar" title="Health" id="player_health">
+            <div class="statvalue health"></div>
+            <div class="statlabel">0 / 0</div>
+          </div>
+          <div class="statbar" title="Energy" id="player_energy">
+            <div class="statvalue energy"></div>
+            <div class="statlabel">0 / 0</div>
+          </div>
+          <div class="statbar" title="Mana" id="player_mana">
+            <div class="statvalue mana"></div>
+            <div class="statlabel">0 / 0</div>
+          </div>
+          <div class="statbar" title="Experience" id="player_xp">
+            <div class="statvalue xp"></div>
+            <div class="statlabel">0 / 0</div>
           </div>
         </div>
+        <div id="player_auras">
+        </div>
+      </div>
+
+      <div class="weather box">
+        <div id="location_name"></div>
+        <div id="zone_name"></div>
+      </div>
+
+      <div class="neighbors box" id="neighbors">
         <div>
-          <div class="statbar energybar" title="Energy" id="player_energy">
-            <div class="statvalue"></div>
-            <span>0 / 0</span>
+          <div></div>
+          <div class="statbar">
+            <div class="statvalue health"></div>
           </div>
         </div>
-        <div>
-          <div class="statbar manabar" title="Mana" id="player_mana">
-            <div class="statvalue"></div>
-            <span>0 / 0</span>
-          </div>
-        </div>
-        <div>
-          <div class="statbar xpbar" title="Experience" id="player_xp">
-            <div class="statvalue"></div>
-            <span>0 / 0</span>
-          </div>
-        </div>
       </div>
-      <div id="player_auras" class="aurabox"></div>
-    </div>
 
-    <!-- NPCs, players, mobs, and items at the current location -->
-    <div class="box" id="contents">
-      <div id="neighbor_prototype" style="display: none">
-        <div class="portrait"></div>
-        <div class="name"></div>
-        <div class="statbar healthbar">
-          <div class="statvalue"></div>
+      <div class="main box textbox scroll" id="main_text"></div>
+
+      <div class="map box">
+        <canvas id="map_canvas">
+        </canvas>
+      </div>
+
+      <div class="selector buttonbox">
+        <div class="button toggle_on" id="chat" onclick="handler.showPane('chat');"></div>
+        <div class="button toggle_off" id="equipment" onclick="handler.showPane('equipment');"></div>
+        <div class="button toggle_off" id="inventory" onclick="handler.showPane('inventory');"></div>
+        <div class="button toggle_off" id="combat" onclick="handler.showPane('combat');"></div>
+        <div class="button toggle_off" id="skills" onclick="handler.showPane('skills');"></div>
+        <div class="spacer"></div>
+        <div class="button toggle_on" id="local_map"></div>
+        <div class="button toggle_off" id="world_map"></div>
+      </div>
+
+      <div class="rightbar box scroll">
+        <div id="chat_pane" class="textbox">
+          <div><p>Hello!</p></div>
         </div>
-        <div class="statbar manabar">
-          <div class="statvalue"></div>
-        </div>
-        <div class="aurabox"></div>
-      </div>
-    </div>
 
-    <!-- Main game text -->
-    <div class="box textbox scroll" id="game_text">
-      <div>
-        <img src="images/atalea.png"></img>
-      </div>
-    </div>
-
-    <!-- Map -->
-    <div class="box" id="map">
-      <div id="room_name"></div>
-      <div id="zone_name"></div>
-      <canvas id="map_canvas" width="200" height="200"></canvas>
-    </div>
-
-    <!-- Social text -->
-    <div class="box textbox" id="chat_text">
-      <div id="pane_title">
-        <div id="social" style="background-image: url('icons/chat.png')"
-             title="Social chat"
-             onclick="handler.showPane('social');"></div>
-        <div id="equipment" style="background-image: url('icons/equipment.png')"
-             title="Equipment"
-             onclick="handler.showPane('equipment');"></div>
-        <div id="inventory" style="background-image: url('icons/inventory.png')"
-             title="Inventory"
-             onclick="handler.showPane('inventory');"></div>
-        <div id="modifiers" style="background-image: url('icons/modifiers.png')"
-             title="Combat modifiers"
-             onclick="handler.showPane('modifiers');"></div>
-        <div id="skills" style="background-image: url('icons/skills.png')"
-             title="Skills"
-             onclick="handler.showPane('skills');"></div>
-      </div>
-      <div id="chatbox" class="scroll">
-        <div>Hello!</div>
-      </div>
-      <div id="equipbox">
-        <div>
+        <div id="equipment_pane">
           <div>
-            <div>Main hand</div>
-            <div id="equip_main_hand"></div>
-            <div>Off-hand</div>
-            <div id="equip_off_hand"></div>
-            <div>Tool</div>
-            <div id="equip_tool"></div>
+            <div>
+              <div>Main hand</div>
+              <div id="equip_main_hand"></div>
+              <div>Off-hand</div>
+              <div id="equip_off_hand"></div>
+              <div>Tool</div>
+              <div id="equip_tool"></div>
+            </div>
+            <hr/>
+            <div>
+              <div>Head</div>
+              <div id="equip_head"></div>
+              <div>Chest</div>
+              <div id="equip_torso"></div>
+              <div>Back</div>
+              <div id="equip_back"></div>
+              <div>Hands</div>
+              <div id="equip_hands"></div>
+              <div>Waist</div>
+              <div id="equip_waist"></div>
+              <div>Legs</div>
+              <div id="equip_legs"></div>
+              <div>Feet</div>
+              <div id="equip_feet"></div>
+            </div>
+            <hr/>
+            <div>
+              <div>Ears</div>
+              <div id="equip_ears"></div>
+              <div>Neck</div>
+              <div id="equip_neck"></div>
+              <div>Wrists</div>
+              <div id="equip_wrists"></div>
+              <div>Left finger</div>
+              <div id="equip_left_finger"></div>
+              <div>Right finger</div>
+              <div id="equip_right_finger"></div>
+            </div>
+            <hr/>
+            <div>
+              <div>Backpack</div>
+              <div id="equip_backpack"></div>
+            </div>
           </div>
-          <hr/>
-          <div>
-            <div>Head</div>
-            <div id="equip_head"></div>
-            <div>Chest</div>
-            <div id="equip_torso"></div>
-            <div>Back</div>
-            <div id="equip_back"></div>
-            <div>Hands</div>
-            <div id="equip_hands"></div>
-            <div>Waist</div>
-            <div id="equip_waist"></div>
-            <div>Legs</div>
-            <div id="equip_legs"></div>
-            <div>Feet</div>
-            <div id="equip_feet"></div>
-          </div>
-          <hr/>
-          <div>
-            <div>Ears</div>
-            <div id="equip_ears"></div>
-            <div>Neck</div>
-            <div id="equip_neck"></div>
-            <div>Wrists</div>
-            <div id="equip_wrists"></div>
-            <div>Left finger</div>
-            <div id="equip_left_finger"></div>
-            <div>Right finger</div>
-            <div id="equip_right_finger"></div>
-          </div>
-          <hr/>
-          <div>
-            <div>Backpack</div>
-            <div id="equip_backpack"></div>
-          </div>
         </div>
-      </div>
-      <div id="invbox">
-        <div class="scroll">
-          <div id="inv_backpack"><h3>Backpack</h3></div>
-          <div id="inv_in_hands"><h3>Hands</h3></div>
-        </div>
-      </div>
-      <div id="combatbox" class="scroll">
-        <div id="attrbox">
-          <h3>Attributes</h3>
-          <div><div>Strength</div><div>0</div></div>
-          <div><div>Intellect</div><div>0</div></div>
-          <div><div>Vitality</div><div>0</div></div>
-          <div><div>Toughness</div><div>0</div></div>
-          <div><div>Willpower</div><div>0</div></div>
-          <div><div>Compassion</div><div>0</div></div>
-          <div><div>Precision</div><div>0</div></div>
-          <div><div>Ferocity</div><div>0</div></div>
-          <div><div>Evasion</div><div>0</div></div>
-          <div><div>Accuracy</div><div>0</div></div>
-          <div><div>Spirit</div><div>0</div></div>
-          <div><div>Insight</div><div>0</div></div>
-          <div><div>Resilience</div><div>0</div></div>
-        </div>
-        <div id="modbox">
-          <h3>Modifiers</h3>
-          <div><div>Physical damage done</div><div>0</div></div>
-          <div><div>Magical damage done</div><div>0</div></div>
-          <div><div>Vitality</div><div>0</div></div>
-          <div><div>Toughness</div><div>0</div></div>
-          <div><div>Willpower</div><div>0</div></div>
-          <div><div>Compassion</div><div>0</div></div>
-          <div><div>Precision</div><div>0</div></div>
-          <div><div>Ferocity</div><div>0</div></div>
-          <div><div>Evasion</div><div>0</div></div>
-          <div><div>Accuracy</div><div>0</div></div>
-          <div><div>Spirit</div><div>0</div></div>
-          <div><div>Insight</div><div>0</div></div>
-          <div><div>Resilience</div><div>0</div></div>
-        </div>
-        <div id="immbox">
-          <h3>Immunities</h3>
-          <div><div>Crushing</div><div>0</div></div>
-          <div><div>Piercing</div><div>0</div></div>
-          <div><div>Slashing</div><div>0</div></div>
-          <div><div>Fire</div><div>0</div></div>
-          <div><div>Cold</div><div>0</div></div>
-          <div><div>Acid</div><div>0</div></div>
-          <div><div>Electricity</div><div>0</div></div>
-          <div><div>Arcane</div><div>0</div></div>
-          <div><div>Shadow</div><div>0</div></div>
-        </div>
-      </div>
-      <div id="skillbox">
-        <div><div>Unspent karma points:</div><div>0</div></div>
-        <hr/>
-        <div><div>dagger proficiency</div><div>23&thinsp;/&thinsp;100</div></div>
-        <div><div>magic missile</div><div></div></div>
-        <div><div>two-handed axe proficiency</div><div>87&thinsp;/&thinsp;100</div></div>
-      </div>
-    </div>
 
-    <!-- Buttons for settings, help, etc. -->
-    <div class="buttonbox" id="buttons">
-      <div>
-        <div id="quit" style="background-image: url('icons/exit_door.png')"></div>
-        <div id="settings" style="background-image: url('icons/cog.png')"></div>
-        <div id="help" style="background-image: url('icons/help.png')"></div>
+        <div id="inventory_pane">
+          <div>
+            <div id="inv_backpack"><h3>Backpack</h3></div>
+            <div id="inv_in_hands"><h3>Hands</h3></div>
+          </div>
+        </div>
+
+        <div id="combat_pane">
+          <div>
+            <div id="resources">
+              <div class="combat_value"><div>Health</div><div>0</div></div>
+              <div class="combat_value"><div>Energy</div><div>0</div></div>
+              <div class="combat_value"><div>Mana</div><div>0</div></div>
+              <div class="combat_value"><div>Armor</div><div>0</div></div>
+            </div>
+            <div id="attributes">
+              <h3>Attributes</h3>
+              <div class="combat_value"><div>Strength</div><div>0</div></div>
+              <div class="combat_value"><div>Intellect</div><div>0</div></div>
+              <div class="combat_value"><div>Vitality</div><div>0</div></div>
+              <div class="combat_value"><div>Toughness</div><div>0</div></div>
+              <div class="combat_value"><div>Willpower</div><div>0</div></div>
+              <div class="combat_value"><div>Compassion</div><div>0</div></div>
+              <div class="combat_value"><div>Precision</div><div>0</div></div>
+              <div class="combat_value"><div>Ferocity</div><div>0</div></div>
+              <div class="combat_value"><div>Evasion</div><div>0</div></div>
+              <div class="combat_value"><div>Accuracy</div><div>0</div></div>
+              <div class="combat_value"><div>Spirit</div><div>0</div></div>
+              <div class="combat_value"><div>Insight</div><div>0</div></div>
+              <div class="combat_value"><div>Resilience</div><div>0</div></div>
+            </div>
+          </div>
+          <div id="immunities">
+            <h3>Immunities</h3>
+            <div class="combat_value"><div>Crushing</div><div>0</div></div>
+            <div class="combat_value"><div>Piercing</div><div>0</div></div>
+            <div class="combat_value"><div>Slashing</div><div>0</div></div>
+            <div class="combat_value"><div>Fire</div><div>0</div></div>
+            <div class="combat_value"><div>Cold</div><div>0</div></div>
+            <div class="combat_value"><div>Acid</div><div>0</div></div>
+            <div class="combat_value"><div>Electricity</div><div>0</div></div>
+            <div class="combat_value"><div>Arcane</div><div>0</div></div>
+            <div class="combat_value"><div>Shadow</div><div>0</div></div>
+          </div>
+        </div>
+
+        <div id="skills_pane">
+          <div class="karma"><div>Unspent karma points:</div><div>0</div></div>
+          <div class="skill_rank"><div>dagger proficiency</div><div>23&thinsp;/&thinsp;100</div></div>
+          <div class="skill_rank"><div>magic missile</div><div></div></div>
+        </div>
       </div>
-    </div>
 
-    <!-- Command input -->
-    <div class="box" id="input">
-      <input type="text" id="command" autocomplete="off" maxlength=200
-             placeholder="Type a command or 'help' for help."/>
-    </div>
+      <div class="leftbuttons buttonbox">
+        <div class="button" id="quit"></div>
+        <div class="button" id="settings"></div>
+        <div class="button" id="help"></div>
+      </div>
 
-    <!-- Buttons for macros -->
-    <div class="buttonbox" id="macros">
-      <div>
-        <div id="macro_1">1</div>
-        <div id="macro_2">2</div>
-        <div id="macro_3">3</div>
-        <div id="macro_4">4</div>
-        <div id="macro_5">5</div>
-        <div id="macro_6">6</div>
-        <div id="macro_7">7</div>
-        <div id="macro_8">8</div>
-        <div id="macro_9">9</div>
-        <div id="macro_0">0</div>
+      <div class="inputarea">
+        <input type="text" id="command" autocomplete="off" maxlength=200
+               placeholder="Type a command or 'help' for help."/>
+      </div>
+
+      <div class="rightbuttons buttonbox">
+        <div class="button">1</div>
+        <div class="button">2</div>
+        <div class="button">3</div>
+        <div class="button">4</div>
+        <div class="button">5</div>
+        <div class="button">6</div>
+        <div class="button">7</div>
+        <div class="button">8</div>
+        <div class="button">9</div>
+        <div class="button">0</div>
       </div>
     </div>
 
   </body>
+
 </html>

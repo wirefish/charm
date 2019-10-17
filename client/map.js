@@ -203,6 +203,13 @@ function compareLocations(a, b)
     return d ? d : surfaceSortOrder[surfaceA] - surfaceSortOrder[surfaceB];
 }
 
+Map.prototype.resize = function()
+{
+    this.canvas.width = this.canvas.clientWidth;
+    this.canvas.height = this.canvas.clientHeight;
+    this.render();
+}
+
 Map.prototype.render = function()
 {
     if (!this.finishedLoading() || !this.rooms)
@@ -220,9 +227,6 @@ Map.prototype.render = function()
     var top = (this.canvas.height - diameter * cell_size) / 2;
     var inset = cell_size / 5;
     var room_size = cell_size - inset * 2;
-
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
 
     this.rooms.sort(compareLocations);
 

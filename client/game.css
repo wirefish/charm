@@ -11,32 +11,117 @@
 }
 
 body {
+    padding: 2px;
     background-color: #18181e;
     color: #efefef;
     font: 10pt artifika;
     overflow: hidden;
-    position: relative;
 }
 
-a {
-    color:#a0a0f0;
-}
+/* Link styles. */
 
 a:link {
-    text-decoration:none;
+    text-decoration: none;
 }
 
-.box {
-    border-radius: 10px;
-    background-color: #2a2a2e;
-    position: absolute;
+.link {
+    color:#a0a0f0;
+    cursor: pointer;
 }
+
+.link.look { color:#ffd898 }
+.link.inv { color:#ffd898 }
+.link.help { color:#6fcf6f }
+.link.list { margin-left:1em; display:inline-block }
+
+/* Paragraph styles. */
+
+.cmd { color:#df9fdf }
+.tutorial { color:#b8e8b8 }
+.motd { color:#a8f0e8; margin-bottom:1em }
+.intro { color:#e8c0e0 }
+.error { color:#ff8f6f }
+.notice { color:#a8f0e8 }
+
+/* Scrollbars. */
+
+.scroll { overflow-y: auto; overflow-x: hidden; }
+::-webkit-scrollbar { width:10px; height:10px }
+::-webkit-scrollbar-track { background-color:#2a2a2e; margin:8px 0px; border-radius:5px }
+::-webkit-scrollbar-thumb { background-color:#484851; border-radius:5px }
+
+/* A buttonbox contains a row of buttons. */
+
+.buttonbox {
+    margin: 2px;
+    background-color: #18181e;
+    display: flex;
+    justify-content: space-between;
+    flex-flow: row nowrap;
+    align-items: stretch;
+    overflow: hidden;
+}
+
+.button {
+    flex: 0 0 40px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-blend-mode: screen;
+    background-color: #18181e;
+    cursor: pointer;
+}
+
+.toggle_off {
+    opacity: 0.5;
+}
+
+.toggle_on {
+    opacity: 1.0;
+}
+
+.spacer {
+    flex: 0 1 100%;
+}
+
+/* Colors for health/energy/mana/experience bars. */
+
+.statbar {
+    background-color: #18181e;
+    overflow: hidden;
+}
+
+.health {
+    background-color: #b82f2f;
+}
+
+.energy {
+    background-color: #b8af00;
+}
+
+.mana {
+    background-color: #2f5caf;
+}
+
+.xp {
+    background-color: #793f89;
+}
+
+/* A box is a top-level region of the interface. */
+
+.box {
+    margin: 2px;
+    border-radius: 5px;
+    background-color: #2a2a2e;
+}
+
+/* A textbox is a scrolling sequence of blocks of text. */
 
 .textbox {
 }
 
 .textbox > div {
-    padding: 0px 10px;
+    padding: 0 10px;
 }
 
 .textbox > div p {
@@ -83,261 +168,132 @@ a:link {
     font-size: 10pt;
 }
 
-.buttonbox {
-    position: absolute;
-    display: table;
-    table-layout: fixed;
-    width: 100%;
-}
+/* The header box shows information about the player's avatar: portrait,
+   name/level/race, health/energy/mana/experience bars, and auras. */
 
-.buttonbox > div {
-    display: table-row;
-}
-
-.buttonbox > div > div {
-    display: table-cell;
+.header {
+    grid-area: header;
+    margin: 2px;
     background-size: contain;
-    background-position: center;
+    background-position: left;
     background-repeat: no-repeat;
-    height: 100%;
-    border-left: 4px solid #18181e;
-    padding-left: 3px;
-    cursor: pointer;
+    padding-left: 75px;
+    padding-right: 5px;
 }
 
-.buttonbox > div > div:hover {
-    background-size: auto 120%;
-}
-
-.portrait {
-    position: absolute;
-    background-color: #18181e;
-    border-radius: 5px;
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-}
-
-.statbar {
-    background-color: #18181e;
-}
-
-.healthbar .statvalue {
-    background-color: #af2f2f;
-}
-
-.energybar .statvalue {
-    background-color: #afa800;
-}
-
-.manabar .statvalue {
-    background-color: #2f5caf;
-}
-
-.xpbar .statvalue {
-    background-color: #793f89;
-}
-
-/* highlights used on portraits to convey attitude and target information */
-
-.highlight_enemy_target {
-    border: 2px solid #df0000;
-}
-
-.highlight_enemy {
-    border: 2px solid #9f0000;
-}
-
-.highlight_hostile {
-    border: 2px solid #643200;
-}
-
-.highlight_friend_target {
-    border: 2px solid #00c800;
-}
-
-.highlight_friendly {
-    border: 2px solid #006400;
-}
-
-.highlight_neutral {
-    border: 2px solid #4f4f00;
-}
-
-.highlight_npc {
-    border: 2px solid #0000a9;
-}
-
-.highlight_passive {
-    border: 2px solid #484851;
-}
-
-/* link styles */
-.link {
-    color:#a0a0f0;
-    cursor: pointer;
-}
-.link.look { color:#ffd898 }
-.link.inv { color:#ffd898 }
-.link.help { color:#6fcf6f }
-.link.list { margin-left:1em; display:inline-block }
-
-/* paragraph styles */
-.cmd { color:#df9fdf }
-.tutorial { color:#b8e8b8 }
-.motd { color:#a8f0e8; margin-bottom:1em }
-.intro { color:#e8c0e0 }
-.error { color:#ff8f6f }
-.notice { color:#a8f0e8 }
-
-/* scrollbars */
-.scroll { overflow-y: auto; overflow-x: hidden; }
-::-webkit-scrollbar { width:10px; height:10px }
-::-webkit-scrollbar-track { background-color:#2a2a2e; margin:8px 0px; border-radius:5px }
-::-webkit-scrollbar-thumb { background-color:#484851; border-radius:5px }
-
-/* Player vitals */
-
-#vitals {
-    height: 80px;
-}
-
-#vitals .portrait {
-    left: 5px;
-    top: 5px;
-    width: 70px;
-    height: 70px;
-}
-
-#vitals .name {
-    position: absolute;
-    left: 80px;
-    top: 5px;
+.header > div:nth-child(1) {
     font-size: 12pt;
-}
-
-#vitals .aurabox {
-    position: absolute;
-    left: 80px;
-    top: 50px;
-    height: 25px;
-    font-size: 0;
-}
-
-#vitals .aura {
-    display: inline-block;
-    width: 25px;
-    height: 25px;
-    border-radius: 4px;
-    margin-right: 3px;
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-blend-mode: multiply;
+    line-height: 20pt;
 }
 
 #player_bars {
-    position: absolute;
     display: flex;
     justify-content: space-between;
     flex-flow: row nowrap;
-    left: 80px;
-    top: 30px;
     height: 18px;
-}
-
-#player_bars > div {
-    flex: 0 0 24%;
 }
 
 #player_bars .statbar {
+    position: relative;
+    flex: 0 0 24%;
     height: 18px;
-    border-radius: 7px;
-    text-align: center;
+    border-radius: 9px;
     cursor: pointer;
-    overflow: hidden;
 }
 
-#player_bars .statbar span {
-    position: relative;
-    top: -18px;
+#player_bars .statlabel {
+    position: absolute;
+    z-index: 1;
+    background: rgba(0, 0, 0, 0);
+    text-align: center;
     line-height: 18px;
+    width: 100%;
 }
 
 #player_bars .statvalue {
-    width: 0%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 18px;
+    width: 100%;
+}
+
+#player_auras {
+    margin-top: 2px;
+    display: flex;
+    flex-flow: row nowrap;
     height: 18px;
 }
 
-/* Other entities in the player's location */
-
-#contents {
-    width: 180px;
+#player_auras div {
+    flex: 0 0 18px;
+    background-size: contain;
+    background-position: center;
 }
 
-#contents > div {
+/* The weather box shows an indication of the weather, time of day, and the name
+   of the current location and zone. */
+
+.weather {
+    grid-area: weather;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-image: url('icons/clouds.jpg');
+}
+
+#location_name {
+    font: 12pt uncial;
+    color: #ffffcf;
+    text-align: center;
+    text-transform: lowercase;
+}
+
+#zone_name {
+    font: 10pt artifika;
+    color: #ffffcf;
+    text-align: center;
+}
+
+/* The neighbors box contains an entry for every entity at the same location as
+   the player's avatar. */
+
+.neighbors {
+    grid-area: neighbors;
+}
+
+.neighbors > div {
     position: relative;
-    width: 100%;
-    height: 47px;
+    margin: 4px 2px;
+    height: 30px;
+    background-size: contain;
+    background-position: left;
+    background-repeat: no-repeat;
+    padding-left: 32px;
     cursor: pointer;
 }
 
-#contents .portrait {
-    left: 3px;
-    top: 3px;
-    width: 44px;
-    height: 44px;
-    box-sizing: border-box;
+.neighbors > div:nth-child(1) {
+    display: none;
 }
 
-#contents .name {
-    position: absolute;
-    left: 50px;
-    top: 4px;
-    width: 125px;
-    font-size: 9pt;
+.neighbors > div > div:nth-child(1) {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-size: 9pt;
+    line-height: 18px;
 }
 
-#contents .aurabox {
-    position: absolute;
-    left: 50px;
-    top: 33px;
-    height: 12px;
-    font-size: 0;
+.neighbors .statbar {
+    height: 6px;
+    border-radius: 3px;
+    width: 100%;
 }
 
-#contents .aura {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    margin-right: 1px;
-    background-size: 100% 100%;
-    background-repeat: no-repeat;
-    background-blend-mode: multiply;
-}
-
-#contents .statbar {
-    left: 50px;
-    width: 125px;
-    height: 5px;
-    border-radius: 2px;
-}
-
-#contents .healthbar {
-    position: absolute;
-    top: 21px;
-}
-
-#contents .manabar {
-    position: absolute;
-    top: 27px;
-}
-
-#contents .statvalue {
-    width: 0%;
-    height: 5px;
-    border-radius: 2px;
+.neighbors .statvalue {
+    height: 6px;
+    width: 20%;
 }
 
 @keyframes enter {
@@ -355,280 +311,324 @@ a:link {
     from {width: 0%} to {width: 100%}
 }
 
-/* Testing: stat box */
+/* The main box is a scrolling history of the player's commands and
+   interactions. */
 
-#pane_title {
-    text-align: justify;
-    margin-left: 10%;
-    margin-right: 10%;
+.main {
+    grid-area: main;
 }
 
-#pane_title div {
-    display: inline-block;
-    background-size: contain;
-    background-position: bottom;
-    background-repeat: no-repeat;
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-    padding-top: 8px;
-    opacity: 0.5;
+/* The map box shows a map of the area around the player's avatar. */
+
+.map {
+    grid-area: map;
+    height: 0px;
+    padding-top: 100%;
+    position: relative;
+    overflow: hidden;
 }
 
-#pane_title:after {
-    content: "";
-    display: inline-block;
+.map canvas {
     width: 100%;
-}
-
-#pane_selector {
+    height: 100%;
+    border-radius: 5px;
     position: absolute;
-    left: 0px;
     top: 0px;
-    width: 20px;
-    height: 20px;
-    background-color: red;
+    left: 0px;
 }
 
-/* Social chat */
+/* The selector buttons determine what is displayed in the rightbar box. */
 
-#chatbox {
-    display: block;
+.selector {
+    grid-area: selector;
 }
 
-/* Equipment */
+#chat {
+    background-image: url('icons/chat.png');
+}
 
-#equipbox {
+#equipment {
+    background-image: url('icons/equipment.png');
+}
+
+#inventory {
+    background-image: url('icons/inventory.png');
+}
+
+#combat {
+    background-image: url('icons/combat.png');
+}
+
+#skills {
+    background-image: url('icons/skills.png');
+}
+
+#local_map {
+    background-image: url('icons/local_map.png');
+}
+
+#world_map {
+    background-image: url('icons/world_map.png');
+}
+
+/* The rightbar box shows one of several panes. */
+
+.rightbar {
+    grid-area: rightbar;
+    padding: 3px;
+}
+
+/* The chat pane shows messages to/from other players and chat channels. */
+
+#chat_pane {
+}
+
+/* The equipment pane shows items that the player's avatar has equipped.  */
+
+#equipment_pane {
     display: none;
 }
 
-#equipbox > div {
-    margin-top: 5px;
-    overflow-y: auto;
-    overflow-x: hidden;
+#equipment_pane > div {
 }
 
-#equipbox > div > div {
+#equipment_pane > div > div {
     display: flex;
     justify-content: space-between;
     flex-flow: row wrap;
     width: 100%;
 }
 
-#equipbox > div > div > div:nth-child(odd) {
-    flex: 0 0 30%;
-    min-width: 30%;
-    max-width: 30%;
+#equipment_pane > div > div > div:nth-child(odd) {
+    flex: 0 1 25%;
+    margin-top: 2px;
     height: 20px;
-    margin-top: 3px;
+    line-height: 20px;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
 }
 
-#equipbox > div > div > div:nth-child(even) {
-    flex: 0 0 70%;
-    min-width: 70%;
-    max-width: 70%;
+#equipment_pane > div > div > div:nth-child(even) {
+    flex: 0 1 75%;
+    margin-top: 2px;
     height: 20px;
-    margin-top: 3px;
     text-indent: 25px;
-    background-size: 20px 20px;
+    line-height: 20px;
+    background-size: contain;
     background-repeat: no-repeat;
-    background-blend-mode: multiply;
-    background-image: url('icons/cube.png');
+    background-position: left;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
 }
 
-#equipbox > div > hr {
+#equipment_pane > div > hr {
     margin: 5px 0;
-    border-bottom: 1px solid #7a7a7a;
+    border-bottom: 1px solid #53535f;
 }
 
-/* Inventory */
+/* The inventory pane shows items that the player's avatar is carrying. */
 
-#invbox {
+#inventory_pane {
     display: none;
 }
 
-#invbox > div {
+#inventory_pane > div {
 }
 
-#invbox > div > div {
+#inventory_pane > div > div {
     display: flex;
     justify-content: space-between;
     flex-flow: row wrap;
+    width: 100%;
 }
 
-#invbox > div > div > h3 {
+#inventory_pane > div > div > h3 {
     flex: 0 0 100%;
     font: 10pt artifika;
-    border-bottom: 1px solid #9a9a9a;
+    border-bottom: 1px solid #53535f;
     margin-top: 5px;
     text-align: center;
 }
 
-#invbox > div > div > div {
+#inventory_pane > div > div > div {
     flex: 0 0 50%;
     max-width: 50%;
     height: 20px;
     margin-top: 3px;
+    line-height: 20px;
     text-indent: 25px;
-    background-size: 20px 20px;
+    background-size: contain;
     background-repeat: no-repeat;
-    background-blend-mode: multiply;
-    background-image: url('icons/cube.png');
+    background-position: left;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
 }
 
-#invbox > div > div > p {
-    text-align: center;
-    font-style: italic;
-}
+/* The combat pane shows resources, attributes that determine combat modifiers,
+   and immunities. */
 
-/* Combat modifiers */
-
-#combatbox {
+#combat_pane {
     display: none;
 }
 
-#combatbox > div > div {
-    margin-top: 5px;
-    font-size: 10pt;
+#combat_pane > div {
 }
 
-#combatbox > div > div > div {
-    display: inline-block;
-    vertical-align: middle;
+#combat_pane h3 {
+    flex: 0 0 100%;
+    font: 10pt artifika;
+    border-bottom: 1px solid #53535f;
+    margin-top: 10px;
     text-align: center;
 }
 
-#combatbox > div > div > div:nth-child(1) {
-    width: 75%;
+.combat_value {
+    flex: 0 0 40%;
+    line-height: 1.5;
+}
+
+.combat_value > div:nth-child(1) {
+    display: inline-block;
+    width: 60%;
     text-align: left;
 }
 
-#combatbox > div > div > div:nth-child(2) {
-    width: 25%;
+.combat_value > div:nth-child(2) {
+    display: inline-block;
+    width: 40%;
     text-align: right;
 }
 
-#combatbox h3 {
-    font: 10pt artifika;
-    border-bottom: 1px solid #9a9a9a;
-    margin: 5px 0;
-    text-align: center;
+#resources {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    width: 100%;
 }
 
-#attrbox {
-    display: inline-block;
-    width: 49%;
+#resources .combat_value {
+    font-size: 12pt;
 }
 
-#modbox {
-    display: inline-block;
-    width: 49%;
+#attributes {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    width: 100%;
 }
 
-/* Skills */
+#immunities {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    width: 100%;
+}
 
-#skillbox {
+/* The skills pane shows unspent karma and current/max rank in known skills. */
+
+#skills_pane {
     display: none;
-    margin: 0 10px;
 }
 
-#skillbox > hr {
-    margin: 10px 0;
+#skills_pane > div {
 }
 
-#skillbox > div {
-    margin-top: 5px;
+#skills_pane .karma {
+    font-size: 12pt;
+    margin-bottom: 10px;
 }
 
-#skillbox > div > div {
+#skills_pane .karma > div:nth-child(1) {
     display: inline-block;
-    vertical-align: middle;
 }
 
-#skillbox > div > div:nth-child(1) {
-    width: 66%;
+#skills_pane .karma > div:nth-child(2) {
+    display: inline-block;
+    margin-left: 1em;
+}
+
+#skills_pane > div:nth-child(even) {
+    background-color: #353538;
+}
+
+.skill_rank {
+    line-height: 1.5;
+    padding: 0 5px;
+}
+
+.skill_rank > div:nth-child(1) {
+    display: inline-block;
+    width: 60%;
     text-align: left;
 }
 
-#skillbox > div > div:nth-child(2) {
-    width: 34%;
+.skill_rank > div:nth-child(2) {
+    display: inline-block;
+    width: 40%;
     text-align: right;
 }
 
-#skillbox > h3 {
-    font: 10pt artifika;
-    border-bottom: 1px solid #9a9a9a;
-    margin: 5px 0;
-    text-align: center;
+/* The left buttonbox contains "system" buttons. */
+
+.leftbuttons {
+    grid-area: leftbuttons;
 }
 
-/* Maps */
-
-#map {
+#quit {
+    background-image: url('icons/exit_door.png');
 }
 
-#room_name {
-    font: 12pt uncial;
-    color: #ffffcf;
-    text-align: center;
-    text-transform: lowercase;
-    position: relative;
-    top: -6px;
+#settings {
+    background-image: url('icons/cog.png');
 }
 
-#zone_name {
-    font: 10pt artifika;
-    color: #ffffcf;
-    text-align: center;
-    position: relative;
-    top: -6px;
+#help {
+    background-image: url('icons/help.png');
 }
 
-#map > canvas {
-    position: absolute;
+/* The inputarea box is where the player types commands. */
+
+.inputarea {
+    grid-area: inputarea;
+    margin: 2px;
 }
 
-#game_text {
-}
-
-#chat_text {
-}
-
-#buttons {
-    width: 180px;
-}
-
-/* User input area */
-
-#input {
-    background-color: #4040a0;
-}
-
-#input input[type="text"] { width: 100% }
-
-input[type="text"] {
+.inputarea input[type="text"] {
+    width: 100%;
     padding: 6px;
     border: 2px solid #484851;
     border-radius: 8px;
     font: 10pt artifika;
     outline: 0;
     background-color: #efefef;
+    height: 36px;
 }
 
-input[type="text"]:focus {
+.inputarea input[type="text"]:focus {
     border: 2px solid #dc6520;
 }
 
-/* Buttons for user-settable macros */
+/* The right buttonbox allows the player to assign macros to buttons that
+   correspond with one-digit commands. */
 
-#macros {
+.rightbuttons {
+    grid-area: rightbuttons;
+}
+
+/* The container lays out all the top-level boxes. */
+
+#container {
+    display: grid;
+    height: 100%;
+    grid-template-columns: 180px 1fr 35%;
+    grid-template-rows: 70px auto 30px 1fr 40px;
+    grid-template-areas:
+      "header header weather"
+      "neighbors main map"
+      "neighbors main selector"
+      "neighbors main rightbar"
+      "leftbuttons inputarea rightbuttons";
 }

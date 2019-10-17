@@ -9,89 +9,14 @@ var ws = null;
 var map = null;
 var handler = null;
 
-//
-// Resize and rearrange all UI elements as needed for the current window size.
-//
-function layout()
-{
-    var margin = 4;  // between all top-level boxes
-
-    var window_width = window.innerWidth;
-    var window_height = window.innerHeight;
-
-    // Determine the desired size of the map, since this drives most other size
-    // decisions.
-    var map_size = Math.min(Math.round(window_width * 0.375), Math.round(window_height * 0.5));
-
-    var input = document.getElementById("input");
-    var input_height = input.offsetHeight;
-
-    var vitals = document.getElementById("vitals");
-    var vitals_height = vitals.offsetHeight;
-    vitals.style.left = vitals.style.top = margin;
-    vitals.style.width = window_width - map_size - 3 * margin;
-
-    var player_bars = document.getElementById("player_bars");
-    player_bars.style.width = (window_width - map_size - 4 * margin - 80);
-
-    var contents = document.getElementById("contents");
-    var contents_width = contents.offsetWidth;
-    contents.style.left = margin;
-    contents.style.top = vitals_height + 2 * margin;
-    contents.style.height = window_height - (vitals_height + input_height + 4 * margin);
-
-    var buttons = document.getElementById("buttons");
-    buttons.style.left = margin;
-    buttons.style.top = window_height - (input_height + margin);
-    buttons.style.height = input_height;
-
-    var game_text = document.getElementById("game_text");
-    game_text.style.top = vitals_height + 2 * margin;
-    game_text.style.left = contents_width + 2 * margin;
-    game_text.style.width = window_width - (contents_width + map_size + 4 * margin);
-    game_text.style.height = window_height - (vitals_height + input_height + 4 * margin);
-
-    input.style.left = contents_width + 2 * margin;
-    input.style.top = window_height - (input_height + margin);
-    input.style.width = window_width - (contents_width + map_size + 4 * margin);
-
-    var map = document.getElementById("map");
-    map.style.left = window_width - map_size - margin;
-    map.style.top = margin;
-    map.style.width = map.style.height = map_size;
-
-    var map_canvas = document.getElementById("map_canvas");
-    var top_margin = 44;  // FIXME: from height of room_name and zone_name
-    var canvas_size = map_size - (top_margin + margin);
-    map_canvas.style.left = (map_size - canvas_size) / 2;
-    map_canvas.style.top = top_margin;
-    map_canvas.width = map_canvas.height = canvas_size;
-
-    var chat = document.getElementById("chat_text");
-    chat.style.left = window_width - (map_size + margin);
-    chat.style.top = map_size + 2 * margin;
-    chat.style.width = map_size;
-    chat.style.height = window_height - (map_size + input_height + 4 * margin);
-
-    // The offset by 4 is to make the button margins look right.
-    var macros = document.getElementById("macros");
-    macros.style.left = window_width - (map_size + margin) - 4;
-    macros.style.top = window_height - (input_height + margin);
-    macros.style.width = map_size + 4;
-    macros.style.height = input_height;
-}
-
 function resize()
 {
-    layout();
-    map.render();
+    map.resize();
 }
 window.onresize = resize;
 
 function load()
 {
-    layout();
-
     map = new Map(document.getElementById("map_canvas"));
     map.config([
         ["ship", "icons/map_boat.png"],
@@ -105,7 +30,7 @@ function load()
         ["stone", "images/cobblestone.png"],
         ["shallow_water", "images/water.png"],
     ]);
-    map.render();
+    map.resize();
 
     handler = new MessageHandler();
 }
@@ -171,7 +96,7 @@ function updateBar(id, current, max)
     var p = max ? Math.min(100, 100.0 * current / max) : 0;
     var bar = document.getElementById(id);
     bar.children[0].style.width = p + "%";
-    bar.children[1].innerHTML = current + "&thinsp;/&thinsp;" + max;
+    bar.children[1].innerHTML = current + " / " + max;
 }
 
 function updatePlayerBio(name, icon, level, race)
@@ -181,12 +106,12 @@ function updatePlayerBio(name, icon, level, race)
         'level {0} {1}'.format(level, race);
     document.getElementById("player_name").innerHTML = summary;
 
-    setIcon(document.getElementById("player_portrait"), icon);
+    setIcon(document.getElementById("header"), icon);
 }
 
 // Appends a block element to a scrollable text pane, removing the oldest block
 // first if the maximum number of blocks would be exceeded.
-function appendBlock(block, containerId = 'game_text')
+function appendBlock(block, containerId = 'main_text')
 {
     var container = document.getElementById(containerId);
     if (container.childNodes.length >= max_blocks)
@@ -194,12 +119,6 @@ function appendBlock(block, containerId = 'game_text')
     container.appendChild(block);
     container.scrollTop = container.scrollHeight;
 }
-
-var PANES = {'social': 'chatbox',
-             'equipment': 'equipbox',
-             'inventory': 'invbox',
-             'modifiers': 'combatbox',
-             'skills': 'skillbox'};
 
 // An object that encapsulates functions callable based on messages from the
 // server.
@@ -218,19 +137,18 @@ function MessageHandler()
     this.debug = true;
 
     // Select the social chat pane by default.
-    this.currentPane = 'social';
-    document.getElementById(this.currentPane).style.opacity = '1.0';
+    this.currentPane = 'chat';
 }
 
 MessageHandler.prototype.showPane = function(button_id)
 {
-    document.getElementById(this.currentPane).style.opacity = '0.5';
-    document.getElementById(PANES[this.currentPane]).style.display = 'none';
+    document.getElementById(this.currentPane).className = 'button toggle_off';
+    document.getElementById(this.currentPane + '_pane').style.display = 'none';
 
     this.currentPane = button_id;
 
-    document.getElementById(this.currentPane).style.opacity = '1.0';
-    document.getElementById(PANES[this.currentPane]).style.display = 'block';
+    document.getElementById(this.currentPane).className = 'button toggle_on';
+    document.getElementById(this.currentPane + '_pane').style.display = 'block';
 }
 
 MessageHandler.prototype.showRaw = function(text)
@@ -261,9 +179,9 @@ MessageHandler.prototype.showError = function(text)
     this.showText(text, 'error');
 }
 
-MessageHandler.prototype.updateMap = function(room_name, zone_name, radius, rooms)
+MessageHandler.prototype.updateMap = function(location_name, zone_name, radius, rooms)
 {
-    document.getElementById("room_name").innerHTML = formatBlock(room_name);
+    document.getElementById("location_name").innerHTML = location_name;
     document.getElementById("zone_name").innerHTML = zone_name;
     map.update(radius, rooms);
     map.render();
@@ -494,35 +412,19 @@ MessageHandler.prototype.setNeighborProperties = function(item, properties)
         properties;
     item.setAttribute("charm-properties", new_properties);
 
-    // children of item are, in order: portrait, name, healthbar, manabar, aurabox
-
     if (properties.icon)
-        setIcon(item.children[0], properties.icon);
-
-    if (properties.state) {
-        item.children[0].className = 'portrait highlight_' + properties.state;
-    }
+        setIcon(item, properties.icon);
 
     if (properties.brief)
-        item.children[1].innerHTML = properties.brief;
+        item.children[0].innerHTML = properties.brief;
 
     if (defined(properties.health) || properties.max_health) {
-        item.children[2].children[0].style.width =
+        item.children[1].children[0].style.width =
             (100.0 * properties.health / properties.max_health) + "%";
     }
     else {
-        item.children[2].style.visibility = 'hidden';
+        item.children[1].style.visibility = 'hidden';
     }
-
-    if (defined(properties.mana) || properties.max_mana) {
-        item.children[3].children[0].style.width =
-            (100.0 * properties.mana / properties.max_mana) + "%";
-    }
-    else {
-        item.children[3].style.visibility = 'hidden';
-    }
-
-    // TODO: auras
 
     // Set a command to perform when clicking the item. TODO: make it
     // appropriate, or add a popup with a few options.
@@ -532,28 +434,28 @@ MessageHandler.prototype.setNeighborProperties = function(item, properties)
 
 MessageHandler.prototype.createNeighbor = function(properties)
 {
-    var contents = document.getElementById("contents");
-    var item = contents.children[0].cloneNode(true);
+    var neighbors = document.getElementById("neighbors");
+    var item = neighbors.children[0].cloneNode(true);
     this.setNeighborProperties(item, properties);
     item.className = "do_enter";
     item.style.display = "block";
-    contents.appendChild(item);
+    neighbors.appendChild(item);
     return item;
 }
 
-MessageHandler.prototype.setNeighbors = function(neighbors)
+MessageHandler.prototype.setNeighbors = function(new_neighbors)
 {
-    var contents = document.getElementById("contents");
+    var neighbors = document.getElementById("neighbors");
 
     // Remove all but the first child, which is the invisible prototype used to
     // instantiate other items.
-    while (contents.children[0].nextSibling)
-        contents.removeChild(contents.children[0].nextSibling);
+    while (neighbors.children[0].nextSibling)
+        neighbors.removeChild(neighbors.children[0].nextSibling);
 
     // Add each neighbor.
-    if (neighbors) {
-        for (var i = 0; i < neighbors.length; ++i)
-            this.createNeighbor(neighbors[i]);
+    if (new_neighbors) {
+        for (var i = 0; i < new_neighbors.length; ++i)
+            this.createNeighbor(new_neighbors[i]);
     }
 }
 
@@ -751,7 +653,7 @@ MessageHandler.prototype.showSay = function(prefix, text, is_chat)
         elements.push(makeTextElement('p', prefix + ':'));
         elements = elements.concat(formatText(text, 'blockquote'));
     }
-    appendBlock(wrapElements('div', elements), is_chat ? 'chat_text' : 'game_text');
+    appendBlock(wrapElements('div', elements), is_chat ? 'chat_text' : 'main_text');
 }
 
 MessageHandler.prototype.listMacros = function(macros)
@@ -829,7 +731,7 @@ function sendInput(s)
 
 function onUserInput(event)
 {
-    var obj = document.getElementById("input").children[0];
+    var obj = document.getElementById("command");
     command_history[command_pos] = obj.value;
     if (event.keyCode == 13) {  // enter
         if (obj.value.length > 0)
@@ -879,7 +781,7 @@ function start()
     ws.onclose = session_on_close;
     ws.onmessage = session_on_message;
 
-    var input = document.getElementById("input");
+    var input = document.getElementById("command");
     input.focus();
     input.addEventListener("keydown", (event) => {
         onUserInput(event);
