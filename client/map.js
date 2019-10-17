@@ -217,14 +217,17 @@ Map.prototype.render = function()
 
     var context = this.canvas.getContext("2d");
     context.imageSmoothingQuality = "high";
+    context.textAlign = 'center';
+    context.textBaseline = 'middle';
 
     context.fillStyle = "#2a2a2e";
     context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+    var map_size = Math.max(this.canvas.width, this.canvas.height);
     var diameter = 2 * this.radius + 1;
-    var cell_size = Math.min(this.canvas.width, this.canvas.height) / diameter;
-    var left = (this.canvas.width - diameter * cell_size) / 2;
-    var top = (this.canvas.height - diameter * cell_size) / 2;
+    var cell_size = Math.ceil(map_size / diameter);
+    var left = Math.floor((this.canvas.width - cell_size) / 2);
+    var top = Math.floor((this.canvas.height - cell_size) / 2);
     var inset = cell_size / 5;
     var room_size = cell_size - inset * 2;
 
@@ -237,8 +240,7 @@ Map.prototype.render = function()
         var [x, y, name, icon, quest_state, vendor, trainer, exits, surface, domain] = this.rooms[j];
 
         context.save();
-        context.translate(left + (x + this.radius) * cell_size,
-                          top + (y + this.radius) * cell_size);
+        context.translate(left + x * cell_size, top + y * cell_size);
 
         // Fill the cell.
         if (domain == 'outdoor') {
@@ -288,8 +290,7 @@ Map.prototype.render = function()
         var [x, y, name, icon, quest_state, vendor, trainer, exits, surface, domain] = this.rooms[j];
 
         context.save();
-        context.translate(left + (x + this.radius) * cell_size,
-                          top + (y + this.radius) * cell_size);
+        context.translate(left + x * cell_size, top + y * cell_size);
 
         // Render a highlight around the current room.
         if (x == 0 && y == 0) {
