@@ -10,6 +10,12 @@
    (brief
     :initarg :brief :reader brief
     :documentation "A noun describing a member of the race, e.g. 'an elf'.")
+   (male-icon
+    :initarg :male-icon :initform nil :reader male-icon
+    :documentation "Default icon for male members of the race.")
+   (female-icon
+    :initarg :female-icon :initform nil :reader female-icon
+    :documentation "Default icon for female members of the race.")
    (full
     :initarg :full :reader full
     :documentation "A prose description of a generic member of the race.")
@@ -82,6 +88,7 @@
 
 (defproto avatar (combatant creature)
   (name nil :instance)
+  (icon nil :instance)
   (full nil :instance)
   (race nil :instance)
   (gender nil :instance)
@@ -123,6 +130,14 @@
 
 (defmethod describe-brief ((subject avatar) &rest args)
   (or (name subject) (apply #'describe-brief (race subject) args)))
+
+(defmethod describe-icon ((subject avatar))
+  (or (with-slots (icon gender race) subject
+        (cond
+          (icon icon)
+          ((eq gender :female) (female-icon race))
+          (t (male-icon race))))
+      'invisible))
 
 (defmethod describe-full ((subject avatar))
   (or (full subject) (describe-full (race subject))))
