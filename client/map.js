@@ -228,7 +228,7 @@ Map.prototype.render = function()
     var cell_size = Math.ceil(map_size / diameter);
     var left = Math.floor((this.canvas.width - cell_size) / 2);
     var top = Math.floor((this.canvas.height - cell_size) / 2);
-    var inset = cell_size / 5;
+    var inset = cell_size / 4;
     var room_size = cell_size - inset * 2;
 
     this.rooms.sort(compareLocations);
@@ -246,8 +246,8 @@ Map.prototype.render = function()
         if (domain == 'outdoor') {
             var bg = this.images.images[surface];
             if (bg) {
-                var offset = cell_size / 5;
-                context.drawImage(bg, -offset, -offset, cell_size + 2 * offset, cell_size + 2 * offset);
+                var overhang = cell_size / 4;
+                context.drawImage(bg, -overhang, -overhang, cell_size + 2 * overhang, cell_size + 2 * overhang);
             }
         }
         else {
