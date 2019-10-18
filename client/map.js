@@ -7,6 +7,8 @@ function ImageList(image_urls)
     this.progress = 0.0;
     this.callback = undefined;
 
+    // TODO: use window.devicePixelRatio to determine when to load @2x images.
+
     this.load = function(callback) {
         this.callback = callback;
         for (var i = 0; i < this.image_urls.length; ++i) {
@@ -225,7 +227,7 @@ Map.prototype.render = function()
 
     var map_size = Math.max(this.canvas.width, this.canvas.height);
     var diameter = 2 * this.radius + 1;
-    var cell_size = Math.ceil(map_size / diameter);
+    var cell_size = (Math.ceil(map_size / diameter) + 3) & ~3;
     var left = Math.floor((this.canvas.width - cell_size) / 2);
     var top = Math.floor((this.canvas.height - cell_size) / 2);
     var inset = cell_size / 4;
@@ -246,8 +248,9 @@ Map.prototype.render = function()
         if (domain == 'outdoor') {
             var bg = this.images.images[surface];
             if (bg) {
-                var overhang = cell_size / 4;
-                context.drawImage(bg, -overhang, -overhang, cell_size + 2 * overhang, cell_size + 2 * overhang);
+                var overhang = cell_size / 8;
+                context.drawImage(bg, -overhang, -overhang,
+                                  cell_size + 2 * overhang, cell_size + 2 * overhang);
             }
         }
         else {
