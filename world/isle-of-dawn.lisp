@@ -454,7 +454,7 @@
 (defproto ogre-caretaker (npc)
   (brief "the ogre caretaker")
   (pose "is here, casually pulverizing rocks with his hammer.")
-  (icon :ogre)
+  (icon 'ogre)
   (full "The caretaker is a hulking figure, standing over eight feel tall. He
     wears an iron helm, iron gauntlets, and a breechclout. He carries an
     enormous iron sledgehammer."))
@@ -472,7 +472,7 @@
     many overgrown with vines and twisting grasses. The blocks' surfaces have
     been crudely painted with scenes of carnage featuring enormous warriors
     laying waste to their tiny assailants.")
-  (surface :dirt)
+  (surface :rocks)
   (exits ((gravel-path :north goblin-shrine :east human-shrine)))
   (contents (ogre-caretaker)))
 
