@@ -4,9 +4,8 @@
     height:40px;
     border-radius:3px;
     background-color:#18181e;
-    background-image:url('images/atalea_small.png');
-    background-image:-webkit-image-set(url('images/atalea_small.png') 1x, url('images/atalea_small@2x.png') 2x);
-    background-image:-moz-image-set(url('images/atalea_small.png') 1x, url('images/atalea_small@2x.png') 2x);
+    background-image: image-set(url('images/atalea_small.png') 1x,
+                                url('images/atalea_small@2x.png') 2x);
     background-repeat:no-repeat;
     position:relative;
 }
