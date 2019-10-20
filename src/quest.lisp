@@ -122,9 +122,9 @@ Four events occur during the lifetime of a quest:
   (remove-quest-items actor quest :npc npc)
   (call-next-method)
   (show-notice actor "You have finished the quest ~s." (name quest))
-  (show-map actor)
   (setf (gethash (key quest) (finished-quests actor)) (get-universal-time))
-  (gain-xp actor (quest-xp-reward quest)))
+  (gain-xp actor (quest-xp-reward quest))
+  (show-map actor))
 
 (defmethod do-finish-quest :before (actor quest npc)
   (notify-observers (location actor) #'will-finish-quest actor quest npc))
