@@ -738,7 +738,7 @@
 (defquest choose-a-name
   (name "Nameless No More")
   (summary "Choose your name by saying it in the presence of the orb of naming.")
-  (required-quests '(get-some-clothes)))
+  (required-quests '(choose-a-gender)))
 
 (defmethod do-offer-quest (avatar (quest (eql choose-a-name)) npc)
   (show-say avatar npc "Oh, hello. I didn't see you standing there. I hope you
