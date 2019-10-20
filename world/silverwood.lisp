@@ -352,7 +352,7 @@
   (pose "sits on a stump as she sharpens a knife.")
   (full "Nina is an elven woman dressed in the practical garb of a hunter. She
     wears her silver hair in a long braid.")
-  (icon 'female-elf-silver))
+  (icon 'elf-female-silver))
 
 (defmethod did-enter-room ((observer ranger) (actor avatar) location entry)
   (show-text actor "Nina smiles in welcome as you approach."))

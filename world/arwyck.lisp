@@ -87,6 +87,7 @@
 (defproto mining-guildmaster (trainer)
   (brief "Marigold")
   (pose "is nearby, poking through a stack of ore.")
+  (icon 'dwarf-female-black)
   (full "Marigold is a cheerful, rosy-cheeked dwarven woman who looks strong
     enough to crush rocks. Her leather garments are streaked with soot.")
   (teaches '(mining smelting)))
