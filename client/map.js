@@ -293,26 +293,8 @@ Map.prototype.render = function()
         context.save();
         context.translate(left + x * cell_size, top + y * cell_size);
 
-        // Render a highlight around the current room.
-        if (x == 0 && y == 0) {
-            context.beginPath();
-            var border_size = room_size * 1.33;
-            var border_inset = (cell_size - border_size) / 2;
-            context.rect(border_inset, border_inset, border_size, border_size);
-            context.fillStyle = '#c0c080';
-            context.fill();
-        }
-
         // Fill the room interior based on the surface.
-        if (domain == 'outdoor') {
-            context.globalCompositeOperation = 'screen';
-            context.beginPath();
-            context.fillStyle = '#4f4f4f';
-            context.rect(inset, inset, room_size, room_size);
-            context.fill();
-            context.globalCompositeOperation = 'source-over';
-        }
-        else {
+        if (domain != 'outdoor') {
             var bg = this.images.images[surface];
             if (bg) {
                 // NOTE: This assumes the source image is 128x128 and is
@@ -330,6 +312,24 @@ Map.prototype.render = function()
                 context.rect(inset, inset, room_size, room_size);
                 context.fill();
             }
+        }
+
+        // Lighten the room interior to make markers easier to see.
+        context.globalCompositeOperation = 'screen';
+        context.beginPath();
+        context.fillStyle = '#4f4f4f';
+        context.rect(inset, inset, room_size, room_size);
+        context.fill();
+        context.globalCompositeOperation = 'source-over';
+
+        // Render a highlight around the current room.
+        if (x == 0 && y == 0) {
+            context.beginPath();
+            var border_inset = cell_size / 8;
+            var border_size = cell_size - 2 * border_inset;
+            context.rect(border_inset, border_inset, border_size, border_size);
+            context.fillStyle = 'rgba(224, 224, 128, 0.625)'; // '#c0c080';
+            context.fill();
         }
 
         // Draw an icon if one is defined.
