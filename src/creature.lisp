@@ -3,6 +3,7 @@
 ;;; FIXME: reorganize this
 
 (defproto creature (entity)
+  (icon 'head-silhouette)
   (attitude :neutral)
   (begins-quests nil)
   (ends-quests nil))
