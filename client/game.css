@@ -1,4 +1,4 @@
-* { margin: 0; padding: 0; outline: 0; border: none }
+* { margin: 0; padding: 0; outline: 0; border: none; }
 
 @font-face {
     font-family: uncial;
@@ -265,11 +265,11 @@ a:link {
 .neighbors > div {
     position: relative;
     margin: 4px 2px;
-    height: 30px;
+    height: 34px;
     background-size: contain;
     background-position: left;
     background-repeat: no-repeat;
-    padding-left: 32px;
+    padding-left: 37px;
     cursor: pointer;
 }
 
