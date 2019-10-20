@@ -248,7 +248,7 @@ Map.prototype.render = function()
         if (domain == 'outdoor') {
             var bg = this.images.images[surface];
             if (bg) {
-                var overhang = cell_size / 8;
+                var overhang = cell_size / 4;
                 context.drawImage(bg, -overhang, -overhang,
                                   cell_size + 2 * overhang, cell_size + 2 * overhang);
             }

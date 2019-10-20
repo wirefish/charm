@@ -239,7 +239,7 @@ a:link {
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
-    background-image: url('icons/clouds.jpg');
+    /* background-image: url('icons/clouds.jpg'); */
 }
 
 #location_name {
