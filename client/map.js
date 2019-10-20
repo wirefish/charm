@@ -248,9 +248,7 @@ Map.prototype.render = function()
         if (domain == 'outdoor') {
             var bg = this.images.images[surface];
             if (bg) {
-                var overhang = cell_size / 4;
-                context.drawImage(bg, -overhang, -overhang,
-                                  cell_size + 2 * overhang, cell_size + 2 * overhang);
+                context.drawImage(bg, 0, 0, cell_size, cell_size);
             }
         }
         else {
@@ -317,9 +315,10 @@ Map.prototype.render = function()
         else {
             var bg = this.images.images[surface];
             if (bg) {
-                // FIXME:
-                context.drawImage(bg,
-                                  0, 0, 128, 128,
+                // NOTE: This assumes the source image is 128x128 and is
+                // intended to cover the entire cell. Just draw a 64x64 subimage
+                // over the room.
+                context.drawImage(bg, 32, 32, 64, 64,
                                   inset, inset, room_size, room_size);
             }
             else {
