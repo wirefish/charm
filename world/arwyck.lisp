@@ -10,7 +10,8 @@
 
 (defproto dock-location (location)
   (domain :outdoor)
-  (surface :wood))
+  (surface :wood)
+  (surrounding :shallow-water))
 
 (deflocation west-dock (dock-location)
   (brief "West Dock")

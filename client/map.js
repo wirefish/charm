@@ -239,14 +239,15 @@ Map.prototype.render = function()
     context.lineWidth = 16;
     context.lineCap = 'butt';
     for (var j = 0; j < this.rooms.length; ++j) {
-        var [x, y, name, icon, quest_state, vendor, trainer, exits, surface, domain] = this.rooms[j];
+        var [x, y, name, icon, quest_state, vendor, trainer, exits,
+             surface, surrounding, domain] = this.rooms[j];
 
         context.save();
         context.translate(left + x * cell_size, top + y * cell_size);
 
         // Fill the cell.
         if (domain == 'outdoor') {
-            var bg = this.images.images[surface];
+            var bg = this.images.images[surrounding ? surrounding : surface];
             if (bg) {
                 context.drawImage(bg, 0, 0, cell_size, cell_size);
             }
@@ -288,13 +289,14 @@ Map.prototype.render = function()
     context.lineCap = 'round';
     context.strokeStyle = '#1f1f1f'; // 'black';
     for (var j = 0; j < this.rooms.length; ++j) {
-        var [x, y, name, icon, quest_state, vendor, trainer, exits, surface, domain] = this.rooms[j];
+        var [x, y, name, icon, quest_state, vendor, trainer, exits,
+             surface, surrounding, domain] = this.rooms[j];
 
         context.save();
         context.translate(left + x * cell_size, top + y * cell_size);
 
         // Fill the room interior based on the surface.
-        if (domain != 'outdoor') {
+        if (domain != 'outdoor' || surrounding) {
             var bg = this.images.images[surface];
             if (bg) {
                 // NOTE: This assumes the source image is 128x128 and is

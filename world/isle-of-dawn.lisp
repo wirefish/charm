@@ -1022,8 +1022,9 @@
   (full "This sturdy single-masted vessel makes frequent trips between the Isle
     of Dawn and the village of Arwyck on the mainland.")
   (icon :ship)
-  (surface :deep-water)
   (domain :outdoor)
+  (surface :wood)
+  (surrounding :shallow-water)
   (contents (sailor)))
 
 (defmethod do-enter-world :after ((actor the-siren) location entry)

@@ -42,8 +42,10 @@
                          (when (find-type-in-container 'vendor location) t)
                          (when (find-type-in-container 'trainer location) t)
                          (mapcar #'direction
-                                 (remove-if-not #'(lambda (x) (portal-visible-p x avatar)) (exits location)))
+                                 (remove-if-not #'(lambda (x) (portal-visible-p x avatar))
+                                                (exits location)))
                          (surface location)
+                         (surrounding location)
                          (domain location))))
              (remove-if-not #'(lambda (loc)
                                 (= (z-offset (third loc)) (z-offset (location avatar))))

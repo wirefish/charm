@@ -251,6 +251,7 @@
              pass swiftly beneath the bridge.")))
   (domain :outdoor)
   (surface :stone)
+  (surrounding :shallow-water)
   (exits ((dirt-path :west forest-4-3 :east forest-6-3))))
 
 (deflocation under-the-bridge (location)

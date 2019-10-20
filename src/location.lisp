@@ -115,6 +115,7 @@
   (size :gigantic)
   (domain :outdoor) ; or :indoor, :underground, :astral, etc.
   (surface :dirt) ; any anything else, really
+  (surrounding nil) ; and surface
   (tutorial nil)
   (z-offset 0)
   (region nil :instance)
