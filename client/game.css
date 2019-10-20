@@ -20,28 +20,32 @@ body {
 
 /* Link styles. */
 
+a {
+    color: #a0a0f0;
+}
+
 a:link {
     text-decoration: none;
 }
 
 .link {
-    color:#a0a0f0;
+    color: #a0a0f0;
     cursor: pointer;
 }
 
-.link.look { color:#ffd898 }
-.link.inv { color:#ffd898 }
-.link.help { color:#6fcf6f }
-.link.list { margin-left:1em; display:inline-block }
+.link.look { color: #ffd898 }
+.link.inv { color: #ffd898 }
+.link.help { color: #6fcf6f }
+.link.list { margin-left: 1em; display: inline-block }
 
 /* Paragraph styles. */
 
-.cmd { color:#df9fdf }
-.tutorial { color:#b8e8b8 }
-.motd { color:#a8f0e8; margin-bottom:1em }
-.intro { color:#e8c0e0 }
-.error { color:#ff8f6f }
-.notice { color:#a8f0e8 }
+.cmd { color: #df9fdf }
+.tutorial { color: #b8e8b8 }
+.motd { color: #a8f0e8; margin-bottom: 1em }
+.intro { color: #e8c0e0 }
+.error { color: #ff8f6f }
+.notice { color: #a8f0e8 }
 
 /* Scrollbars. */
 

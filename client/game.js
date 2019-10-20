@@ -22,6 +22,9 @@ function load()
         // icons
         ["ship", "icons/map_boat.png"],
         ["house", "icons/map_house.png"],
+        ["quest_available", "icons/map_quest_available.png"],
+        ["quest_incomplete", "icons/map_quest_incomplete.png"],
+        ["quest_complete", "icons/map_quest_complete.png"],
         ["vendor", "icons/map_vendor.png"],
         ["trainer", "icons/map_trainer.png"],
         // terrain

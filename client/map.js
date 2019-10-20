@@ -373,28 +373,23 @@ Map.prototype.render = function()
 
         // Draw a symbol to denote quest state.
         if (quest_state) {
-            var heart = "\u2665";
-            if (quest_state == "complete")
-                context.fillStyle = "#efcf3f";  // gold
-            else if (quest_state == "incomplete")
-                context.fillStyle = "#afafbf";  // silver
-            else // "available"
-                context.fillStyle = "#1565c1";  // blue
-            this.drawSymbol(context, heart, inset, inset, room_size / 2 + 2);
+            var image = this.images.images["quest_" + quest_state];
+            context.drawImage(image, inset + 2, inset + 2,
+                              room_size / 2 - 2, room_size / 2 - 2);
         }
 
         // Draw a symbol if there's a vendor.
         if (vendor) {
             var image = this.images.images["vendor"];
-            var size = room_size / 2;
-            context.drawImage(image, inset + size, inset, size, size);
+            context.drawImage(image, inset + room_size / 2, inset + 2,
+                              room_size / 2 - 2, room_size / 2 - 2);
         }
 
         // Draw a symbol if there's a trainer.
         if (trainer) {
             var image = this.images.images["trainer"];
-            var size = room_size / 2;
-            context.drawImage(image, inset, inset + size, size, size);
+            context.drawImage(image, inset + 2, inset + room_size / 2,
+                              room_size / 2 - 2, room_size / 2 - 2);
         }
 
         context.restore();
