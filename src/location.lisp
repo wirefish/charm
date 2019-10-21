@@ -118,8 +118,12 @@
   (surrounding nil) ; and surface
   (tutorial nil)
   (z-offset 0)
-  (region nil :instance)
   (exits () :instance))
+
+(defun region (location)
+  (when-let* ((package (symbol-package (type-of location)))
+              (symbol (find-symbol (package-name package) package)))
+    (symbol-value symbol)))
 
 ;;; A macro to define a location class and a singleton instance.
 
@@ -133,9 +137,6 @@
        (defclass ,name ,bases ,slot-defs)
        (defparameter ,name (make-instance ',name))
        (setf (gethash ',name *locations*) ,name))))
-
-(defmethod initialize-instance :after ((location location) &key)
-  (setf (region location) *current-region*))
 
 (defun find-exit (location direction)
   (find-if #'(lambda (x) (eq (direction x) direction)) (exits location)))
