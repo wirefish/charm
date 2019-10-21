@@ -309,7 +309,8 @@
              (floor current-rank))
       (show-notice avatar "Your rank in ~a has increased to ~d!"
                    (name skill)
-                   (floor (+ new-rank))))))
+                   (floor new-rank))
+      (update-skills avatar (list skill-key)))))
 
 (defun update-skills (avatar &optional keys)
   (send-client-command
@@ -319,7 +320,7 @@
      (mapcar #'(lambda (key)
                  (let ((rank (skill-rank avatar key))
                        (skill (find-skill key)))
-                   (list key (name skill) rank (max-rank skill))))
+                   (list key (name skill) (floor rank) (max-rank skill))))
              (or keys (hash-table-keys skills))))))
 
 ;;; Select an avatar's next (auto) attack.
