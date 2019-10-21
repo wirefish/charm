@@ -294,6 +294,24 @@
                           (describe-brief item :article nil)))))))
     (send-client-command (session actor) "updateInventory" update)))
 
+(defparameter *all-combat-keys*
+  (plist-hash-table
+   (list* :max-health #'health
+          :max-energy #'max-energy
+          :max-mana #'max-mana
+          (loop for modifier in (append *primary-attributes*
+                                        *secondary-attributes*
+                                        (hash-table-keys *damage-types*))
+             append (list modifier (curry #'get-modifier modifier))))))
+
+(defun update-combat (actor &optional keys)
+  (send-client-command
+   (session actor) "updateCombat"
+   (alist-hash-table
+    (mapcar #'(lambda (key)
+                (cons key (funcall (gethash key *all-combat-keys*) actor)))
+            (or keys (hash-table-keys *all-combat-keys*))))))
+
 ;;;
 
 (defun skill-rank (avatar skill-key)

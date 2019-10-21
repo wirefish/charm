@@ -316,6 +316,15 @@ MessageHandler.prototype.updateSkills = function(unspent_karma, skills)
     }
 }
 
+MessageHandler.prototype.updateCombat = function(values)
+{
+    for (var key in values) {
+        var div = document.getElementById('combat_' + key);
+        if (div)
+            div.innerHTML = values[key];
+    }
+}
+
 MessageHandler.prototype.startPlayerCast = function(name, duration)
 {
     var bar = document.getElementById("player_mana");
