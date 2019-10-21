@@ -99,16 +99,18 @@ There are a number of verbs/events that interact with inventory in this way:
         *inventory-slot-order*))
 
 (defun add-to-inventory (item avatar &key force quantity remove-from)
-  "Attempts to add `item` to the inventory of `avatar`. Returns the container to
-  which the item was added, or nil on failure. If `force` is t, the item is
-  always successfully added to the avatar's hands as a last resort."
+  "Attempts to add `item` to the inventory of `avatar`. On success, returns two
+  values: the container to which the item was added, and a list of the stacks
+  that were modified within that container. Returns nil on failure. If `force`
+  is t, the item is always successfully added to the avatar's hands as a last
+  resort."
   (some #'(lambda (slot)
-            (when-let ((container (gethash slot (equipment avatar))))
-              (when (add-to-container item container
-                                      :force (and force (eq slot :in-hands))
-                                      :quantity quantity
-                                      :remove-from remove-from)
-                container)))
+            (when-let* ((container (gethash slot (equipment avatar)))
+                        (stacks (add-to-container item container
+                                                  :force (and force (eq slot :in-hands))
+                                                  :quantity quantity
+                                                  :remove-from remove-from)))
+              (values container stacks)))
         *inventory-slot-order*))
 
 ;;; The `take-item` event occurs when `actor` removes `item` from `origin`,
@@ -254,15 +256,19 @@ There are a number of verbs/events that interact with inventory in this way:
      (call-next-method))))
 
 (defmethod do-give-item (actor item (recipient avatar))
-  (when-let ((container (add-to-inventory item recipient :force t)))
-    (show-text recipient
-               (concatenate
-                'string
-                (format-give-item actor item)
-                (format nil " You place ~a in your ~a."
-                        (if (= 1 (stack-size item)) "it" "them")
-                        (describe-brief container :article nil))))
-    item))
+  (multiple-value-bind (container stacks) (add-to-inventory item recipient :force t)
+    (when container
+      (show-text recipient
+                 (concatenate
+                  'string
+                  (format-give-item actor item)
+                  (format nil " You place ~a in your ~a."
+                          (if (= 1 (stack-size item)) "it" "them")
+                          (describe-brief container :article nil))))
+      (update-inventory recipient :changed (mapcar #'(lambda (stack)
+                                                       (cons (slot container) stack))
+                                                   stacks))
+      item)))
 
 ;;; The `drop-item` event occurs when `actor` drops `item`, moving it from
 ;;; `inventory-slot` to the actor's location. If `quantity` is non-nil, only

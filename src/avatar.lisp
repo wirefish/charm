@@ -272,17 +272,26 @@
                                (remove :in-hands (hash-table-keys *equipment-slots*)))))))
       (send-client-command (session actor) "updateEquipment" update))))
 
-(defun update-inventory (actor)
-  (let ((update (make-hash-table)))
-    (dolist (slot '(:backpack :in-hands))
-      (when-let ((container (gethash slot (equipment actor))))
-        (setf (gethash slot update)
-              (alist-hash-table
-               (mapcar #'(lambda (item)
-                           (cons (write-to-string (id item))
-                                 (list (describe-icon item)
-                                       (describe-brief item :article nil))))
-                       (contents container))))))
+(defun update-inventory (actor &key changed removed)
+  (let ((update (alist-hash-table
+                 (mapcar #'(lambda (slot) (cons slot (make-hash-table)))
+                         '(:backpack :in-hands)))))
+    ;; If items were removed, map from their id to nil in the appropriate slot.
+    (loop for (slot . item) in removed do
+         (setf (gethash (write-to-string (id item)) (gethash slot update)) nil))
+    (if changed
+        ;; Only send updates for changed items.
+        (loop for (slot . item) in changed do
+             (setf (gethash (write-to-string (id item)) (gethash slot update))
+                   (list (describe-icon item)
+                         (describe-brief item :article nil))))
+        ;; Include all inventory items in the update.
+        (dolist (slot '(:backpack :in-hands))
+          (when-let ((container (gethash slot (equipment actor))))
+            (dolist (item (contents container))
+              (setf (gethash (write-to-string (id item)) (gethash slot update))
+                    (list (describe-icon item)
+                          (describe-brief item :article nil)))))))
     (send-client-command (session actor) "updateInventory" update)))
 
 ;;;
