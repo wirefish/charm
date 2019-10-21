@@ -22,12 +22,14 @@
   "A convenience macro to help create a list of recipes."
   `(list ,@(mapcar (lambda (spec)
                      (destructuring-bind (rank item materials) spec
-                       `(make-instance 'recipe
-                                       :skill ',skill
-                                       :rank ,rank
-                                       :item (make-instance ',item)
-                                       :materials (list ,@(loop for (material count) on materials by #'cddr
-                                                                collect `(make-instance ',material :stack-size ,count))))))
+                       `(make-instance
+                         'recipe
+                         :skill ',skill
+                         :rank ,rank
+                         :item (make-instance ',item)
+                         :materials (list ,@(loop for (material count) on materials by #'cddr
+                                               collect `(make-instance ',material
+                                                                       :stack-size ,count))))))
                    specs)))
 
 ;;; A material is a crafted item that can in turn be used to craft another item.
@@ -110,12 +112,14 @@
    (show-text actor "You begin crafting ~a with your ~a."
               (describe-brief item)
               (describe-brief tool :article nil))
+   (start-casting actor 5)
    (change-state :finish 5))
   (:finish
    (do-craft-item actor item recipe)
    (remove-behavior actor :activity))
   (:stop
-   (show-text actor "Your crafting attempt has been interrupted.")))
+   (show-text actor "Your crafting attempt has been interrupted.")
+   (stop-casting actor)))
 
 #+nil(defun offer-craft (actor item recipe)
        nil)

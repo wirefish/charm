@@ -325,24 +325,28 @@ MessageHandler.prototype.updateCombat = function(values)
     }
 }
 
-MessageHandler.prototype.startPlayerCast = function(name, duration)
+MessageHandler.prototype.startPlayerCast = function(duration)
 {
-    var bar = document.getElementById("player_mana");
+    var castbar = document.getElementById("castbar");
+    var progress = castbar.children[0];
 
-    bar.children[1].style.animation = "";
-    bar.children[0].innerHTML = name;
-    window.requestAnimationFrame(function (t) {
-        window.requestAnimationFrame(function (t) {
-            bar.children[1].style.animation = "cast {0} linear".format(duration);
-        });
+    castbar.style.display = 'block';
+    progress.style.transitionDuration = duration + 's';
+    progress.style.width = '0%';
+
+    progress.addEventListener('transitionend', function(event) {
+        castbar.style.display = 'none';
     });
+
+    window.setTimeout(
+        function() { progress.style.width = '100%'; },
+        0);
 }
 
-MessageHandler.prototype.cancelPlayerCast = function(mana, max_mana)
+MessageHandler.prototype.stopPlayerCast = function()
 {
-    var bar = document.getElementById("player_mana");
-    bar.children[1].style = "";
-    updateBar('player_mana', mana, max_mana)
+    var castbar = document.getElementById("castbar");
+    castbar.style.display = 'none';
 }
 
 function getNeighborId(key)

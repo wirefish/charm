@@ -311,10 +311,6 @@ a:link {
 }
 .do_exit { animation: exit 0.4s ease-out; }
 
-@keyframes cast {
-    from {width: 0%} to {width: 100%}
-}
-
 /* The main box is a scrolling history of the player's commands and
    interactions. */
 
@@ -598,6 +594,7 @@ a:link {
 .inputarea {
     grid-area: inputarea;
     margin: 2px;
+    position: relative;
 }
 
 .inputarea input[type="text"] {
@@ -613,6 +610,27 @@ a:link {
 
 .inputarea input[type="text"]:focus {
     border: 2px solid #dc6520;
+}
+
+#castbar {
+    position: relative;
+    top: -8px;
+    width: 90%;
+    margin: auto;
+    height: 4px;
+    border-radius: 2px;
+    background-color: #bfbfc8;
+    overflow: hidden;
+    display: none;
+}
+
+#castbar > div {
+    width: 0%;
+    height: 100%;
+    background-color: #484851;
+    transition-property: width;
+    transition-timing-function: linear;
+    transition-duration: 1s;
 }
 
 /* The right buttonbox allows the player to assign macros to buttons that

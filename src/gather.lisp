@@ -81,12 +81,14 @@
    (show-text actor "You begin gathering from ~a with your ~a."
               (describe-brief node :article :definite)
               (describe-brief tool :article nil))
+   (start-casting actor 5)
    (change-state :finish 5))
   (:finish
    (do-gather-resources actor (gathered-resources resources) node)
    (remove-behavior actor :activity))
   (:stop
-   (show-text actor "Your gathering attempt has been interrupted.")))
+   (show-text actor "Your gathering attempt has been interrupted.")
+   (stop-casting actor)))
 
 (defcommand (actor "gather")
   "Attempt to gather resources from a resource node at your location. You must

@@ -97,3 +97,13 @@
   (when-let ((session (session avatar)))
     (send-client-command session "removeNeighbor"
                          (id obj) message)))
+
+;;;
+
+(defun start-casting (avatar duration)
+  (when-let ((session (session avatar)))
+    (send-client-command session "startPlayerCast" duration)))
+
+(defun stop-casting (avatar)
+  (when-let ((session (session avatar)))
+    (send-client-command session "stopPlayerCast")))
