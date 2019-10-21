@@ -311,6 +311,17 @@
                    (name skill)
                    (floor (+ new-rank))))))
 
+(defun update-skills (avatar &optional keys)
+  (send-client-command
+   (session avatar) "updateSkills"
+   (karma avatar)
+   (with-slots (skills) avatar
+     (mapcar #'(lambda (key)
+                 (let ((rank (skill-rank avatar key))
+                       (skill (find-skill key)))
+                   (list key (name skill) rank (max-rank skill))))
+             (or keys (hash-table-keys skills))))))
+
 ;;; Select an avatar's next (auto) attack.
 
 (defproto fist (natural-weapon)

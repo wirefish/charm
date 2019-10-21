@@ -29,4 +29,5 @@
                  :xp (xp actor)
                  :xp-required (xp-required-for-next-level actor))
   (update-equipment actor)
-  (update-inventory actor))
+  (update-inventory actor)
+  (update-skills actor))

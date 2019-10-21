@@ -236,83 +236,6 @@ MessageHandler.prototype.updateAuras = function(key, auras)
     }
 }
 
-function formatModifiers(modifiers)
-{
-    var parts = [];
-    for (let name in modifiers) {
-        var value = modifiers[name];
-        var sign = value >= 0 ? '+' : '&minus;';
-        parts.push('{0} {1}{2}'.format(name, sign, Math.round(value)))
-    }
-    if (parts.length == 0)
-        return 'none';
-    else
-        return parts.join(', ');
-}
-
-MessageHandler.prototype.showStatus = function(stats)
-{
-    var lines = [];
-
-    if (stats.name) {
-        lines.push('You are {0}, a level {1} {2}.'.format(
-            stats.name, stats.level, removeArticle(stats.race)));
-    }
-    else {
-        lines.push('You a level {1} {2}.'.format(
-            stats.level, removeArticle(stats.race)));
-    }
-
-    /*
-    for (var i = 0; i < stats.guilds.length; ++i) {
-        var [profession, guild, rank] = stats.guilds[i];
-        lines.push('You are a rank {0} {1} in {2}.'.format(
-            rank, removeArticle(profession), guild));
-    }
-
-    lines.push('You have {0} unspent karma points.'.format(stats.karma));
-
-    var attributes = [];
-    for (let name of ATTRIBUTE_NAMES)
-        attributes.push('{0} {1}'.format(name, Math.round(stats.modifiers[name])));
-    lines.push('Attributes: ' + attributes.join(', '));
-
-    var attack_modifiers = {};
-    var defense_modifiers = {};
-    var proficiencies = {};
-    var other = {};
-    for (let key in stats.modifiers) {
-        var value = stats.modifiers[key];
-        var sep = key.indexOf('_');
-        if (sep >= 0) {
-            var [prefix, suffix] = key.split('_', 2)
-            if (suffix == 'damage')
-                attack_modifiers[prefix] = value;
-            else if (suffix == 'resistance')
-                defense_modifiers[prefix] = value;
-            else if (suffix == 'proficiency')
-                proficiencies[prefix] = value;
-            else
-                other[prefix] = value;
-        }
-    }
-
-    lines.push('Attack modifiers: ' + formatModifiers(attack_modifiers));
-    lines.push('Defense modifiers: ' + formatModifiers(defense_modifiers));
-    lines.push('Proficiencies: ' + formatModifiers(proficiencies));
-    */
-
-    appendBlock(wrapElements(
-        'div', lines.map(function (line) { return makeTextElement('p', line); })));
-}
-
-function joinClauses(clauses) {
-    if (clauses.length == 1)
-        return clauses[0];
-    else
-        return clauses.slice(0, -1).join(', ') + ' and ' + clauses[clauses.length - 1];
-}
-
 MessageHandler.prototype.updateInventory = function(inventory)
 {
     for (var slot in inventory) {
@@ -357,6 +280,56 @@ MessageHandler.prototype.updateEquipment = function(equipment)
         else {
             div.style.backgroundImage = 'none';
             div.innerHTML = null;
+        }
+    }
+}
+
+MessageHandler.prototype.updateSkills = function(unspent_karma, skills)
+{
+    document.getElementById('unspent_karma').innerHTML = unspent_karma.toString();
+
+    var skills_pane = document.getElementById('skills_pane');
+
+    for (var i = 0; i < skills.length; ++i) {
+        var [key, name, rank, max_rank] = skills[i];
+        var div_id = 'skill_' + key;
+        var div = document.getElementById(div_id);
+        if (rank == null) {
+            // Remove the skill entry.
+            if (div)
+                div.parentNode.removeChild(div);
+        }
+        else if (div) {
+            // Update the skill entry.
+            if (max_rank > 0)
+                div.children[1].innerHTML = '{0} / {1}'.format(rank, max_rank);
+        }
+        else {
+            // Find the existing skill entry before which to insert the new one,
+            // based on ordering by skill name. Ignore the first child, which is
+            // the unspent karma and not a skill.
+            var next_div = null;
+            for (var j = 1; j < skills_pane.children.length; ++j) {
+                var child = skills_pane.children[j];
+                if (name < child.children[0].innerHTML) {
+                    next_div = child;
+                    break;
+                }
+            }
+
+            // Add a new skill entry.
+            div = document.createElement('div');
+            div.id = div_id;
+            div.className = 'skill_rank';
+            var name_div = document.createElement('div');
+            name_div.innerHTML = name;
+            div.appendChild(name_div);
+            if (max_rank > 0) {
+                var rank_div = document.createElement('div');
+                rank_div.innerHTML = '{0} / {1}'.format(rank, max_rank);
+                div.appendChild(rank_div);
+            }
+            document.getElementById('skills_pane').insertBefore(div, next_div);
         }
     }
 }

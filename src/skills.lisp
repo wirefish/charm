@@ -31,7 +31,8 @@
       (show-notice avatar "~a teaches you the skill ~s."
                    (describe-brief trainer :capitalize t)
                    (name skill))
-      (show-notice avatar "You learn the skill ~s." (name skill))))
+      (show-notice avatar "You learn the skill ~s." (name skill)))
+  (update-skills avatar (list (key skill))))
 
 (defcommand (actor "learn" skill-name)
   "When no *skill-name* is given, list the skills taught by a nearby trainer.
@@ -78,7 +79,8 @@
 (defmethod do-unlearn-skill (avatar skill trainer)
   ;; FIXME: add back karma
   (remhash (key skill) (skills avatar))
-  (show-notice avatar "You unlearn the skill ~s." (name skill)))
+  (show-notice avatar "You unlearn the skill ~s." (name skill))
+  (update-skills avatar (list (key skill))))
 
 (defcommand (actor "unlearn" skill-name)
   "Unlearn a skill you previously learned. This can only be done at a trainer
@@ -88,20 +90,31 @@
                              (contents (location actor)))))
     ;; There is a trainer here.
     (if skill-name
-        ;; FIXME: unlearn the skill
-        (show-text actor "TBD")
+        ;; Unlearn the skill.
+        (let ((matches (match-objects skill-name
+                                      (mapcar #'find-skill (teaches trainer)))))
+          (case (length matches)
+            (0
+             (show-text actor "~a doesn't teach any skill like that."
+                        (describe-brief trainer :capitalize t)))
+            (1
+             (unlearn-skill actor (first matches) trainer))
+            (t
+             (show-text actor "Do you want to unlearn ~a?"
+                        (format-list (mapcar #'describe-brief matches) :conjunction "or")))))
         ;; List skills that the actor knows and the trainer teaches.
-        (let ((keys (keep-if #'(lambda (key)
-                                 (member key (teaches trainer)))
-                             (hash-table-keys (skills actor)))))
+        (let ((keys (remove-if-not #'(lambda (key)
+                                       (member key (teaches trainer)))
+                                   (hash-table-keys (skills actor)))))
           (if (null keys)
               (show-text actor "~a can't remove your knowledge of any skill you
                 currently know." (describe-brief trainer :capitalize t))
-              (progn
-                (show-text actor "~a can remove your knowledge of the following skills:"
-                           (describe-brief trainer :capitalize t))
-                (dolist (key keys)
-                  (show-text actor "- ~a" (name (find-skill key))))))))
+              (show-links actor
+                          (format nil "~a can remove your knowledge of the following skills:"
+                                  (describe-brief trainer :capitalize t))
+                          "unlearn"
+                          (sort (mapcar #'(lambda (key) (name (find-skill key))) keys)
+                                #'string<)))))
     ;; No trainer.
     (show-text actor "There is no trainer here.")))
 
