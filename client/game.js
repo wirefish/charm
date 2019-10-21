@@ -18,24 +18,6 @@ window.onresize = resize;
 function load()
 {
     map = new Map(document.getElementById("map_canvas"));
-    map.config([
-        // icons
-        ["ship", "icons/map_boat.png"],
-        ["house", "icons/map_house.png"],
-        ["quest_available", "icons/map_quest_available.png"],
-        ["quest_incomplete", "icons/map_quest_incomplete.png"],
-        ["quest_complete", "icons/map_quest_complete.png"],
-        ["vendor", "icons/map_vendor.png"],
-        ["trainer", "icons/map_trainer.png"],
-        // terrain
-        ["grass", "images/grass.png"],
-        ["forest", "images/forest.png"],
-        ["dirt", "images/dirt.jpg"],
-        ["wood", "images/wood.png"],
-        ["stone", "images/cobblestone.png"],
-        ["rocks", "images/rubble.png"],
-        ["shallow_water", "images/water.png"],
-    ]);
     map.resize();
 
     handler = new MessageHandler();

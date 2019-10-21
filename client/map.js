@@ -1,87 +1,106 @@
-// A helper object that loads a set of images and runs a callback after each one.
-function ImageList(image_urls)
+'use strict';
+
+// Images used as icons within map cells.
+var icon_urls = {
+    'ship': 'icons/map_boat.png',
+    'house': 'icons/map_house.png',
+    'quest_available': 'icons/map_quest_available.png',
+    'quest_incomplete': 'icons/map_quest_incomplete.png',
+    'quest_complete': 'icons/map_quest_complete.png',
+    'vendor': 'icons/map_vendor.png',
+    'trainer': 'icons/map_trainer.png',
+};
+
+// Images used as patterns for drawing surfaces and the outlines of indoor and
+// undergroup locations.
+var pattern_urls = {
+    'grass': 'images/grass.png',
+    'forest': 'images/forest.png',
+    'dirt': 'images/dirt.jpg',
+    'wood': 'images/wood.png',
+    'stone': 'images/cobblestone.png',
+    'rocks': 'images/rubble.png',
+    'shallow_water': 'images/water.png',
+    'underground': 'images/underground.png',
+    'indoor': 'images/indoor.png',
+};
+
+// Loads a set of images and runs a callback after each one.
+
+function ImageLoader(image_urls)
 {
     this.image_urls = image_urls;
     this.images = {};
-    this.num_loaded = 0;
-    this.progress = 0.0;
-    this.callback = undefined;
+    this.finish_callback = undefined;
+}
 
-    // TODO: use window.devicePixelRatio to determine when to load @2x images.
+ImageLoader.prototype.loadImages = function(callback)
+{
+    this.callback = callback;
 
-    this.load = function(callback) {
-        this.callback = callback;
-        for (var i = 0; i < this.image_urls.length; ++i) {
-            var [key, url] = this.image_urls[i];
-            (function (key, url, self) {
-                var image = new Image();
-                image.onload = function() { self.onload(this, key); }
-                image.src = url;
-            })(key, url, this);
-        }
-    }
-
-    this.onload = function(image, key) {
-        this.images[key] = image;
-        this.progress = ++this.num_loaded / this.image_urls.length;
-        this.callback(this);
+    for (var key in this.image_urls) {
+        var url = this.image_urls[key];
+        (function (key, url, loader) {
+            var image = new Image();
+            image.onload = function() { loader.onLoadImage(key, this); }
+            image.src = url;
+        })(key, url, this);
     }
 }
 
-ImageList.prototype.finishedLoading = function()
+ImageLoader.prototype.onLoadImage = function(key, image)
 {
-    return this.num_loaded == this.image_urls.length;
+    this.images[key] = image;
+    this.callback(this);
+}
+
+ImageLoader.prototype.finishedLoading = function()
+{
+    return Object.keys(this.images).length == Object.keys(this.image_urls).length;
 }
 
 // Renders a representation of the rooms around the player.
+
 function Map(canvas)
 {
     this.canvas = canvas;
     this.radius = 0;
     this.rooms = undefined;
-    this.images = undefined;
+
+    var self = this;
+
+    this.icons = undefined;
+    var icon_loader = new ImageLoader(icon_urls);
+    icon_loader.loadImages(function(loader) { self.onLoadIcon(loader); });
+
+    this.patterns = undefined;
+    var pattern_loader = new ImageLoader(pattern_urls);
+    pattern_loader.loadImages(function(loader) { self.onLoadPattern(loader); });
 }
 
-Map.prototype.domainColors = {
-    'indoor': '#484848',
-    'underground': '#4f4b32',
-}
-
-Map.prototype.surfaceColors = {
-    'grass': '#728b2d',
-    'weeds': '#9aaa12',
-    'flowers': '#f4b2b2',
-    'forest': '#3f7741',
-    'dirt': '#726020',
-    'stone': '#8f8f8f',
-    'rocks': '#878470',
-    'wood': '#7f7228',
-    'sand': '#e2c388',
-    'tile': '#f4f0d9',
-    'shallow_water': '#6fa1f2',
-    'deep_water': '#2e61b2',
-}
-
-Map.prototype.defaultSurfaceColor = 'red';
-
-Map.prototype.config = function(images)
+Map.prototype.onLoadIcon = function(loader)
 {
-    this.images = new ImageList(images);
-    var this_ = this;
-    this.images.load(function(image_list) { this_.onLoadImage(image_list); });
+    if (loader.finishedLoading()) {
+        this.icons = loader.images;
+    }
+}
+
+Map.prototype.onLoadPattern = function(loader)
+{
+    if (loader.finishedLoading()) {
+        // Convert the images into patterns.
+        var context = this.canvas.getContext('2d');
+        this.patterns = {};
+        for (var key in loader.images) {
+            var image = loader.images[key];
+            this.patterns[key] = context.createPattern(image, 'repeat');
+        }
+    }
 }
 
 Map.prototype.finishedLoading = function()
 {
-    return this.images != undefined && this.images.finishedLoading();
-}
-
-Map.prototype.onLoadImage = function(image_list)
-{
-    if (this.finishedLoading()) {
-        console.log("loaded all map images");
-        this.render();
-    }
+    return this.icons != undefined && this.patterns != undefined;
 }
 
 Map.prototype.update = function(radius, rooms)
@@ -118,12 +137,6 @@ Map.prototype.showTooltip = function(e)
     }
 }
 
-Map.prototype.drawTexture = function(context, i, j, texture_id, size)
-{
-    var image = this.images.images[texture_id];
-    context.drawImage(image, 64, 64, 128, 128, 0, 0, size + 1, size + 1);
-}
-
 var exit_lines = {
     'north': [0, -1],
     'northeast': [1, -1],
@@ -134,76 +147,6 @@ var exit_lines = {
     'west': [-1, 0],
     'northwest': [-1, -1],
 };
-
-Map.prototype.drawSymbol = function(context, symbol, left, top, size)
-{
-    var radius = size / 2;
-    var cx = left + radius;
-    var cy = top + radius;
-
-    context.font = size + "px arial";
-    context.lineWidth = 1;
-    context.strokeStyle = "black";
-    context.fillText(symbol, cx, cy);
-    context.strokeText(symbol, cx, cy);
-}
-
-Map.prototype.drawUpDown = function(context, inset, room_size)
-{
-    context.fillStyle = 'black';
-    context.beginPath();
-    context.moveTo(inset + 4, inset);
-    context.lineTo(inset + room_size / 3, inset);
-    context.lineTo(inset + room_size / 6 + 2, inset - room_size / 6);
-    context.lineTo(inset + 4, inset);
-    context.fill();
-    context.stroke();
-}
-
-function makeDefaultMap(map, defaultValue)
-{
-    return new Proxy(
-        map,
-        {
-            get: function(object, property) {
-                return object.hasOwnProperty(property) ? object[property] : defaultValue;
-            }
-        });
-}
-
-var surfaceSortOrder = makeDefaultMap(
-    {
-        'deep_water': 1,
-        'shallow_water': 2,
-        'stone': 3,
-        'wood': 4,
-        'tile': 5,
-        'dirt': 6,
-        'sand': 7,
-        'rocks': 8,
-        'grass': 9,
-        'weeds': 10,
-        'flowers': 11,
-        'forest': 12,
-    },
-    0);
-
-var domainSortOrder = makeDefaultMap(
-    {
-        'outdoor': 1,
-        'indoor': 2,
-        'underground': 3,
-    },
-    0);
-
-function compareLocations(a, b)
-{
-    var surfaceA = a[8], surfaceB = b[8];
-    var domainA = a[9], domainB = b[9];
-
-    var d = domainSortOrder[domainA] - domainSortOrder[domainB];
-    return d ? d : surfaceSortOrder[surfaceA] - surfaceSortOrder[surfaceB];
-}
 
 Map.prototype.resize = function()
 {
@@ -219,52 +162,47 @@ Map.prototype.render = function()
 
     var context = this.canvas.getContext("2d");
     context.imageSmoothingQuality = "high";
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
-
     context.fillStyle = "#2a2a2e";
     context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
+    // Figure out the size and placement of the map cells. Each cell is square
+    // and has a size that is a multiple of four, as this reduces rendering
+    // artifacts due to fractional pixel coordinates.
     var map_size = Math.max(this.canvas.width, this.canvas.height);
     var diameter = 2 * this.radius + 1;
     var cell_size = (Math.ceil(map_size / diameter) + 3) & ~3;
-    var left = Math.floor((this.canvas.width - cell_size) / 2);
-    var top = Math.floor((this.canvas.height - cell_size) / 2);
+    var center_left = Math.floor((this.canvas.width - cell_size) / 2);
+    var center_top = Math.floor((this.canvas.height - cell_size) / 2);
     var inset = cell_size / 4;
     var room_size = cell_size - inset * 2;
 
-    this.rooms.sort(compareLocations);
-
-    // Fill the backgrounds for the rooms based on their domain.
-    context.lineWidth = 16;
-    context.lineCap = 'butt';
     for (var j = 0; j < this.rooms.length; ++j) {
         var [x, y, name, icon, quest_state, vendor, trainer, exits,
              surface, surrounding, domain] = this.rooms[j];
 
-        context.save();
-        context.translate(left + x * cell_size, top + y * cell_size);
+        var left = center_left + x * cell_size, top = center_top + y * cell_size;
 
-        // Fill the cell.
+        // Fill the cell background.
         if (domain == 'outdoor') {
-            var bg = this.images.images[surrounding ? surrounding : surface];
-            if (bg) {
-                context.drawImage(bg, 0, 0, cell_size, cell_size);
+            var pattern = this.patterns[surrounding ? surrounding : surface];
+            if (pattern) {
+                context.fillStyle = pattern;
+                context.fillRect(left, top, cell_size, cell_size);
             }
         }
         else {
-            var c = this.domainColors[domain];
-            if (c != undefined) {
-                context.beginPath();
-                context.fillStyle = c;
-                context.rect(-1, -1, cell_size + 2, cell_size + 2);
-                context.fill();
+            var pattern = this.patterns[domain];
+            if (pattern) {
+                context.fillStyle = pattern;
+                context.fillRect(left, top, cell_size, cell_size);
             }
         }
 
-        // For an underground room, draw a wider line along the exit.
+        // For an underground room, draw a wider line along each exit.
         if (domain == 'underground') {
-            context.strokeStyle = c;
+            context.strokeStyle = this.patterns[domain];
+            context.lineWidth = cell_size / 4;
+            context.lineCap = 'butt';
             context.beginPath();
             for (var i = 0; i < exits.length; ++i) {
                 var line = exit_lines[exits[i]];
@@ -274,45 +212,31 @@ Map.prototype.render = function()
                     var sy = cell_size / 2 + room_size / 2 * ly;
                     var ex = cell_size / 2 * (1 + lx) + lx;
                     var ey = cell_size / 2 * (1 + ly) + ly;
-                    context.moveTo(sx, sy);
-                    context.lineTo(ex, ey);
+                    context.moveTo(left + sx, top + sy);
+                    context.lineTo(left + ex, top + ey);
                 }
             }
             context.stroke();
         }
 
-        context.restore();
-    }
+        // Render a highlight around the current room.
+        if (x == 0 && y == 0) {
+            context.lineWidth = 8;
+            context.strokeStyle = '#c8c868';
+            context.strokeRect(left + inset - 4, top + inset - 4,
+                               room_size + 8, room_size + 8);
+        }
 
-    // Render the foreground of each room.
-    context.lineWidth = 4;
-    context.lineCap = 'round';
-    context.strokeStyle = '#1f1f1f'; // 'black';
-    for (var j = 0; j < this.rooms.length; ++j) {
-        var [x, y, name, icon, quest_state, vendor, trainer, exits,
-             surface, surrounding, domain] = this.rooms[j];
-
-        context.save();
-        context.translate(left + x * cell_size, top + y * cell_size);
+        // Render the foreground of each room.
+        context.lineWidth = 4;
+        context.lineCap = 'round';
 
         // Fill the room interior based on the surface.
         if (domain != 'outdoor' || surrounding) {
-            var bg = this.images.images[surface];
-            if (bg) {
-                // NOTE: This assumes the source image is 128x128 and is
-                // intended to cover the entire cell. Just draw a 64x64 subimage
-                // over the room.
-                context.drawImage(bg, 32, 32, 64, 64,
-                                  inset, inset, room_size, room_size);
-            }
-            else {
-                var surface_color = this.surfaceColors[surface];
-                if (!surface_color)
-                    surface_color = this.defaultSurfaceColor;
-                context.beginPath();
-                context.fillStyle = surface_color;
-                context.rect(inset, inset, room_size, room_size);
-                context.fill();
+            var pattern = this.patterns[surface];
+            if (pattern) {
+                context.fillStyle = pattern;
+                context.fillRect(left + inset, top + inset, room_size, room_size);
             }
         }
 
@@ -320,30 +244,23 @@ Map.prototype.render = function()
         context.globalCompositeOperation = 'screen';
         context.beginPath();
         context.fillStyle = '#4f4f4f';
-        context.rect(inset, inset, room_size, room_size);
+        context.rect(left + inset, top + inset, room_size, room_size);
         context.fill();
         context.globalCompositeOperation = 'source-over';
 
-        // Render a highlight around the current room.
-        if (x == 0 && y == 0) {
-            context.beginPath();
-            var border_inset = cell_size / 8;
-            var border_size = cell_size - 2 * border_inset;
-            context.rect(border_inset, border_inset, border_size, border_size);
-            context.fillStyle = 'rgba(224, 224, 128, 0.625)'; // '#c0c080';
-            context.fill();
-        }
-
         // Draw an icon if one is defined.
         if (icon) {
-            var image = this.images.images[icon];
-            context.drawImage(image, inset + 2, inset + 2, room_size - 4, room_size - 4);
+            var image = this.icons[icon];
+            if (image)
+                context.drawImage(image, left + inset + 2, top + inset + 2,
+                                  room_size - 4, room_size - 4);
         }
 
         // Draw the room border and lines for exits.
-        context.beginPath();
-        context.rect(inset, inset, room_size, room_size);
+        context.strokeStyle = '#1f1f1f';
+        context.strokeRect(left + inset, top + inset, room_size, room_size);
         if (exits) {
+            context.beginPath();
             for (var i = 0; i < exits.length; ++i) {
                 var line = exit_lines[exits[i]];
                 if (line) {
@@ -352,51 +269,56 @@ Map.prototype.render = function()
                     var sy = cell_size / 2 + room_size / 2 * ly;
                     var ex = cell_size / 2 * (1 + lx);
                     var ey = cell_size / 2 * (1 + ly);
-                    context.moveTo(sx, sy);
-                    context.lineTo(ex, ey);
+                    context.moveTo(left + sx, top + sy);
+                    context.lineTo(left + ex, top + ey);
                 }
             }
-        }
-        context.stroke();
+            context.stroke();
 
-        // Draw the up and down indicators if needed.
-        if (exits) {
+            context.fillStyle = '#1f1f1f';
             if (exits.indexOf('up') != -1) {
-                this.drawUpDown(context, inset, room_size);
+                // Upward-pointing triangle in upper-left corner.
+                var l = left + inset + 2, r = left + cell_size / 2 - 2,
+                    b = top + inset, t = top + inset / 2;
+                context.beginPath();
+                context.moveTo(l, b);
+                context.lineTo(r, b);
+                context.lineTo((l + r) / 2, t);
+                context.closePath();
+                context.fill();
             }
             if (exits.indexOf('down') != -1) {
-                context.save();
-                context.translate(cell_size, cell_size);
-                context.scale(-1, -1);
-                this.drawUpDown(context, inset, room_size);
-                context.restore();
+                // Downward-pointing triangle in lower-right corner.
+                var l = left + cell_size / 2 + 2, r = left + cell_size - inset - 2,
+                    t = top + cell_size - inset, b = top + cell_size - inset / 2;
+                context.beginPath();
+                context.moveTo(l, t);
+                context.lineTo((l + r) / 2, b);
+                context.lineTo(r, t);
+                context.closePath();
+                context.fill();
             }
         }
 
         // Draw a symbol to denote quest state.
         if (quest_state) {
-            var image = this.images.images["quest_" + quest_state];
-            context.drawImage(image, inset + 2, inset + 2,
+            var image = this.icons["quest_" + quest_state];
+            context.drawImage(image, left + inset + 2, top + inset + 2,
                               room_size / 2 - 2, room_size / 2 - 2);
         }
 
         // Draw a symbol if there's a vendor.
         if (vendor) {
-            var image = this.images.images["vendor"];
-            context.drawImage(image, inset + room_size / 2, inset + 2,
+            var image = this.icons["vendor"];
+            context.drawImage(image, left + inset + room_size / 2, top + inset + 2,
                               room_size / 2 - 2, room_size / 2 - 2);
         }
 
         // Draw a symbol if there's a trainer.
         if (trainer) {
-            var image = this.images.images["trainer"];
-            context.drawImage(image, inset + 2, inset + room_size / 2,
+            var image = this.icons["trainer"];
+            context.drawImage(image, left + inset + 2, top + inset + room_size / 2,
                               room_size / 2 - 2, room_size / 2 - 2);
         }
-
-        context.restore();
     }
-
-    // var this_ = this;
-    // canvas.onmousemove = function(e) { this_.showTooltip(e); }
 }
