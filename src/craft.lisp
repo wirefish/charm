@@ -86,7 +86,6 @@
 ;;;
 
 (defevent craft-item (actor item recipe)
-  (stop-behavior actor :activity)
   (multiple-value-bind (found missing) (find-recipe-materials recipe actor)
     (cond
       (missing
@@ -94,14 +93,15 @@
                   (describe-brief item)))
       ;;; TODO: other checks
       (t
-       (start-behavior actor :activity #'craft item recipe found)))))
+       (start-activity actor #'craft item recipe found)))))
 
 (defmethod do-craft-item (actor item recipe)
   (show-text actor "You successfully craft ~a." (describe-brief item))
   (add-to-inventory (create-recipe-item recipe) actor :force t))
 
 (defbehavior craft (actor item recipe materials)
-    ((tool (gethash :tool (equipment actor))))
+    ((tool (gethash :tool (equipment actor)))
+     (duration 5)) ; FIXME: can be modified by tool
   (:start
    (dolist (material materials)
      (destructuring-bind (container item count) material
@@ -112,11 +112,11 @@
    (show-text actor "You begin crafting ~a with your ~a."
               (describe-brief item)
               (describe-brief tool :article nil))
-   (start-casting actor 5)
-   (change-state :finish 5))
+   (start-casting actor duration)
+   (change-state :finish duration))
   (:finish
    (do-craft-item actor item recipe)
-   (remove-behavior actor :activity))
+   (finish))
   (:stop
    (show-text actor "Your crafting attempt has been interrupted.")
    (stop-casting actor)))

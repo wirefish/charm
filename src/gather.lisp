@@ -85,7 +85,7 @@
    (change-state :finish 5))
   (:finish
    (do-gather-resources actor (gathered-resources resources) node)
-   (remove-behavior actor :activity))
+   (finish))
   (:stop
    (show-text actor "Your gathering attempt has been interrupted.")
    (stop-casting actor)))
@@ -102,8 +102,7 @@
                             (contents (location actor)))))
       (if-let ((resources (gatherable-resources actor node)))
         (progn
-          (stop-behavior actor :activity)
-          (start-behavior actor :activity #'gather resources node))
+          (start-activity actor #'gather resources node))
         (show-text actor
                    "You do not have the required skill to gather anything from ~a."
                    (describe-brief node :article :definite)))
