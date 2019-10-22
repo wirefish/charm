@@ -88,6 +88,7 @@ it to the client resources:
 mkdir /var/charm
 cd /var/charm
 ln -s $CHARM/client/
+ln -s $CHARM/data/
 ```
 
 ### Start NGINX
