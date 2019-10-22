@@ -71,7 +71,7 @@
       (enter-world (make-instance (type-of entity)) location nil))))
 
 (defmethod do-exit-location (actor location exit)
-  (stop-behavior actor :activity)
+  (stop-activity actor)
   (remove-from-container actor location))
 
 (defmethod do-exit-location :around (actor location exit)
@@ -107,7 +107,7 @@
     (when (eq actor (attack-target observer))
       ;; FIXME: should be more general so monsters can switch targets and keep
       ;; attacking.
-      (stop-behavior observer :activity))))
+      (stop-activity observer))))
 
 (defmethod did-exit-location ((observer avatar) actor location exit)
   (when (and (not (eq observer actor))
