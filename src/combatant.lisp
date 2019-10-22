@@ -1,5 +1,24 @@
 (in-package :charm)
 
+;;; Definitions of all damage types.
+
+(defparameter *damage-types*
+  (plist-hash-table
+   '(:crushing :physical
+     :piercing :physical
+     :slashing :physical
+     ;;
+     :fire :elemental
+     :cold :elemental
+     :acid :elemental
+     :electricity :elemental
+     ;;
+     :arcane :magical
+     :shadow :magical)))
+
+(defun damage-group (damage-type)
+  (gethash damage-type *damage-types*))
+
 ;;; An aura is a temporary effect placed on an entity.
 
 (defstruct aura
@@ -151,6 +170,14 @@
 
 (defmethod add-opponent ((actor combatant) opponent)
   (setf (opponents actor) (adjoin opponent (opponents actor))))
+
+;;;
+
+(defun in-combat-p (actor)
+  (opponents actor))
+
+(defun deadp (actor)
+  (= (health actor) 0))
 
 ;;; A loot table is a list of (probability . items), where each item is either a
 ;;; type or (min max type).

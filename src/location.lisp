@@ -71,10 +71,11 @@
               (otherwise (direction-name (direction exit)))))))
 
 (defmethod describe-exit (observer actor location (exit null))
-  (when (not (eq actor observer))
+  (when (and (not (eq actor observer))
+             (exit-pose actor))
     (format nil "~a ~a"
             (describe-brief actor :capitalize t)
-            (or (exit-pose actor) "disappears!"))))
+            (exit-pose actor))))
 
 ;;;
 
@@ -96,10 +97,11 @@
                 (otherwise (concatenate 'string "the " (direction-name dir))))))))
 
 (defmethod describe-entry (observer (actor entity) location (entry null))
-  (when (not (eq actor observer))
+  (when (and (not (eq actor observer))
+             (entry-pose actor))
     (format nil "~a ~a"
             (describe-brief actor :capitalize t)
-            (or (entry-pose actor) "appears!"))))
+            (entry-pose actor))))
 
 ;;; A location is a place in the world.
 

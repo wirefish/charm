@@ -1,24 +1,5 @@
 (in-package :charm)
 
-;;; Definitions of all damage types.
-
-(defparameter *damage-types*
-  (plist-hash-table
-   '(:crushing :physical
-     :piercing :physical
-     :slashing :physical
-     ;;
-     :fire :elemental
-     :cold :elemental
-     :acid :elemental
-     :electricity :elemental
-     ;;
-     :arcane :magical
-     :shadow :magical)))
-
-(defun damage-group (damage-type)
-  (gethash damage-type *damage-types*))
-
 ;;; Return the unadjusted amount damage done by an attack.
 
 (defgeneric damage-amount (attack))
@@ -150,12 +131,6 @@
 
 ;;;
 
-(defun in-combat-p (actor)
-  (opponents actor))
-
-(defun deadp (actor)
-  (= (health actor) 0))
-
 (defun exit-combat-with-target (attacker target)
   (deletef (opponents attacker) target)
   (format-log :info "exit-combat ~a ~a ~a" attacker target (opponents attacker))
@@ -165,36 +140,39 @@
         (change-behavior-state attacker :activity :select-attack))
       (stop-behavior attacker :activity)))
 
-;;;
+;;; When a monster dies, its loot is generated and distributed among live
+;;; avatars in the same location who ended with at least X% of maximum threat.
+;;; Loot that cannot be distributed is dropped on the ground. When an avatar
+;;; dies, it becomes a corpse and cannot do anything except wait for a
+;;; resurrection or use the `recall` command.
 
 (defevent die (actor))
 
-(defproto death-exit (portal)
-  (corpse nil :instance))
-
-(defmethod describe-exit (observer actor location (exit death-exit))
-  (cond
-    ((eq observer actor)
-     (format nil "You die."))
-    ((corpse exit)
-     (format nil "~a dies, leaving behind a rotting corpse."
-             (describe-brief actor :capitalize t)))
-    (t
-     (format nil "~a dies." (describe-brief actor :capitalize t)))))
-
-(defmethod do-die (actor)
+(defmethod do-die ((actor combatant))
   (setf (attack-target actor) nil
         (assist-target actor) nil
         (opponents actor) nil)
   (stop-all-behaviors actor)
-  (let* ((corpse (make-corpse actor))
-         (location (location actor))
-         (portal (make-instance 'death-exit :corpse corpse)))
-    (notify-observers location #'did-die actor)
-    (exit-world actor location portal)
-    (when corpse
-      (enter-world corpse location nil))
+  (notify-observers (location actor) #'did-die actor))
+
+(defmethod do-die ((actor monster))
+  ;; TODO: generate and distribute loot. also move xp distribution here.
+  (let ((location (location actor)))
+    (call-next-method)
+    (exit-world actor location nil)
     (respawn actor location)))
+
+(defmethod do-die ((actor avatar))
+  (call-next-method)
+  (show-notice actor "You are dead. You can wait for an ally to revive you, or
+  use the `recall` command to reincarnate at your recall point."))
+
+(defmethod did-die ((observer avatar) actor)
+  (if (eq observer actor)
+      (show-text observer "You die.")
+      (progn
+        (show-text observer "~a dies." (describe-brief actor :capitalize t))
+        (update-neighbor observer actor))))
 
 ;;; Several events are associated with combat. The `kill` event occurs when
 ;;; `actor` kills `victim`. This can be via direct damage or condition damage,
@@ -382,6 +360,41 @@
       (1 (set-assist-target actor (first matches)))
       (t (show-text actor "Do you want to assist ~a?"
                     (format-list (mapcar #'describe-brief matches) :conjunction "or"))))))
+
+;;;
+
+(defproto recall-portal (portal))
+
+(defmethod describe-exit (observer actor location (exit recall-portal))
+  (format nil "~a disappears in a puff of white smoke."
+          (describe-brief actor :capitalize t)))
+
+(defmethod describe-entry (observer actor location (entry recall-portal))
+  (format nil "~a appears in a puff of white smoke."
+          (describe-brief actor :capitalize t)))
+
+(defbehavior recall (actor location)
+    ()
+  (:start
+   (show-text actor "You search for a way back to the realm of the living...")
+   (start-casting actor 10)
+   (change-state :finish 10))
+  (:finish
+   (show-text actor "Ah! You've done it!")
+   (finish)
+   (traverse-portal actor (make-instance 'recall-portal :destination location)))
+  (:stop
+   (show-text actor "Your recall attempt has been interrupted.")
+   (stop-casting actor)))
+
+(defcommand (actor "recall")
+  "If you die, you can use this command to return to the location where you last
+  bound your soul to a lifestone."
+  (setf (health actor) 1)
+  (start-behavior actor :regenerate #'regenerate)
+  (let ((dest (or (recall-location actor)
+                  (type-of *new-avatar-location*))))
+    (start-activity actor #'recall dest)))
 
 ;;; FIXME: for testing
 

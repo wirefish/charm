@@ -39,7 +39,6 @@
       :dripping-caverns
       :copper-mine
       :isle-of-dawn
-      :shadowlands
       :silverwood))
 
   (dolist (name *region-packages*)

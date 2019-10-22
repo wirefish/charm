@@ -59,9 +59,11 @@
     (and dest (boundp dest) (symbol-value dest))))
 
 (defun find-entry-portal (exit dest)
-  (when dest
-    (let ((entry-dir (opposite-direction (direction exit))))
-      (find-if #'(lambda (x) (eq (direction x) entry-dir)) (exits dest)))))
+  (if (direction exit)
+      (when dest
+        (let ((entry-dir (opposite-direction (direction exit))))
+          (find-if #'(lambda (x) (eq (direction x) entry-dir)) (exits dest))))
+      exit))
 
 (defun respawn (entity location)
   (when-let ((delay (respawn-delay entity)))

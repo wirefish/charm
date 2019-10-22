@@ -128,16 +128,28 @@
 
 ;;; Define how an avatar is described.
 
+(defmethod visible-p ((subject avatar) observer)
+  ;; FIXME: need to check for any invisibility aura
+  (not (deadp subject)))
+
+(defparameter *corpse-noun* (parse-noun "the corpse of "))
+
 (defmethod describe-brief ((subject avatar) &rest args)
-  (or (name subject) (apply #'describe-brief (race subject) args)))
+  (if (deadp subject)
+      (concatenate 'string
+                   (apply #'format-noun *corpse-noun* args)
+                   (or (name subject) (describe-brief (race subject))))
+      (or (name subject) (apply #'describe-brief (race subject) args))))
 
 (defmethod describe-icon ((subject avatar))
-  (or (with-slots (icon gender race) subject
-        (cond
-          (icon icon)
-          ((eq gender :female) (female-icon race))
-          (t (male-icon race))))
-      'invisible))
+  (if (deadp subject)
+      'tombstone
+      (or (with-slots (icon gender race) subject
+            (cond
+              (icon icon)
+              ((eq gender :female) (female-icon race))
+              (t (male-icon race))))
+          'invisible)))
 
 (defmethod describe-full ((subject avatar))
   (or (full subject) (describe-full (race subject))))
