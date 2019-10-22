@@ -32,3 +32,6 @@
   (update-inventory actor)
   (update-skills actor)
   (update-combat actor))
+
+(defcommand (actor "loc")
+  (show-raw actor (encode (type-of (location actor)))))
