@@ -916,6 +916,10 @@
   (show-say actor target "Thank you so much for finding Rhody! He may be a
     little rascal, but he's *my* little rascal and I love him to death."))
 
+(defmethod do-talk (actor (target rhody) subject)
+  (show-say actor target "Hello again! Don't tell my mom, but when her back is
+    turned I'm gonna sneak into the forest for more berries!"))
+
 (deflocation forest-gate (location)
   (brief "Forest Gate")
   (full "A stout wooden stockade separates Arwyck from the forest to the west. A
