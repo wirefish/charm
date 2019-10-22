@@ -7,15 +7,15 @@ TO DO:
 - generalize skill rank up, e.g. for proficiencies, using same model as
   gathering
 
-- deduct karma cost when learning skills
-
-- allow unlearning skills at the trainers who teach them
+- add/deduct karma cost when (un)learning skills
 
 - vendors
 
 - add combat abilities and spells via learning skills
 
-- crafting
+- require a crafting station to craft
+
+- distribute loot/xp based on contribution
 
 ========================================
 
