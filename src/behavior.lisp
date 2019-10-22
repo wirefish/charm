@@ -15,10 +15,13 @@
   (let ((event (gensym))
         (stopped (gensym))
         (state (gensym))
+        (key (gensym))
         (delay (gensym)))
-    `(defun ,name (,actor ,@args)
-       (let (,@vars ,event ,stopped)
-         (labels ((change-state (,state &optional ,delay)
+    `(defun ,name (,actor ,key ,@args)
+       (let* (,@vars ,event ,stopped)
+         (labels ((finish ()
+                    (remove-behavior ,actor ,key))
+                  (change-state (,state &optional ,delay)
                     (when (not ,stopped)
                       (if ,delay
                           (setf ,event (as:delay
@@ -39,20 +42,7 @@
   keyword `key` that can be passed to `stop-behavior` to stop running the
   behavior."
   (format-log :debug "starting behavior ~a (~a) for ~a" key behavior actor)
-  (push (cons key (apply behavior actor args)) (behaviors actor)))
-
-(defun start-parallel-behaviors (actor key behavior &rest arglists)
-  "Starts running multiple parallel instances of `behavior`, where each arglist
-  defines the arguments for one instance. The closure stored under `key` will
-  change the state of all instances when called."
-  (format-log :debug "starting parallel behaviors ~a (~a) for ~a" key behavior actor)
-  (let ((closures (mapcar #'(lambda (args)
-                              (apply behavior actor args))
-                          arglists)))
-    (push (cons key #'(lambda (state &optional delay)
-                        (dolist (closure closures)
-                          (funcall closure state delay))))
-          (behaviors actor))))
+  (push (cons key (apply behavior actor key args)) (behaviors actor)))
 
 (defun change-behavior-state (actor key state &optional delay)
   "Changes the state of a behavior from outside the behavior's normal state
@@ -62,14 +52,15 @@
 
 (defun remove-behavior (actor key)
   "Removes a behavior associated with `key` for `actor` without sending it any
-  state change. This is typically used from within the behavior itself to
-  indicate it has naturally ended."
+  state change. This is typically used from within the behavior itself (via the
+  local `finish` function) to indicate it has naturally ended."
   (with-slots (behaviors) actor
     (when-let ((entry (assoc key behaviors)))
       (setf behaviors (delete (car entry) behaviors :key #'car)))))
 
 (defun stop-behavior (actor key)
-  "Stops running a behavior associated with `key` for `actor`."
+  "Stops running a behavior associated with `key` for `actor` by changing its
+  state to :stop and removing it from the actor's list of behaviors."
   (with-slots (behaviors) actor
     (when-let ((entry (assoc key behaviors)))
       (format-log :info "stopping behavior ~a for ~a" key actor)
@@ -83,3 +74,18 @@
            (format-log :info "stopping behavior ~a for ~a" key actor)
            (funcall closure :stop))
   (setf (behaviors actor) nil))
+
+;;; An activity is just a behavior with key :activity and a few other special
+;;; properties: (1) an entity can perform only one activity at a time; (2) many
+;;; actions are disallowed while an activity is in progress; (3) certain allowed
+;;; actions will interrupt the activity.
+
+(defun stop-activity (actor)
+  (stop-behavior actor :activity))
+
+(defun start-activity (actor behavior &rest args)
+  (stop-activity actor)
+  (apply #'start-behavior actor :activity behavior args))
+
+(defun has-activity (actor)
+  (assoc :activity (behaviors actor)))
