@@ -120,37 +120,30 @@
 
 ;;;
 
-(defcommand (actor ("skills" "sk") :word subcommand :rest skill-name)
-  "View information about the skills you've learned. This command has several
-  subcommands:
-
-  - `skills` or `skills list` lists the skills you have learned.
-
-  - `skills info *skill-name* displays more information about a specific skill.
+(defcommand (actor ("skills" "sk") :rest skill-name)
+  "View information about the skills you've learned. If *skill-name* is
+  specified, show details for matching skills. Otherwise, show a list of all the
+  skills you have learned.
 
   For more information see `help:learn` and `help:unlearn`."
-  (cond
-    ((or (null subcommand) (string= subcommand "list"))
-     (with-slots (skills) actor
-       (if (> (hash-table-count skills) 0)
-           (show-links actor "You have learned the following skills:" "skills info"
-                       (sort (mapcar #'(lambda (x) (name (find-skill x)))
-                                     (hash-table-keys skills))
-                             #'string<))
-           (show-text actor "You haven't learned any skills yet."))))
-    ((string= subcommand "info")
-     (if skill-name
-         (let ((matches (match-skills skill-name actor)))
-           (if (null matches)
-               (show-text actor "You have not learned any skills matching that description.")
-               (dolist (skill matches)
-                 (let ((rank (gethash (key skill) (skills actor))))
-                   (show-text actor "- ~a~a: ~a"
-                              (name skill)
-                              (if (> (max-rank skill) 0)
-                                  (format nil " (rank ~d/~d)" (floor rank) (max-rank skill))
-                                  "")
-                              (summary skill))))))
-         (show-text actor "For which skill do you want to see more information?")))
-    (t
-     (show-text actor "Unknown subcommand. Type `help skills` for help."))))
+  (if (null skill-name)
+      ;; List all skills.
+      (with-slots (skills) actor
+        (if (> (hash-table-count skills) 0)
+            (show-links actor "You have learned the following skills:" "skills"
+                        (sort (mapcar #'(lambda (x) (name (find-skill x)))
+                                      (hash-table-keys skills))
+                              #'string<))
+            (show-text actor "You haven't learned any skills yet.")))
+      ;; Show more information for matching skills.
+      (let ((matches (match-skills skill-name actor)))
+        (if (null matches)
+            (show-text actor "You have not learned any skills matching that description.")
+            (dolist (skill matches)
+              (let ((rank (gethash (key skill) (skills actor))))
+                (show-text actor "- ~a~a: ~a"
+                           (name skill)
+                           (if (> (max-rank skill) 0)
+                               (format nil " (rank ~d/~d)" (floor rank) (max-rank skill))
+                               "")
+                           (summary skill))))))))
