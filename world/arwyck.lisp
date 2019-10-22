@@ -886,6 +886,17 @@
     that has seen numerous repairs over the years.")
   (begins-quests '(find-my-son)))
 
+(defproto rhody (npc)
+  (brief "Rhody Mathers")
+  (pose "fidgets nearby.")
+  (full "Rhody is a young boy, perhaps eight years old. Every now and then you
+    catch him glancing westward, toward the forest.")
+  (icon 'human-boy))
+
+(defmethod visible-p ((subject rhody) (observer avatar))
+  (print (list subject observer (quest-finished-p observer find-my-son)))
+  (quest-finished-p observer find-my-son))
+
 (defmethod do-offer-quest (actor (quest (eql find-my-son)) npc)
   (show-say actor npc "I know we've never met, but I have nobody else to turn
     to. My son is missing. Will you help me?"))
@@ -901,8 +912,9 @@
   (show-say actor npc "Have you found my boy? He should be in the forest to the
     west."))
 
-(defmethod do-finish-quest (actor (quest (eql find-my-son)) npc)
-  (show-say actor npc "Oh, thank you...thank you!"))
+(defmethod do-talk (actor (target miranda) subject)
+  (show-say actor target "Thank you so much for finding Rhody! He may be a
+    little rascal, but he's *my* little rascal and I love him to death."))
 
 (deflocation forest-gate (location)
   (brief "Forest Gate")
@@ -911,4 +923,4 @@
   (domain :outdoor)
   (surface :dirt)
   (exits ((dirt-road :east forest-road-3 :west silverwood::forest-6-3)))
-  (contents (miranda)))
+  (contents (miranda rhody)))

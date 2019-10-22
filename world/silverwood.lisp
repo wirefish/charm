@@ -363,7 +363,26 @@
   (pose "sits in the grass near the firepit.")
   (full "Rhody is a young boy, perhaps eight years old. He looks a bit tired.
     His face is smeared with berry juice.")
-  (icon 'human-boy))
+  (icon 'human-boy)
+  (ends-quests '(arwyck::find-my-son)))
+
+(defmethod did-enter-location ((observer rhody) (actor avatar) location entry)
+  (with-delay (1)
+    (when (and (quest-incomplete-p actor arwyck::find-my-son)
+               (same-location-p actor observer))
+      (show-say actor observer "Hello there. I was just picking berries and I met this
+        nice elf! Aren't her ears cool?")
+      (advance-quest actor arwyck::find-my-son))))
+
+(defmethod do-finish-quest (actor (quest (eql arwyck::find-my-son)) npc)
+  (show-say actor npc "I'm sorry my mom got so worried. I guess I should head
+    back. Nice to meet you!")
+  (show-text actor "Rhody wipes his face with his sleeve then heads north, back
+    toward the road.")
+  (remove-neighbor actor npc))
+
+(defmethod visible-p ((subject rhody) (observer avatar))
+  (quest-active-p observer arwyck::find-my-son))
 
 (deflocation forest-3-6 (forest)
   (brief "Rangers' Camp")

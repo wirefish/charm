@@ -4,7 +4,7 @@
   (:import-from :cl-async :with-delay)
   (:export
    :defproto :deflocation :defregion :transform-slot-init-form
-   :describe-brief :describe-pose :describe-full :describe-exit :describe-entry
+   :visible-p :describe-brief :describe-pose :describe-full :describe-exit :describe-entry
    :format-noun :format-verb
    :same-location-p
    ;;
@@ -23,7 +23,7 @@
    :rank :command :recipe-list
    ;;
    :show-text :show-say :show-notice :announce :maybe-show-tutorial
-   :update-map-nearby
+   :update-map-nearby :update-neighbor :remove-neighbor
    :change-race :change-gender :change-name :valid-name-p
    :with-delay :format-log
    :run-server))
