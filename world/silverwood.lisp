@@ -430,7 +430,7 @@
           (dirt-path :north forest-2-7 :west forest-1-8))))
 
 (deflocation forest-3-8 (forest)
-  (exits ((forest-portal :west forest-2-8 :north forest-3-7))))
+  (exits ((forest-portal :west forest-2-8 :north forest-3-7 :south forest-3-9))))
 
 (deflocation forest-0-9 (forest)
   (exits ((forest-portal :north forest-0-8 :east forest-1-9))))
