@@ -269,9 +269,15 @@
   (exits ((dirt-path :west forest-5-3 :east arwyck::forest-gate)
           (forest-portal :north forest-6-2 :south forest-6-4))))
 
+(defproto boulder (entity)
+  (brief "an enormous granite boulder")
+  (pose "rises nearly to the height of the trees.")
+  (full "The boulder is larger than most houses. Its surface is covered with
+    moss and lichen."))
+
 (deflocation forest-0-4 (forest)
   (exits ((forest-portal :east forest-1-4 :north forest-0-3)))
-  (contents (giant-spider)))
+  (contents (giant-spider boulder)))
 
 (deflocation forest-1-4 (forest)
   (exits ((forest-portal :east forest-2-4 :north forest-1-3

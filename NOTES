@@ -17,6 +17,25 @@ TO DO:
 
 - distribute loot/xp based on contribution
 
+- add a :coin-purse slot for currency; generalize the notion of preferred slots
+  for items
+
+- enforce unique constraints, e.g. for currency; add moneychangers, who are
+  vendors that let you convert copper <-> silver <-> gold at a nominal rate of
+  100 per step.
+
+- flesh out a quest chain for the old hermit in Silverwood: silk, then missing
+  earring behind waterfall, then things from copper mine, then kill some boss
+  mob (beneath boulder) that killed her son. Completing it all enables the
+  player to get her sword for a later quest chain.
+
+- add a quest chain for Nina after the player finds Rhody.
+
+- add more quests in the abandoned copper mine.
+
+- add a quest that starts under the bridge, maybe there is a note in a bottle or
+  something.
+
 ========================================
 
 COMBAT
