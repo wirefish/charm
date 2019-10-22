@@ -375,30 +375,74 @@
   (contents (ranger rhody)))
 
 (deflocation forest-4-6 (forest)
-  (exits ((forest-portal :west forest-3-6 :east forest-5-6 :north forest-4-5)))
+  (exits ((forest-portal :west forest-3-6 :east forest-5-6 :north forest-4-5
+                         :south forest-4-7)))
   (contents (large-spiderweb giant-spider)))
 
 (deflocation forest-5-6 (forest-stream)
   (exits ((forest-portal :west forest-4-6 :east forest-6-6)
-          (stream-portal :north forest-5-5 :south canyon-stream-1))))
+          (stream-portal :north forest-5-5 :south forest-5-7))))
 
 (deflocation forest-6-6 (forest)
-  (exits ((forest-portal :west forest-5-6 :east forest-7-6 :north forest-6-5)))
+  (exits ((forest-portal :west forest-5-6 :east forest-7-6
+                         :north forest-6-5 :south forest-6-7)))
   (contents (giant-spider)))
 
 (deflocation forest-7-6 (forest)
   (exits ((forest-portal :west forest-6-6 :north forest-7-5))))
 
+(deflocation forest-0-7 (forest)
+  (exits ((forest-portal :east forest-1-7 :south forest-0-8))))
+
 (deflocation forest-1-7 (forest)
-  (exits ((forest-portal :east forest-2-7 :north forest-1-6)))
+  (exits ((forest-portal :east forest-2-7 :north forest-1-6
+                         :west forest-0-7 :south forest-1-8)))
   (contents (giant-spider)))
 
 (deflocation forest-2-7 (forest-path)
   (exits ((forest-portal :west forest-1-7 :east forest-3-7)
-          (dirt-path :north forest-2-6))))
+          (dirt-path :north forest-2-6 :south forest-2-8))))
 
 (deflocation forest-3-7 (forest)
-  (exits ((forest-portal :west forest-2-7 :north forest-3-6))))
+  (exits ((forest-portal :west forest-2-7 :north forest-3-6
+                         :south forest-3-8 :east forest-4-7))))
+
+(deflocation forest-4-7 (forest)
+  (exits ((forest-portal :west forest-3-7 :north forest-4-6 :east forest-5-7))))
+
+(deflocation forest-5-7 (forest-stream)
+  (exits ((forest-portal :west forest-4-7 :east forest-6-7)
+          (stream-portal :north forest-5-6 :south canyon-stream-1))))
+
+(deflocation forest-6-7 (forest)
+  (exits ((forest-portal :west forest-5-7 :north forest-6-6))))
+
+(deflocation forest-0-8 (forest-path)
+  (exits ((dirt-path :east forest-1-8)
+          (forest-portal :north forest-0-7 :south forest-0-9))))
+
+(deflocation forest-1-8 (forest-path)
+  (exits ((dirt-path :west forest-0-8 :east forest-2-8)
+          (forest-portal :north forest-1-7 :south forest-1-9))))
+
+(deflocation forest-2-8 (forest-path)
+  (exits ((forest-portal :south forest-2-9 :east forest-3-8)
+          (dirt-path :north forest-2-7 :west forest-1-8))))
+
+(deflocation forest-3-8 (forest)
+  (exits ((forest-portal :west forest-2-8 :north forest-3-7))))
+
+(deflocation forest-0-9 (forest)
+  (exits ((forest-portal :north forest-0-8 :east forest-1-9))))
+
+(deflocation forest-1-9 (forest)
+  (exits ((forest-portal :north forest-1-8 :east forest-2-9 :west forest-0-9))))
+
+(deflocation forest-2-9 (forest)
+  (exits ((forest-portal :west forest-1-9 :east forest-3-9 :north forest-2-8))))
+
+(deflocation forest-3-9 (forest)
+  (exits ((forest-portal :west forest-2-9 :north forest-3-8))))
 
 ;;; canyon-stream
 
@@ -410,7 +454,7 @@
   (surface :shallow-water))
 
 (deflocation canyon-stream-1 (canyon-stream)
-  (exits ((stream-portal :north forest-5-6 :south canyon-stream-2))))
+  (exits ((stream-portal :north forest-5-7 :south canyon-stream-2))))
 
 (deflocation canyon-stream-2 (canyon-stream)
   (exits ((stream-portal :north canyon-stream-1 :south canyon-end))))
