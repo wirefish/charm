@@ -23,7 +23,8 @@
   (level 1)
   (attacks (giant-spider-bite))
   (entry-pose "drops down from the branches above.")
-  (loot '((0.5 silky-spiderweb))))
+  (loot '((0.5 silky-spiderweb)
+          (0.5 1 5 copper-coin))))
 
 ;;; prototypes
 

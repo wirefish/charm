@@ -11,6 +11,10 @@
 (defproto stackable-item (item)
   (stack-limit 100))
 
+(defproto currency (item)
+  (weight 0)
+  (stack-limit 100000))
+
 (defmethod describe-brief ((subject item) &rest args)
   (let ((count (or (getf args :count) (stack-size subject))))
     (apply #'format-noun (brief subject) :count count (remove-from-plist args :count))))
