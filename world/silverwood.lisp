@@ -65,7 +65,7 @@
 (defproto old-sword (entity)
   (brief "a single-edged sword")
   (pose "hangs above the hearth.")
-  (icon 'katana)
+  (icon 'swords-10)
   (full "Although clearly old and in need of sharpening, the sword appears to be
     of excellent craftsmanship. Its long hilt is wrapped with dark cord and its
     small circular guard is ornately carved.
@@ -445,7 +445,7 @@
   (exits ((forest-portal :west forest-5-7 :north forest-6-6))))
 
 (deflocation forest-0-8 (forest-path)
-  (exits ((dirt-path :east forest-1-8)
+  (exits ((dirt-path :east forest-1-8 :west forests-edge-east)
           (forest-portal :north forest-0-7 :south forest-0-9))))
 
 (deflocation forest-1-8 (forest-path)
@@ -470,6 +470,50 @@
 
 (deflocation forest-3-9 (forest)
   (exits ((forest-portal :west forest-2-9 :north forest-3-8))))
+
+;;; forest's edge
+
+(defproto forests-edge (location)
+  (brief "Forest's Edge")
+  (domain :outdoor)
+  (surface :grass))
+
+(deflocation forests-edge-east (forests-edge)
+  (full "This is the eastern edge of a small emcampment just outside the edge of
+    Silverwood.")
+  (exits ((dirt-path :east forest-0-8 :west forests-edge-center))))
+
+(deflocation forests-edge-center (forests-edge)
+  (full "This is center of a small emcampment just outside the edge of
+    Silverwood.")
+  (exits ((dirt-path :north forests-edge-north :south forests-edge-south
+                     :east forests-edge-east :west forests-edge-west))))
+
+(deflocation forests-edge-north (forests-edge)
+  (full "This is the northern edge of a small emcampment just outside the edge of
+    Silverwood.")
+  (exits ((dirt-path :south forests-edge-center))))
+
+(deflocation forests-edge-south (forests-edge)
+  (full "This is the southern edge of a small emcampment just outside the edge of
+    Silverwood.")
+  (exits ((dirt-path :north forests-edge-center))))
+
+(defproto teamster (npc)
+  (brief "a dusty teamster"))
+
+(defmethod do-talk (actor (target teamster) subject)
+  (show-say actor target "Greetings, traveler. These plains stretch for many
+    miles beyond the edge of the forest. At the base of the foothills on their
+    far side you'll find a settlement called Kirada, but it is far too distant
+    to reach on foot. A coach arrives here periodically, though, and will take
+    you there if you so desire."))
+
+(deflocation forests-edge-west (forests-edge)
+  (full "This is the western edge of a small emcampment just outside the edge of
+    Silverwood.")
+  (exits ((dirt-path :east forests-edge-center)))
+  (contents (teamster)))
 
 ;;; canyon-stream
 
