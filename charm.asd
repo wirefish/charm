@@ -35,7 +35,6 @@
              (:file "item")
              (:file "combatant")
              (:file "creature")
-             (:file "corpse")
              (:file "equipment")
              (:file "weapon")
              (:file "armor")
