@@ -355,8 +355,15 @@
     wears her silver hair in a long braid.")
   (icon 'elf-female-silver))
 
-(defmethod did-enter-room ((observer ranger) (actor avatar) location entry)
+(defmethod did-enter-location ((observer ranger) (actor avatar) location entry)
   (show-text actor "Nina smiles in welcome as you approach."))
+
+(defmethod do-talk (actor (target ranger) subject)
+  (if (quest-incomplete-p actor arwyck::find-my-son)
+      (show-say actor target "This little scamp sure loves his berries. But the
+        forest is a dangerous place, especially for one so young.")
+      (show-say actor target "Good to see you! Have you seen Rhody lately? I
+        miss that little scamp.")))
 
 (defproto rhody (npc)
   (brief "Rhody Mathers")
