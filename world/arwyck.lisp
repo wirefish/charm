@@ -894,7 +894,6 @@
   (icon 'human-boy))
 
 (defmethod visible-p ((subject rhody) (observer avatar))
-  (print (list subject observer (quest-finished-p observer find-my-son)))
   (quest-finished-p observer find-my-son))
 
 (defmethod do-offer-quest (actor (quest (eql find-my-son)) npc)
