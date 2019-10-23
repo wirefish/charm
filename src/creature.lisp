@@ -26,16 +26,16 @@
 ;;;
 
 (defmethod do-inflict-damage :after (actor (target monster) attack amount)
-  ;; Update threat.
-  (let ((entry (assoc actor (threat target))))
+  ;; Update threat, which is a mapping from opponent id to total damage done by
+  ;; that opponent.
+  (let ((entry (assoc (id actor) (threat target))))
     (if entry
         (incf (cdr entry) amount)
-        (push (cons actor amount) (threat target)))))
-
-;;; A loot table is a list of (probability . items), where each item is either a
-;;; type or (min max type).
+        (push (cons (id actor) amount) (threat target)))))
 
 (defun create-loot (loot-table)
+  "Generates random loot from `loot-table`, which is a list of (probability .
+  items). Each item in items is either a type, or a list (min max type)."
   (do (loot)
       ((null loot-table) (nreverse loot))
     (destructuring-bind (probability . items) (pop loot-table)
@@ -48,12 +48,18 @@
               (push (make-instance item) loot)))))))
 
 (defun award-xp (monster)
-  (when-let ((targets (remove-if-not #'(lambda (x)
-                                         (let ((opponent (car x)))
-                                           (and (typep opponent 'avatar)
-                                                (not (deadp opponent))
-                                                (same-location-p monster opponent))))
-                                     (threat monster))))
+  "Award experience for killing a monster. Every avatar that caused threat
+  (e.g. by damaging the monster or healing one of its opponents) and is alive
+  and at the monster's location receives a share of experience in proportion to
+  the threat they caused."
+  (when-let ((targets (keep-if
+                       #'(lambda (x)
+                           (when-let ((opponent (find-id-in-container (car x)
+                                                                      (location monster))))
+                             (when (and (typep opponent 'avatar)
+                                        (not (deadp opponent)))
+                               (cons opponent (cdr x)))))
+                       (threat monster))))
     (let ((total-threat (apply #'+ (mapcar #'cdr targets)))
           (total-xp (xp-value monster)))
       (loop for (opponent . threat) in targets do

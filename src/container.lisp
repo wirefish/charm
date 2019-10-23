@@ -35,6 +35,10 @@
   "Returns a list of objects in `container` with the specified type."
   (find-in-container-if #'(lambda (x) (typep x type)) container))
 
+(defun find-id-in-container (id container)
+  "Returns the first object in `container` with the specified ID."
+  (first (find-in-container-if #'(lambda (x) (= id (id x))) container)))
+
 (defun count-type-in-container (type container)
   "Returns the total quantity of objects with type `type` in container."
   (count-quantity (find-type-in-container type container)))
