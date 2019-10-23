@@ -72,9 +72,11 @@
 ;;; Functions that manage the pane which displays entities in the same location
 ;;; as the player, aka neighbors.
 
-(defun neighbor-properties (entity)
-  "Returns a hash table of properties describing a neighbor, to be sent to the
-  client."
+(defgeneric neighbor-properties (entity)
+  (:documentation "Returns a hash table of properties describing a neighbor, to
+    be sent to the client."))
+
+(defmethod neighbor-properties (entity)
   (plist-hash-table (list :key (id entity)
                           :brief (describe-brief entity :article nil)
                           :icon (describe-icon entity))))
@@ -87,11 +89,13 @@
                                         (neighbor-properties x)))
                                   (contents (location avatar))))))
 
-(defun update-neighbor (avatar obj &optional message)
+(defun update-neighbor (avatar obj &rest properties)
   (when-let ((session (session avatar)))
     (send-client-command session "updateNeighbor"
-                         (neighbor-properties obj)
-                         message)))
+                         (if properties
+                             (plist-hash-table (list* :key (id obj) properties))
+                             (neighbor-properties obj))
+                         nil)))
 
 (defun remove-neighbor (avatar obj &optional message)
   (when-let ((session (session avatar)))

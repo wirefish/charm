@@ -132,7 +132,7 @@
 ;;;
 
 (defun exit-combat-with-target (attacker target)
-  (deletef (opponents attacker) target)
+  (remove-opponent attacker target)
   (format-log :info "exit-combat ~a ~a ~a" attacker target (opponents attacker))
   (if (opponents attacker)
       (progn
@@ -156,9 +156,10 @@
   (notify-observers (location actor) #'did-die actor))
 
 (defmethod do-die ((actor monster))
-  ;; TODO: generate and distribute loot. also move xp distribution here.
+  ;; TODO: generate and distribute loot.
   (let ((location (location actor)))
     (call-next-method)
+    (award-xp actor)
     (exit-world actor location nil)
     (respawn actor location)))
 
@@ -170,9 +171,7 @@
 (defmethod did-die ((observer avatar) actor)
   (if (eq observer actor)
       (show-text observer "You die.")
-      (progn
-        (show-text observer "~a dies." (describe-brief actor :capitalize t))
-        (update-neighbor observer actor))))
+      (show-text observer "~a dies." (describe-brief actor :capitalize t))))
 
 ;;; Several events are associated with combat. The `kill` event occurs when
 ;;; `actor` kills `victim`. This can be via direct damage or condition damage,
@@ -190,10 +189,6 @@
 (defmethod do-kill (attacker victim)
   (exit-combat-with-target attacker victim))
 
-(defmethod do-kill ((actor avatar) victim)
-  (call-next-method)
-  (gain-xp actor (* 20 (1+ (level victim)))))
-
 (defmethod will-kill ((observer avatar) actor victim)
   (show-text observer "~a killed ~a!"
              (if (eq observer actor) "You" (describe-brief actor :capitalize t))
@@ -210,8 +205,15 @@
   (when (deadp target)
     (kill actor target)))
 
+(defmethod do-inflict-damage :after (actor target attack amount)
+  (notify-observers (location actor) #'did-inflict-damage actor target attack amount))
+
 (defmethod do-inflict-damage :after (actor (target avatar) attack amount)
   (update-avatar target :health (health target)))
+
+(defmethod did-inflict-damage ((observer avatar) actor target attack amount)
+  (when (not (eq target observer))
+    (update-neighbor observer target :health (health target))))
 
 ;;; The `attack` event occurs when `actor` uses a harmful `attack` against
 ;;; `target`.
@@ -255,8 +257,13 @@
     (call-next-method)
     (notify-observers (location actor) #'did-attack actor target attack)))
 
+(defmethod do-attack :before (actor target attack)
+  (notify-observers (location actor) #'will-attack actor target attack))
+
+(defmethod do-attack :after (actor target attack)
+  (notify-observers (location actor) #'did-attack actor target attack))
+
 (defmethod do-attack (actor target attack)
-  (format-log :debug "~a attacks ~a with ~a" actor target attack)
   (resolve-attack actor target attack))
 
 ;;; The combat behavior is running whenever a combatant is in combat.
@@ -267,7 +274,6 @@
   ;; Select the next attack to execute against the current target. If there is
   ;; no target or no attack, re-enter this state after a short delay.
   (:select-attack
-   (format-log :info "select-attack ~a ~a" actor (attack-target actor))
    (let ((target (attack-target actor)))
      (setf next-attack (and target (select-attack actor target)))
      (if next-attack
@@ -291,10 +297,9 @@
 (defmethod do-attack :after (actor (target monster) attack)
   (when (and (not (deadp target))
              (not (in-combat-p target)))
-    (stop-behavior target :activity)
     (add-opponent target actor)
     (setf (attack-target target) actor)
-    (start-behavior target :activity #'combat)))
+    (start-activity target #'combat)))
 
 ;;; The `attack` command sets the default target for subsequent attacks and
 ;;; begins autoattacking the target.

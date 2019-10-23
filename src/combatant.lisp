@@ -33,7 +33,6 @@
   (level 0)
   (modifiers (make-hash-table))
   (attitude :neutral)
-  (loot nil)
   ;;
   (max-health nil :instance)
   (health nil :instance)
@@ -163,33 +162,33 @@
   (:method (attacker)
     nil))
 
+;;;
+
 (defgeneric add-opponent (actor opponent)
   (:documentation "Called when `actor` enters combat with `opponent`."))
-
-;; FIXME: monsters will keep threat
 
 (defmethod add-opponent ((actor combatant) opponent)
   (setf (opponents actor) (adjoin opponent (opponents actor))))
 
-;;;
+(defgeneric remove-opponent (actor opponent)
+  (:documentation "Called when `actor` is no longer in combat with `opponent`."))
+
+(defmethod remove-opponent (actor opponent)
+  (deletef (opponents actor) opponent))
 
 (defun in-combat-p (actor)
   (opponents actor))
 
+;;;
+
 (defun deadp (actor)
   (= (health actor) 0))
 
-;;; A loot table is a list of (probability . items), where each item is either a
-;;; type or (min max type).
+(defun xp-value (combatant)
+  (* 20 (1+ (level combatant))))
 
-(defun create-loot (loot-table)
-  (do (loot)
-      ((null loot-table) (nreverse loot))
-    (destructuring-bind (probability . items) (pop loot-table)
-      (when (< (random 1.0) probability)
-        (let ((item (random-elt items)))
-          (if (listp item)
-              (destructuring-bind (min max type) item
-                (push (make-instance type :stack-count (uniform-random min max))
-                      loot))
-              (push (make-instance item) loot)))))))
+(defmethod neighbor-properties ((entity combatant))
+  (let ((properties (call-next-method)))
+    (setf (gethash :health properties) (health entity)
+          (gethash :max-health properties) (max-health entity))
+    properties))

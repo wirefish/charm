@@ -115,6 +115,9 @@ function MessageHandler()
     // The cached properties for the player's avatar.
     this.avatar = {};
 
+    // The cached properties of neighbors.
+    this.neighbors = {};
+
     // Enemies that are currently in combat with the player.
     this.enemies = new Set();
 
@@ -376,15 +379,15 @@ function setNeighborHighlight(key, type)
     }
 }
 
-MessageHandler.prototype.setNeighborProperties = function(item, properties)
+MessageHandler.prototype.setNeighborProperties = function(item, new_properties)
 {
-    item.id = getNeighborId(properties.key);
+    var key = new_properties.key;
 
-    var old_properties = item.getAttribute("charm-properties");
-    var new_properties = old_properties ?
-        Object.assign({}, old_properties, properties) :
-        properties;
-    item.setAttribute("charm-properties", new_properties);
+    var old_properties = this.neighbors[new_properties.key];
+    var properties = old_properties ?
+        Object.assign({}, old_properties, new_properties) :
+        new_properties;
+    this.neighbors[key] = properties;
 
     if (properties.icon)
         setIcon(item, properties.icon);
@@ -392,7 +395,7 @@ MessageHandler.prototype.setNeighborProperties = function(item, properties)
     if (properties.brief)
         item.children[0].innerHTML = properties.brief;
 
-    if (defined(properties.health) || properties.max_health) {
+    if (properties.health && properties.max_health) {
         item.children[1].children[0].style.width =
             (100.0 * properties.health / properties.max_health) + "%";
     }
@@ -410,9 +413,10 @@ MessageHandler.prototype.createNeighbor = function(properties)
 {
     var neighbors = document.getElementById("neighbors");
     var item = neighbors.children[0].cloneNode(true);
-    this.setNeighborProperties(item, properties);
+    item.id = getNeighborId(properties.key);
     item.className = "do_enter";
     item.style.display = "block";
+    this.setNeighborProperties(item, properties);
     neighbors.appendChild(item);
     return item;
 }
@@ -449,11 +453,6 @@ MessageHandler.prototype.removeNeighbor = function(key, exit_pose)
 {
     var item = document.getElementById(getNeighborId(key));
 
-    if (exit_pose) {
-        var properties = item.getAttribute("charm-properties");
-        this.showText("{0} {1}".format(properties.brief.capitalize(), exit_pose));
-    }
-
     item.addEventListener('animationend', function (event) {
         this.parentNode.removeChild(this);
     });
@@ -463,6 +462,8 @@ MessageHandler.prototype.removeNeighbor = function(key, exit_pose)
             item.className = "do_exit";
         });
     });
+
+    delete this.neighbors[key];
 }
 
 // Called when an entity `actor` takes another entity `target`, removing it from

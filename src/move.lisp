@@ -105,7 +105,7 @@
 
 (defmethod did-exit-location ((observer combatant) actor location exit)
   (when (member actor (opponents observer))
-    (deletef (opponents observer) actor)
+    (remove-opponent observer actor)
     (when (eq actor (attack-target observer))
       ;; FIXME: should be more general so monsters can switch targets and keep
       ;; attacking.
