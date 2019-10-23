@@ -762,11 +762,28 @@
     and sizes of crates, barrels, and boxes are stacked on the floor.")
   (exits ((doorway :west warehouse-anteroom :east warehouse-meeting-room))))
 
+;; TODO: remove trap, for testing. Also the trap should attack the target to
+;; apply the aura, which allows for evasion.
+
+(defproto fire-aura (damage-aura)
+  (damage-type :fire)
+  (total-damage 30)
+  (duration 15)
+  (tick-interval 3))
+
+(defproto fire-trap (entity)
+  (brief "a fire trap")
+  (hidden t))
+
 (deflocation warehouse-meeting-room (warehouse)
   (brief "Meeting Room")
   (full "This cramped room contains a long table and numerous chairs and
     stools.")
-  (exits ((doorway :west warehouse-storeroom))))
+  (exits ((doorway :west warehouse-storeroom)))
+  (contents (fire-trap)))
+
+(defmethod did-enter-location ((observer fire-trap) (actor avatar) location entry)
+  (apply-aura observer 'fire-aura actor))
 
 ;;; south-road
 

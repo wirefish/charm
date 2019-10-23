@@ -78,7 +78,7 @@
 ;;; Functions that announce combat events to observers.
 
 (defun announce-miss (attacker target attack)
-  (dolist (observer (contents (location attacker)))
+  (dolist (observer (contents (location target)))
     (when (has-session-p observer)
       (show-text observer
                  "~a ~a ~a with ~a and ~a!"
@@ -91,7 +91,7 @@
                  (if (eq observer attacker) "miss" "misses")))))
 
 (defun announce-evade (attacker target attack)
-  (dolist (observer (contents (location attacker)))
+  (dolist (observer (contents (location target)))
     (when (has-session-p observer)
       (show-text observer
                  "~a ~a ~a with ~a, but ~a ~a aside!"
@@ -105,7 +105,7 @@
                  (if (eq observer target) "leap" "leaps")))))
 
 (defun announce-resist (attacker target attack)
-  (dolist (observer (contents (location attacker)))
+  (dolist (observer (contents (location target)))
     (when (has-session-p observer)
       (show-text observer
                  "~a ~a ~a with ~a, but the attack has no effect!"
@@ -117,7 +117,7 @@
                  (describe-brief attack)))))
 
 (defun announce-hit (attacker target attack amount)
-  (dolist (observer (contents (location attacker)))
+  (dolist (observer (contents (location target)))
     (when (has-session-p observer)
       (show-text observer
                  "~a ~a ~a with ~a for ~d damage!"
@@ -206,7 +206,7 @@
     (kill actor target)))
 
 (defmethod do-inflict-damage :after (actor target attack amount)
-  (notify-observers (location actor) #'did-inflict-damage actor target attack amount))
+  (notify-observers (location target) #'did-inflict-damage actor target attack amount))
 
 (defmethod do-inflict-damage :after (actor (target avatar) attack amount)
   (update-avatar target :health (health target)))

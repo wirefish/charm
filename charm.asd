@@ -42,6 +42,7 @@
              (:file "avatar")
              (:file "tool")
              (:file "event")
+             (:file "aura")
 
              (:file "config")
              (:file "help")

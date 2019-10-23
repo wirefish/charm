@@ -19,11 +19,6 @@
 (defun damage-group (damage-type)
   (gethash damage-type *damage-types*))
 
-;;; An aura is a temporary effect placed on an entity.
-
-(defstruct aura
-  name description icon modifier amount)
-
 ;;; A prototype for an entity that can participate in combat.
 
 (defproto combatant ()
@@ -40,7 +35,7 @@
   (energy nil :instance)
   (max-mana nil :instance)
   (mana nil :instance)
-  (auras nil :instance) ; list of (aura . expiration-time)
+  (auras nil :instance)
   (attack-target nil :instance)
   (assist-target nil :instance)
   (opponents nil :instance))
@@ -92,12 +87,7 @@
   (apply #'+
          (gethash modifier (modifiers entity) 0)
          (base-attribute-value modifier (level entity))
-         (keep-if #'(lambda (x)
-                      (destructuring-bind (aura . expiry) x
-                        (declare (ignore expiry))
-                        (when (eq (aura-modifier aura) modifier)
-                          (aura-amount aura))))
-                  (auras entity))))
+         (mapcar (curry #'get-modifier modifier) (auras entity))))
 
 ;;; Health, energy, and mana are resources used during combat.
 
