@@ -766,6 +766,7 @@
 ;; apply the aura, which allows for evasion.
 
 (defproto fire-aura (damage-aura)
+  (icon 'fire)
   (damage-type :fire)
   (total-damage 30)
   (duration 15)

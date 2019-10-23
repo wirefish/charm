@@ -197,27 +197,27 @@ MessageHandler.prototype.updateAvatar = function(properties)
         updateBar('player_xp', this.avatar.xp, this.avatar.xp_required);
 }
 
-MessageHandler.prototype.updateAuras = function(key, auras)
+MessageHandler.prototype.showAura = function(key, icon)
 {
-    var parent = undefined;
-    if (key == this.player_path)
-        parent = document.getElementById('vitals');
-    else
-        parent = document.getElementById(getNeighborId(path));
-    var aurabox = parent.getElementsByClassName('aurabox')[0];
+    var id = 'aura_' + key;
+    var item = document.getElementById(id);
+    if (!item) {
+        item = document.createElement('div');
+        item.id = id;
+        item.className = 'show_aura';
+        setIcon(item, icon);
+        document.getElementById('player_auras').insertBefore(item, null);
+    }
+}
 
-    if (aurabox) {
-        while (aurabox.firstChild)
-            aurabox.removeChild(aurabox.firstChild);
-
-        for (var i = 0; i < auras.length; ++i) {
-            var [name, icon, color, end_time] = auras[i];
-            var item = document.createElement('div');
-            item.className = 'aura';
-            item.style.backgroundImage = "url('icons/{0}')".format(icon);
-            item.style.backgroundColor = color;
-            aurabox.appendChild(item);
-        }
+MessageHandler.prototype.hideAura = function(key)
+{
+    var item = document.getElementById('aura_' + key);
+    if (item) {
+        item.addEventListener('animationend', function (event) {
+            this.parentNode.removeChild(this);
+        });
+        item.className = 'hide_aura';
     }
 }
 

@@ -31,6 +31,16 @@
   (:method (actor aura)
     (setf (owner-id aura) (id actor))))
 
+;;;
+
+(defun show-aura (avatar aura)
+  (when-let ((session (session avatar)))
+    (send-client-command session "showAura" (type-of aura) (icon aura))))
+
+(defun hide-aura (avatar aura)
+  (when-let ((session (session avatar)))
+    (send-client-command session "hideAura" (type-of aura))))
+
 ;;; The `apply-aura` event occurs when `actor` causes a new instance of type
 ;;; `aura` to be applied to `target`.
 
@@ -82,7 +92,8 @@
 (defmethod do-apply-aura :after (actor aura (target avatar))
   (show-text target "~a has applied ~a to you."
              (describe-brief actor :capitalize t)
-             (describe-brief aura)))
+             (describe-brief aura))
+  (show-aura target aura))
 
 (defmethod do-remove-aura (actor aura target)
   (deletef (auras target) aura)
@@ -97,7 +108,8 @@
                  (describe-brief actor :capitalize t)
                  (describe-brief aura))
       (show-text target "~a has faded."
-                 (describe-brief aura))))
+                 (describe-brief aura)))
+  (hide-aura target aura))
 
 ;;;
 

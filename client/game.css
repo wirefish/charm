@@ -235,6 +235,20 @@ a:link {
     background-position: center;
 }
 
+@keyframes show_aura {
+    0% { width: 0; opacity: 0.0; }
+    50% { width: 18px; opacity: 0.0; }
+    100% { width: 18px; opacity: 1.0; }
+}
+.show_aura { animation: show_aura 0.3s linear; }
+
+@keyframes hide_aura {
+    0% { width: 18px; opacity: 1.0; }
+    50% { width: 18px; opacity: 0.0; }
+    100% { width: 0; opacity: 0.0; }
+}
+.hide_aura { animation: hide_aura 0.3s linear; }
+
 /* The weather box shows an indication of the weather, time of day, and the name
    of the current location and zone. */
 
