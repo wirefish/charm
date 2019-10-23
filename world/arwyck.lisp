@@ -57,6 +57,11 @@
   (level 3)
   (attack-verb "flattens"))
 
+(defproto keen-dagger (dagger)
+  (brief "a keen dagger")
+  (level 1)
+  (quality 2))
+
 (defproto killer-troll (monster)
   (brief "a killer troll")
   (pose "looks out over the bay.")
@@ -66,7 +71,7 @@
 
 (deflocation bayside-plaza-5 (bayside-plaza-location)
   (exits ((bayside-plaza-portal :west bayside-plaza-4)))
-  (contents (killer-troll)))
+  (contents (keen-dagger killer-troll)))
 
 ;;; harbor-road
 
