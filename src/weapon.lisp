@@ -11,6 +11,15 @@
   (attack-delay 3)
   (offhand-penalty 0))
 
+(defmethod attack-message ((observer avatar) attacker target (attack weapon))
+  (format nil "~a ~a ~a with ~a"
+          (if (eq observer attacker) "You" (describe-brief attacker :capitalize t))
+          (if (eq observer attacker)
+              (verb-plural (attack-verb attack))
+              (verb-singular (attack-verb attack)))
+          (if (eq observer target) "you" (describe-brief target))
+          (describe-brief attack)))
+
 ;;; Light weapons are quick, do relatively little damage per hit, and incur a
 ;;; relatively small penalty when used in the off-hand.
 
@@ -66,6 +75,14 @@
       (let ((k (* damage-scale (/ attack-delay 2.5))))
         (cons (* k (+ 4 (* 2 level)))
               (* k (+ 6 (* 3 level))))))))
+
+(defmethod attack-message ((observer avatar) attacker target (attack natural-weapon))
+  (format nil "~a ~a ~a"
+          (if (eq observer attacker) "You" (describe-brief attacker :capitalize t))
+          (if (eq observer attacker)
+              (verb-plural (attack-verb attack))
+              (verb-singular (attack-verb attack)))
+          (if (eq observer target) "you" (describe-brief target))))
 
 ;;;
 

@@ -138,6 +138,14 @@
 (defgeneric damage-type (attack)
   (:documentation "Returns the type of damage caused by `attack`."))
 
+(defgeneric attack-message (observer attacker target attack)
+  (:documentation "Returns a description of what `observer` sees when `attacker`
+    attacks `target` with `attack`. The result should be a sentence with no
+    trailing punctuation, e.g. 'Bob smashes Ann with a mallet', or nil if no
+    message should be displayed.")
+  (:method (observer attacker target attack)
+    nil))
+
 ;;;
 
 (defgeneric select-attack (attacker target)

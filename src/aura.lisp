@@ -16,8 +16,9 @@
   (getf (modifiers subject) modifier 0))
 
 (defmethod describe-brief ((subject aura) &rest args)
-  (declare (ignore args))
-  (name subject))
+  (if (getf args :capitalize)
+      (string-capitalize (name subject))
+      (name subject)))
 
 (defmethod describe-full ((subject aura))
   (full subject))
@@ -108,7 +109,7 @@
                  (describe-brief actor :capitalize t)
                  (describe-brief aura))
       (show-text target "~a has faded."
-                 (describe-brief aura)))
+                 (describe-brief aura :capitalize t)))
   (hide-aura target aura))
 
 ;;;
@@ -123,6 +124,12 @@
     (let ((tick-damage (* total-damage (/ tick-interval duration))))
       (cons (floor tick-damage)
             (ceiling tick-damage)))))
+
+(defmethod attack-message ((observer avatar) attacker target (attack damage-aura))
+  (format nil "~a ~a ~a"
+          (describe-brief attack :capitalize t)
+          (verb-singular (attack-verb attack))
+          (if (eq observer target) "you" (describe-brief target)
 
 (defmethod setup-aura (actor (aura damage-aura))
   ;; TODO: allow actor's modifiers to influence the aura damage?

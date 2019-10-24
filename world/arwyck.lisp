@@ -766,7 +766,9 @@
 ;; apply the aura, which allows for evasion.
 
 (defproto fire-aura (damage-aura)
+  (name "firestorm")
   (icon 'fire)
+  (attack-verb "burns")
   (damage-type :fire)
   (total-damage 30)
   (duration 15)

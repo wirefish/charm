@@ -81,26 +81,16 @@
   (dolist (observer (contents (location target)))
     (when (has-session-p observer)
       (show-text observer
-                 "~a ~a ~a with ~a and ~a!"
-                 (if (eq observer attacker) "You" (describe-brief attacker :capitalize t))
-                 (if (eq observer attacker)
-                     (verb-plural (attack-verb attack))
-                     (verb-singular (attack-verb attack)))
-                 (if (eq observer target) "you" (describe-brief target))
-                 (describe-brief attack)
+                 "~a and ~a!"
+                 (attack-message observer attacker target attack)
                  (if (eq observer attacker) "miss" "misses")))))
 
 (defun announce-evade (attacker target attack)
   (dolist (observer (contents (location target)))
     (when (has-session-p observer)
       (show-text observer
-                 "~a ~a ~a with ~a, but ~a ~a aside!"
-                 (if (eq observer attacker) "You" (describe-brief attacker :capitalize t))
-                 (if (eq observer attacker)
-                     (verb-plural (attack-verb attack))
-                     (verb-singular (attack-verb attack)))
-                 (if (eq observer target) "you" (describe-brief target))
-                 (describe-brief attack)
+                 "~a, but ~a ~a aside!"
+                 (attack-message observer attacker target attack)
                  (if (eq observer target) "you" (describe-brief target :article :definite))
                  (if (eq observer target) "leap" "leaps")))))
 
@@ -108,25 +98,15 @@
   (dolist (observer (contents (location target)))
     (when (has-session-p observer)
       (show-text observer
-                 "~a ~a ~a with ~a, but the attack has no effect!"
-                 (if (eq observer attacker) "You" (describe-brief attacker :capitalize t))
-                 (if (eq observer attacker)
-                     (verb-plural (attack-verb attack))
-                     (verb-singular (attack-verb attack)))
-                 (if (eq observer target) "you" (describe-brief target))
-                 (describe-brief attack)))))
+                 "~a, but the attack has no effect!"
+                 (attack-message observer attacker target attack)))))
 
 (defun announce-hit (attacker target attack amount)
   (dolist (observer (contents (location target)))
     (when (has-session-p observer)
       (show-text observer
-                 "~a ~a ~a with ~a for ~d damage!"
-                 (if (eq observer attacker) "You" (describe-brief attacker :capitalize t))
-                 (if (eq observer attacker)
-                     (verb-plural (attack-verb attack))
-                     (verb-singular (attack-verb attack)))
-                 (if (eq observer target) "you" (describe-brief target))
-                 (describe-brief attack)
+                 "~a for ~d damage!"
+                 (attack-message observer attacker target attack)
                  amount))))
 
 ;;;
@@ -206,7 +186,8 @@
     (kill actor target)))
 
 (defmethod do-inflict-damage :after (actor target attack amount)
-  (notify-observers (location target) #'did-inflict-damage actor target attack amount))
+  (when (location target)
+    (notify-observers (location target) #'did-inflict-damage actor target attack amount)))
 
 (defmethod do-inflict-damage :after (actor (target avatar) attack amount)
   (update-avatar target :health (health target)))
