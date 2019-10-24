@@ -125,11 +125,11 @@
       (cons (floor tick-damage)
             (ceiling tick-damage)))))
 
-(defmethod attack-message ((observer avatar) attacker target (attack damage-aura))
+(defmethod attack-message (observer attacker target (attack damage-aura))
   (format nil "~a ~a ~a"
           (describe-brief attack :capitalize t)
           (verb-singular (attack-verb attack))
-          (if (eq observer target) "you" (describe-brief target)
+          (if (eq observer target) "you" (describe-brief target))))
 
 (defmethod setup-aura (actor (aura damage-aura))
   ;; TODO: allow actor's modifiers to influence the aura damage?
