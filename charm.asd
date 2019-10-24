@@ -79,4 +79,5 @@
              (:file "copper-mine")
              (:file "dripping-caverns")
              (:file "isle-of-dawn")
+             (:file "mistmarsh")
              (:file "silverwood")))))

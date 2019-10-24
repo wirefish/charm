@@ -660,7 +660,7 @@
     a road winds through marshes that stretch along the coast of Emerald Bay.")
   (domain :outdoor)
   (surface :stone)
-  (exits ((dirt-road :west east-road-3))))
+  (exits ((dirt-road :west east-road-3 :east mistmarsh::muddy-path-0-4))))
 
 ;;; muggers-alley
 
