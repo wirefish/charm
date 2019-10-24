@@ -4,9 +4,6 @@ TO DO:
 
 - add command to leave game
 
-- generalize skill rank up, e.g. for proficiencies, using same model as
-  gathering
-
 - add/deduct karma cost when (un)learning skills
 
 - vendors
@@ -15,7 +12,7 @@ TO DO:
 
 - require a crafting station to craft
 
-- distribute loot/xp based on contribution
+- distribute loot
 
 - add a :coin-purse slot for currency; generalize the notion of preferred slots
   for items

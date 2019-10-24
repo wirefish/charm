@@ -97,7 +97,12 @@
 
 (defmethod do-craft-item (actor item recipe)
   (show-text actor "You successfully craft ~a." (describe-brief item))
-  (add-to-inventory (create-recipe-item recipe) actor :force t))
+  (add-to-inventory (create-recipe-item recipe) actor :force t)
+  (let* ((skill-key (skill recipe))
+         (actor-rank (skill-rank actor skill-key)))
+    (increase-skill-rank actor
+                         skill-key
+                         (skill-rank-increase actor-rank (rank recipe)))))
 
 (defbehavior craft (actor item recipe materials)
     ((tool (gethash :tool (equipment actor)))

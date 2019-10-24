@@ -67,6 +67,16 @@
 (defmethod match-tokens (tokens (target skill))
   (match-tokens tokens (name target)))
 
+;;;
+
+(defun skill-rank-increase (current-rank difficulty &optional (scale 1.0))
+  "Returns the amount by which to increase an avatar's rank in a skill,
+  based on the avatar's current rank and the difficulty of the task being
+  performed. Difficulty depends on context; it could be computed from the level
+  of an adversary for a combat skill, or be the required rank of a resource for
+  a gathering skill, etc."
+  (min 1.0 (* 0.5 scale (expt 1.25 (- difficulty current-rank)))))
+
 ;;; An ability is something an avatar becomes able do upon learning a skill and
 ;;; optionally achieving a required rank. Abilities fall into three categories:
 ;;; actions (standalone commands), spells (for use with the `cast` command), and
