@@ -114,7 +114,8 @@
 (defmethod did-exit-location ((observer avatar) actor location exit)
   (when (and (not (eq observer actor))
              (visible-p actor observer))
-    (show-text observer (describe-exit observer actor location exit))
+    (when-let ((msg (describe-exit observer actor location exit)))
+      (show-text observer msg))
     (remove-neighbor observer actor))
   (call-next-method))
 
@@ -142,10 +143,10 @@
     (did-enter-location entry actor location entry)))
 
 (defmethod did-enter-location ((observer avatar) actor location entry)
-  ;; TODO: handle entry-specific messages.
   (when (and (not (eq observer actor))
              (visible-p actor observer))
-    (show-text observer (describe-entry observer actor location entry))
+    (when-let ((msg (describe-entry observer actor location entry)))
+      (show-text observer msg))
     (update-neighbor observer actor)))
 
 (defun traverse-portal (actor exit)
