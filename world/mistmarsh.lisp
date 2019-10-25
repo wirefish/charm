@@ -1,5 +1,27 @@
 (in-package :mistmarsh)
 
+#|
+
+Sinkholes lead to an underground network of caves that connect otherwise
+unreachable parts of the marsh.
+
+The river is too wide and deep to cross without high swimming skill.
+
+The creeping mist moves around the marsh, maybe only at night. It is a blob of
+entities that move slowly but are always adjacent. In the mist, you cannot see
+beyond the current location. Also, the mist spawns rare creatures including a
+high-level boss-type creature if certain conditions are met.
+
+The marsh is home to poisonous frogs and giant dragonflies on the surface, and
+slimes/oozes in the caverns.
+
+The section east of the river has a rare mini-boss type creature with special
+loot.
+
+The surface has some low-level herbs.
+
+|#
+
 (defregion mistmarsh)
 
 (defproto swamp-portal (portal))
