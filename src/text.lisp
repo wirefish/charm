@@ -150,16 +150,17 @@
             tokens
             (values (cdr tokens) quantity)))))
 
-(defun format-list (items &key fn (conjunction "and"))
+(defun format-list (items &key (conjunction "and"))
   "Returns a string that formats `items` as a comma-separated list, using
-  `conjunction` before the last item with an Oxford comma as appropriate. If
-  `fn` is not null, it is applied to each item before formatting."
-  (let ((items (if fn (mapcar fn items) items)))
-    (case (length items)
-      (0 "")
-      (1 (car items))
-      (2 (format nil "~a ~a ~a" (car items) conjunction (cadr items)))
-      (t (format nil "~{~a~^, ~}, ~a ~a" (butlast items) conjunction (car (last items)))))))
+  `conjunction` before the last item with an Oxford comma as appropriate."
+  (if items
+      (if (null conjunction)
+          (format nil "~{~a~^, ~}" items)
+          (case (length items)
+            (1 (car items))
+            (2 (format nil "~a ~a ~a" (car items) conjunction (cadr items)))
+            (t (format nil "~{~a~^, ~}, ~a ~a" (butlast items) conjunction (car (last items))))))
+      ""))
 
 (defun split-list (tokens)
   "Given a sequence of tokens that represents one or more objects separated by
