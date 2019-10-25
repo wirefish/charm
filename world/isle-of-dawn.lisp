@@ -490,23 +490,20 @@
 
 ;;; clothing-stall
 
-(defproto simple-shirt (clothing)
+(defproto simple-shirt (clothing-torso)
   (brief "a simple cotton shirt")
   (icon 'common-clothing)
-  (full "The shirt is well-made and comfortable.")
-  (slot :torso))
+  (full "The shirt is well-made and comfortable."))
 
-(defproto simple-pants (clothing)
+(defproto simple-pants (clothing-legs)
   (brief "a pair of cotton pants")
-  (full "The pants are made of thick brown cloth.")
-  (slot :legs))
+  (full "The pants are made of thick brown cloth."))
 
-(defproto leather-shoes (clothing)
+(defproto leather-shoes (clothing-feet)
   (brief "a pair of leather shoes")
   (icon 'shoes)
   (full "These low shoes have a sturdy sole, suitable for walking long
-    distances.")
-  (slot :feet))
+    distances."))
 
 (defproto small-backpack (equipment container) ; FIXME: lib::small-backpack etc.
   (brief "a small canvas backpack")
