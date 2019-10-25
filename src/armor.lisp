@@ -18,7 +18,8 @@
   armor-value of one.")
 
 (defproto armor (equipment)
-  (armor-value 1))
+  (armor-type "armor")
+  (armor-value 0))
 
 (defgeneric base-armor-attribute (item)
   (:documentation "Returns the base armor of a piece of equipment.")
@@ -36,3 +37,13 @@
      (if (eq modifier :armor) (base-armor-attribute entity) 0)))
 
 ;; TODO: Does heavy armor (i.e. high armor-value) increase cast times?
+
+(defmethod describe-full ((subject armor))
+  ;; FIXME: show quality if > 0
+  (format nil
+          "~a (level ~d ~a; armor ~d~{; ~(~a~) ~d~})"
+          (call-next-method)
+          (level subject)
+          (armor-type subject)
+          (base-armor-attribute subject)
+          (equipment-modifiers-plist subject)))

@@ -5,12 +5,14 @@
 ;;; Clothing is armor that provides no protection.
 
 (defproto clothing (armor)
+  (armor-type "clothing")
   (armor-value 0))
 
 ;;; Cloth armor is armor that requires no proficiency but provides little
 ;;; protection.
 
 (defproto cloth-armor (armor)
+  (armor-type "cloth armor")
   (armor-value 1/4))
 
 ;;; Leather armor requires no proficiency but provides a little more protection.
@@ -27,6 +29,7 @@
   (cost '(:karma 5)))
 
 (defproto mail-armor (armor)
+  (armor-type "mail armor")
   (proficiency 'mail-armor-proficiency)
   (armor-value 3/4))
 
@@ -39,5 +42,6 @@
   (cost '(:karma 5)))
 
 (defproto plate-armor (armor)
+  (armor-type "plate armor")
   (proficiency 'plate-armor-proficiency)
   (armor-value 1))
