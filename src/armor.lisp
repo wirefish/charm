@@ -7,13 +7,11 @@
 
 (defparameter *armor-slots*
   (plist-hash-table
-   '(:head 2
-     :torso 4
-     :hands 2
-     :back 1
-     :waist 1
-     :legs 3
-     :feet 2))
+   '(:head 4
+     :torso 5
+     :hands 3
+     :legs 5
+     :feet 3))
   "Base amount of armor granted per level, by slot, for items with an
   armor-value of one.")
 
