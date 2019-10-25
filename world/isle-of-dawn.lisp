@@ -832,9 +832,8 @@
 
 ;;; guard-station
 
-(defproto worn-dagger (lib::dagger)
+(defproto worn-dagger (dagger)
   (brief "a worn copper dagger")
-  (icon 'knives-02)
   (full "The dagger has a slender blade and a smooth wooden handle."))
 
 (defquest kill-some-plants
@@ -859,7 +858,7 @@
   (show-text avatar "The guard begins to demonstrate some basic dagger
       techniques.")
   (with-delay (2)
-    (learn-skill avatar lib::dagger-proficiency npc)
+    (learn-skill avatar dagger-proficiency npc)
     (show-say avatar npc "You're a natural! Now equip that dagger and go kill
       one of those plants. Strike fast and true! If you can overcome such a
       fearsome foe, I'll happily let you pass.")))
