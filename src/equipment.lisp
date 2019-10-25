@@ -7,13 +7,10 @@
   (slot nil)
   (proficiency nil)
   (mastery nil)
-  (modifiers nil) ; plist
+  ;;
   (quality 0 :instance)
-  (affix nil :instance) ; enchant, etc.
-  (inscription nil :instance)) ; personalization text
-
-(defmethod get-modifier (modifier (entity equipment))
-  (getf (modifiers entity) modifier 0))
+  (modifiers #(nil nil) :instance)
+  (inscription nil :instance))
 
 ;;; Each piece of equipment uses `slot` to describe where it can be equipped by
 ;;; an avatar. (This slot *does not* map one-to-one to the avatar's equipment
@@ -53,10 +50,28 @@
   avatar fully-equipped in level 50 gear would have a total item budget of 50
   times this value.")
 
-(defun equipment-attribute-budget (slot level)
-  (* level
-     *attribute-budget-per-level*
-     (gethash slot *equipment-slot-weights*)))
+(defun equipment-attribute-budget (item)
+  (with-slots (slot level quality) item
+    (* (+ level quality)
+       *attribute-budget-per-level*
+       (gethash slot *equipment-slot-weights*))))
+
+(defmethod get-modifier (modifier (entity equipment))
+  (let ((mod (find-if #'(lambda (mod) (eq (car mod) modifier)) (modifiers entity))))
+    (if mod (cdr mod) 0)))
+
+(defun set-primary-modifier (modifier item)
+  (setf (elt (modifiers item) 0)
+        (cons modifier (max 1 (round (* 0.7 (equipment-attribute-budget item)))))))
+
+(defun set-secondary-modifier (modifier item)
+  (let ((budget (equipment-attribute-budget item)))
+    (setf (elt (modifiers item) 1)
+          (cons modifier (max 1 (- budget (round (* 0.7 budget))))))))
+
+(defun equipment-modifiers-plist (item)
+  (loop for mod across (modifiers item)
+     if mod append (list (car mod) (cdr mod))))
 
 ;;; The `quality` of an piece of equipment is an integer that adds to the item's
 ;;; effective level when computing its attributes, but does not increase the
@@ -72,8 +87,12 @@
          5 (parse-noun "a legendary"))))
 
 (defmethod describe-brief ((subject equipment) &rest args)
-  (if-let ((quality-name (gethash (quality subject) *quality-names*)))
-    (format nil "~a ~a"
-            (apply #'format-noun quality-name args)
-            (call-next-method subject :article nil))
-    (call-next-method)))
+  (let ((prefix
+         (if-let ((quality-name (gethash (quality subject) *quality-names*)))
+           (format nil "~a ~a"
+                   (apply #'format-noun quality-name args)
+                   (call-next-method subject :article nil))
+           (call-next-method))))
+    (if-let ((primary-attribute (elt (modifiers subject) 0)))
+      (concatenate 'string prefix " of " (string-downcase (symbol-name (car primary-attribute))))
+      prefix)))

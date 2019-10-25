@@ -99,4 +99,4 @@
             (/ (+ min max)
                (attack-delay subject)
                2.0)
-            (modifiers subject))))
+            (equipment-modifiers-plist subject))))
