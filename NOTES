@@ -238,67 +238,87 @@ Crafting also requires that an appropriate tool be equipped, just as with
 gathering.
 
 The "craft" command lets you say what you want to create, which determines the
-base materials required, and what optional materials you want to add in order to
+base materials required, and any extra materials you want to add in order to
 increase quality or control attributes of the final item. Learning the effects
-of optional materials is a trial-and-error process, maybe with some hints from
+of extra materials is a trial-and-error process, maybe with some hints from
 crafting trainers and the like.
 
-For example:
+Extra materials only apply to equipment. They fall into three categories; at
+most one extra material from each category can be used in a craft attempt:
+
+* Primary modifier: The material adds a modifier using 70% of the item's
+  modifier budget. (Affixes can be added later to set a secondary modifier that
+  accounts for the other 30% of the budget; affixes can be changed while the
+  primary modifier is fixed.) The primary modifier is incorporated into the item
+  name, e.g. "iron shortsword of strength".
+
+* Quality: The material increases the quality of the item. Quality is also
+  incorporated into the item name, e.g. "masterwork iron shortsword".
+
+* Success enhancer: Extra materials that add a primary modifier or increase
+  quality also add a chance of failure. This category of extra material exists
+  solely to reduce that chance of failure.
+
+Examples:
 
     "craft iron ingot" -- requires smelting skill, uses 3 iron ore
 
     "craft iron shortsword with fire shard" -- requires weaponsmithing skill,
       uses 2 iron ingot and 1 pine lumber as required materials; the fire shard
-      adds fire immunity
+      adds fire immunity and the item might be called "iron shortsword of fire
+      resistance".
 
-    "craft diamond ring with amethyst and turquoise" -- requires jewelcrafting
-      skill, uses a diamond and a gold ingot, the two added materials add e.g.
-      precision and compassion.
+    "craft diamond ring with amethyst and fine turquoise powder" -- requires
+      jewelcrafting skill, uses a diamond and a gold ingot, the two extra
+      materials might add e.g. precision as a primary modifier and increase
+      quality by 1.
 
-Note that multiple additional materials are allowed, each adds some attribute
-according to the item budget. Some added materials instead increase quality.
-(Perhaps a quality increase is required in order to add attributes, if 0-quality
-items have no attribute budget?)
-
-The parser needs to be extended to support "and"- and ","-separated lists in a
-command argument, as in the "with/using" clause of the "craft" command.
-
-After typing "craft", you see a message like "Your attempt to craft ~a will use
-~a. You have a ~d% chance of success. Type `accept` to begin crafting." The
-message lists all the materials used. The success chance is based on your rank
-relative to the required rank, and decreases with each added material. Failure
-has a chance of losing materials.
+If there is a chance of failure, the craft command will show you a message like
+"Your attempt to craft ~a will use ~a. You have a ~d% chance of success. Type
+`accept` to begin crafting." The message lists all the materials used. The
+success chance is based on the extra materials; you always succeed for a "basic"
+craft with no extra materials. If you fail, there is a chance of losing
+materials.
 
 If you are missing materials, the message says "You are missing the following
-materials needed to craft ~a: ~a." and doesn't offer the craft attempt.
+materials needed to craft ~a: ~a.".
 
 You can use a quantity to craft multiple items, e.g. "craft 99 iron ingots".
-When you do so, the message shows all materials used/missing. The success chance
-is applied for each single item. The time taken scales linearly, or maybe you
-get a speed-up for each item past the first up to some limit. You see a result
-message after each individual item.
+This only works for stackable items and therefore does not work with extra
+materials which only apply to equipment. The time taken scales sub-linearly. You
+see a result message after each individual item.
 
-When you type "accept" your :activity changes to crafting, which takes a few
-seconds and fails if interrupted. You can use "stop" to stop without failure.
-While crafting, show a "cooldown" bar/widget as with other non-instant tasks.
+When you begin crafting (immediately or after typing "accept") your :activity
+changes to crafting, which takes a few seconds and fails if interrupted. You can
+use "stop" to stop without failure. While crafting you see a "cast bar" as with
+other non-instant activities.
 
-You can (rarely) proc a free quality upgrade, based on your rank relative to the
-required rank and perhaps attributes of your tool. Your tool can also reduce the
-crafting time.
+Your tool can have modifiers that affect your craft attempt: reduce time,
+increase success rate, maybe others.
 
-The materials needed for quality/attributes vary based on item level and general
-type. They are typically crafted items themselves, e.g. a jewel cut from a raw
-gemstone. For example, for accessories you might have a matrix like:
+Each extra material defines (1) an item type to which it applies; (2) a maximum
+level for the item it is used with; (3) a failure rate increase (negative for
+the third category), (4) a modifier or quality level. Extra materials are
+usually crafted items themselves. In the case of quality enhancers, the material
+for each quality level may be crafted from multiple of the next-lower item, in
+addition to whatever else is needed.
 
-level    quality-1    quality-2    quality-3    quality-4    quality-5
- 1-10    X
-11-20    X            X
-21-30    X            X            X
-31-40    X            X            X            X
-41-50    X            X            X            X            X
+========================================
 
-Where X denotes some added material. Note that higher qualities are not
-necessarily available at lower levels. Also, materials for higher qualities
-become *much* harder and more expensive to obtain. Often the material for
-quality N is crafted using, in part, one or more of the material for quality
-N-1.
+AFFIXES
+
+Affixes are crafted items that imbue equipment with a secondary modifier (using
+30% of the item's budget). Unlike the primary modifier that is "baked in" when
+crafting an item, the affix (and hence the secondary attribute) can be changed
+by replacing it with a new one.
+
+The "affix" command applies an affix item to a piece of equipment, e.g. "affix
+rune of shadow to iron shield". There are different types of affix items that
+can be created by different crafters: runes, sigils, glyphs, fetishes, etc.
+
+The 70/30 ratio between fixed primary and adjustable secondary modifier was
+selected to make gear selection important, but provide some flexibility.
+
+Applying an affix consumes the affix item and sets the secondary modifier of the
+equipment. The operation fails of the primary and secondary modifiers are the
+same.
