@@ -140,6 +140,7 @@
   (let ((location (location actor)))
     (call-next-method)
     (award-xp actor)
+    (award-loot actor)
     (exit-world actor location nil)
     (respawn actor location)))
 

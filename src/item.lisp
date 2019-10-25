@@ -11,7 +11,7 @@
 (defproto stackable-item (item)
   (stack-limit 100))
 
-(defproto currency (item)
+(defproto currency (stackable-item)
   (weight 0)
   (stack-limit 100000))
 

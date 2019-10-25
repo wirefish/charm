@@ -33,7 +33,7 @@
         (incf (cdr entry) amount)
         (push (cons (id actor) amount) (threat target)))))
 
-(defun create-loot (loot-table)
+(defun generate-loot (loot-table)
   "Generates random loot from `loot-table`, which is a list of (probability .
   items). Each item in items is either a type, or a list (min max type)."
   (do (loot)
@@ -43,9 +43,25 @@
         (let ((item (random-elt items)))
           (if (listp item)
               (destructuring-bind (min max type) item
-                (push (make-instance type :stack-count (uniform-random min max))
+                (push (make-instance type :stack-size (uniform-random min max))
                       loot))
               (push (make-instance item) loot)))))))
+
+(defun award-loot (monster)
+  (when-let ((targets (keep-if
+                       #'(lambda (x)
+                           (when-let ((opponent (find-id-in-container (car x)
+                                                                      (location monster))))
+                             (when (and (typep opponent 'avatar)
+                                        (not (deadp opponent)))
+                               opponent)))
+                       (threat monster))))
+    (do ((loot (generate-loot (loot monster))))
+        ((not loot))
+      (give-item monster (pop loot) (random-elt targets)))))
+
+(defmethod format-give-item ((actor monster) item)
+  (format nil "You receive ~a." (describe-brief item)))
 
 (defun award-xp (monster)
   "Award experience for killing a monster. Every avatar that caused threat

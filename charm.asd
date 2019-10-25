@@ -70,6 +70,7 @@
                       ((:file "races")
                        (:file "locations")
                        (:file "portals")
+                       (:file "coins")
                        (:file "weapons")
                        (:file "armor")
                        (:file "vehicle")
