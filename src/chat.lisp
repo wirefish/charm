@@ -7,10 +7,13 @@
 (defun avatar-in-channel (avatar channel)
   (member channel (channels avatar) :test #'string-equal))
 
+(defun is-valid-channel-name (name)
+  (cl-ppcre:scan "^[\\w-]{3,12}$" name))
+
 (defcommand (actor ("chat" "/") :word channel :rest message)
   "Sends a message to a chat channel. The message will be seen by all players
   who have joined the channel."
-  (if (member channel (channels actor) :test #'string-equal)
+  (if (avatar-in-channel actor channel)
       (let ((text (merge-tokens message)))
         (maphash-values #'(lambda (session)
                             (with-slots (avatar) session
@@ -21,13 +24,14 @@
                                                      text))))
                         *sessions*))
       (show-text actor
-                 "You are not in the ~s channel. See `help:channel` for more information.")))
+                 "You are not in the ~s channel. See `help:channel` for more information."
+                 channel)))
 
 (defcommand (actor "channel" :word subcommand :word channel)
   "This command displays information about chat channels, or lets you join or leave a channel.
 
-  When *subcommand* is not specified, displays a list of those chat channels you
-  have joined. Otherwise, *subcommand* can be one of the following:
+  When *subcommand* is not specified, the command displays a list of those chat
+  channels you have joined. Otherwise, *subcommand* can be one of the following:
 
   - 'who' will display a list of players in *channel*.
 
@@ -54,5 +58,20 @@
                                      (describe-brief avatar))))
                              (hash-table-values *sessions*))))
        (show-text actor "~a." (format-list members))))
-    (t
-     (show-text actor "TBD"))))
+    ((string-equal subcommand "leave")
+     (if (avatar-in-channel actor channel)
+         (progn
+           (deletef (channels actor) channel :test #'string-equal)
+           (show-text actor "You have left the ~(~s~) channel." channel))
+         (show-text actor "You are not in the ~(~s~) channel." channel)))
+    ((string-equal subcommand "join")
+     (cond
+       ((>= (length (channels actor)) *max-channels*)
+        (show-text actor "You have already joined the maximum allowed number of channels."))
+       ((not (is-valid-channel-name channel))
+        (show-text actor "~(~s~) is not a valid channel name." channel))
+       ((avatar-in-channel actor channel)
+        (show-text actor "You are already in the ~(~s~) channel." channel))
+       (t
+        (push channel (channels actor))
+        (show-text actor "You have joined the ~(~s~) channel." channel))))))
