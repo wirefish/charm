@@ -631,6 +631,13 @@ MessageHandler.prototype.showSay = function(prefix, text, is_chat)
     appendBlock(wrapElements('div', elements), is_chat ? 'chat_text' : 'main_text');
 }
 
+MessageHandler.prototype.showChat = function(channel, speaker, message)
+{
+    var s = '[{0}] {1} says, &ldquo;{2}&rdquo;'.format(channel, speaker, message);
+    var p = makeTextElement('p', s);
+    appendBlock(wrapElements('div', [p]), 'chat_pane');
+}
+
 MessageHandler.prototype.listMacros = function(macros)
 {
     var elements = [];

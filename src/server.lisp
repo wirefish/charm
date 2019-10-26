@@ -1,8 +1,5 @@
 (in-package :charm)
 
-;; A mapping from session keys to session objects.
-(defvar *sessions* (make-hash-table :test #'equal))
-
 ;; TODO: rely on nginx to enforce idle timeouts
 (defparameter *session-idle-seconds* 1800)
 

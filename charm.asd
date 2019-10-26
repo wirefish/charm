@@ -60,6 +60,7 @@
              (:file "craft")
              (:file "combat")
              (:file "status")
+             (:file "chat")
              (:file "admin")
 
              (:file "database")

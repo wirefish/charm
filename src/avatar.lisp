@@ -107,7 +107,8 @@
   (finished-quests (make-hash-table) :instance) ; quest-key -> completion time
   (tutorials-on t :instance)
   (tutorials-seen (make-hash-table) :instance) ; key -> t
-  (recall-location nil :instance))
+  (recall-location nil :instance)
+  (channels '("help" "ooc") :instance))
 
 ;;; Control serialization of slots.
 

@@ -1,5 +1,8 @@
 (in-package :charm)
 
+;; A mapping from session keys to session objects.
+(defvar *sessions* (make-hash-table :test #'equal))
+
 (defun make-session-key ()
   (ironclad:byte-array-to-hex-string (ironclad:make-random-salt)))
 
@@ -48,9 +51,7 @@
   "Sends a message that contains a JSON array whose first element is a command
   name and whose subsequent elements are arguments to that command."
   (let ((message (with-output-to-string (s) (encode-json (cons command args) s))))
-    (if session
-        (send-message session message)
-        (format t "~a~%" message))
+    (send-message session message)
     nil))
 
 (defun has-session-p (target)

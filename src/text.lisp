@@ -130,6 +130,15 @@
   (let ((trimmed (string-trim #(#\Space #\Tab #\Return #\Newline) input)))
     (cl-ppcre:all-matches-as-strings "(^[^\\w\\s])|[^\\s,.:;?!]+|[,.:;?!]" trimmed)))
 
+(defun separatorp (token)
+  (and (= (length token) 1)
+       (find (char token 0) ",.:;?!")))
+
+(defun merge-tokens (tokens)
+  (let ((parts (loop for token in tokens
+                  append (list (if (separatorp token) "" " ") token))))
+    (apply #'concatenate 'string (rest parts))))
+
 (defun parse-quantity (token)
   "Interprets `token` as a possible quantity. Returns either an integer, :all,
   or nil if the token does not describe a quantity."
