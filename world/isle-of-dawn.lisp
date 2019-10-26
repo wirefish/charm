@@ -150,13 +150,11 @@
   (full "Flowers of every color and description bloom in the expansive fields
     along the sides of the path. The air is heavy with their fragrance.")
 
-  (tutorial "The &#9829; symbol means that a creature wants to talk to you about
-    a quest. The symbol also appears on the map to help you find nearby quests.
-
-    When the symbol is blue, a new quest is available: `talk` to the creature to
-    learn more. When the symbol is silver, you have started but not yet
-    completed a quest. When it is gold, you have completed a quest and can
-    `talk` to the creature to receive your rewards!")
+  (tutorial "The ? symbol on the map means that a creature wants to talk to you
+    about a quest. When the symbol is blue, a new quest is available: `talk` to
+    the creature to learn more. When the symbol is silver, you have started but
+    not yet completed a quest. When it is gold, you have completed a quest and
+    can `talk` to the creature to receive your rewards!")
   (visible (("low table"
              "The table looks sturdy but is otherwise unremarkable.")
             ("umbrella"
@@ -247,7 +245,7 @@
     Elves are quick-footed and quick-witted, although we are not as strong as
     many of the other races of Atalea. We excel as hunters, magicians, bards,
     and--it pains me to say--as thieves. We consider ourselves custodians of the
-    forest and take that charge very seriously. We do not stand by idly if our
+    forest and take that charge very seriously. We do not stand idly by if our
     beloved home is threatened.
 
     If you would join my folk, simply `meditate` here to make your purpose
