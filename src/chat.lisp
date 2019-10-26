@@ -10,19 +10,24 @@
 (defun is-valid-channel-name (name)
   (cl-ppcre:scan "^[\\w-]{3,12}$" name))
 
+(defun show-chat (message channel &optional speaker)
+  (maphash-values #'(lambda (session)
+                      (with-slots (avatar) session
+                        (when (and avatar (avatar-in-channel avatar channel))
+                          (send-client-command session "showChat"
+                                               (string-downcase channel)
+                                               speaker
+                                               message))))
+                  *sessions*))
+
+
 (defcommand (actor ("chat" "/") :word channel :rest message)
   "Sends a message to a chat channel. The message will be seen by all players
   who have joined the channel."
   (if (avatar-in-channel actor channel)
-      (let ((text (merge-tokens message)))
-        (maphash-values #'(lambda (session)
-                            (with-slots (avatar) session
-                              (when (and avatar (avatar-in-channel avatar channel))
-                                (send-client-command session "showChat"
-                                                     (string-downcase channel)
-                                                     (describe-brief actor :capitalize t)
-                                                     text))))
-                        *sessions*))
+      (show-chat (merge-tokens message)
+                 channel
+                 (describe-brief actor :capitalize t))
       (show-text actor
                  "You are not in the ~s channel. See `help:channel` for more information."
                  channel)))
@@ -61,6 +66,9 @@
     ((string-equal subcommand "leave")
      (if (avatar-in-channel actor channel)
          (progn
+           (show-chat (format nil "~a leaves the channel."
+                              (describe-brief actor :capitalize t))
+                      channel)
            (deletef (channels actor) channel :test #'string-equal)
            (show-text actor "You have left the ~(~s~) channel." channel))
          (show-text actor "You are not in the ~(~s~) channel." channel)))
@@ -74,4 +82,6 @@
         (show-text actor "You are already in the ~(~s~) channel." channel))
        (t
         (push channel (channels actor))
+        (show-chat (format nil "~a joins the channel." (describe-brief actor :capitalize t))
+                   channel)
         (show-text actor "You have joined the ~(~s~) channel." channel))))))

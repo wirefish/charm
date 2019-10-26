@@ -631,11 +631,15 @@ MessageHandler.prototype.showSay = function(prefix, text, is_chat)
     appendBlock(wrapElements('div', elements), is_chat ? 'chat_text' : 'main_text');
 }
 
-MessageHandler.prototype.showChat = function(channel, speaker, message)
+MessageHandler.prototype.showChat = function(channel, speaker, text)
 {
-    var s = '[{0}] {1} says, &ldquo;{2}&rdquo;'.format(channel, speaker, message);
-    var p = makeTextElement('p', s);
-    appendBlock(wrapElements('div', [p]), 'chat_pane');
+    var message;
+    if (speaker)
+        message = '[{0}] {1} says, &ldquo;{2}&rdquo;'.format(channel, speaker, text);
+    else
+        message = '[{0}] {1}'.format(channel, text);
+
+    appendBlock(wrapElements('div', [makeTextElement('p', message)]), 'chat_pane');
 }
 
 MessageHandler.prototype.listMacros = function(macros)
