@@ -15,12 +15,14 @@
     ()
   (:start
    (show-text actor "You begin to meditate.")
+   (start-casting actor 3)
    (change-state :finish 3))
   (:finish
    (do-meditate actor)
    (remove-behavior actor :activity))
   (:stop
-   (show-text actor "Your meditation has been interrupted.")))
+   (show-text actor "Your meditation has been interrupted.")
+   (stop-casting actor)))
 
 (defcommand (actor "meditate")
   "Use the meditate command to spend a few moments focusing your mind. This
