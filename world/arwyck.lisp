@@ -57,11 +57,6 @@
   (level 3)
   (attack-verb "flattens"))
 
-(defproto keen-dagger (dagger)
-  (brief "a keen dagger")
-  (level 1)
-  (quality 2))
-
 (defproto killer-troll (monster)
   (brief "a killer troll")
   (pose "looks out over the bay.")
@@ -71,7 +66,7 @@
 
 (deflocation bayside-plaza-5 (bayside-plaza-location)
   (exits ((bayside-plaza-portal :west bayside-plaza-4)))
-  (contents (keen-dagger killer-troll)))
+  (contents ((copper-dagger :quality 1) killer-troll)))
 
 ;;; harbor-road
 
@@ -588,8 +583,8 @@
   (pose "stands behind the counter, arms crossed.")
   (full "Maury is a burly man with a full beard and little hair left atop his
     head. He looks strong enough to crack a few skulls without the aid of the
-    weapons he sells."))
-;; FIXME: (sells [weapons/pine-club weapons/poplar-club weapons/birch-club weapons/maple-club]]
+    weapons he sells.")
+  (sells (copper-mace bronze-mace iron-mace)))
 
 (defmethod do-talk (actor (target maury) subject)
   (declare (ignore subject))
@@ -598,8 +593,7 @@
 
 (deflocation mace-shop (location)
   (brief "Maury's Maces")
-  (full "This shop sells maces, clubs, and similar weapons meant for cracking
-    skulls.")
+  (full "This shop sells a variety of weapons ideal for cracking skulls.")
   (domain :indoor)
   (surface :wood)
   (exits ((exit-doorway :north east-road-1)))

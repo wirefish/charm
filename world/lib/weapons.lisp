@@ -30,6 +30,21 @@
   (proficiency 'dagger-proficiency)
   (mastery 'dagger-mastery))
 
+(defproto copper-dagger (dagger)
+  (brief "a copper dagger")
+  (level 1)
+  (vendor-price '(silver-coin 10)))
+
+(defproto bronze-dagger (dagger)
+  (brief "a bronze dagger")
+  (level 5)
+  (vendor-price '(silver-coin 20)))
+
+(defproto iron-dagger (dagger)
+  (brief "an iron dagger")
+  (level 10)
+  (vendor-price '(silver-coin 40)))
+
 ;;; Wands are light weapons that do magical or elemental damage, depending on
 ;;; the specific wand.
 
@@ -86,6 +101,21 @@
   (weapon-type "one-handed mace")
   (proficiency 'mace-proficiency)
   (mastery 'mace-mastery))
+
+(defproto copper-mace (mace)
+  (brief "a copper mace")
+  (level 1)
+  (vendor-price '(silver-coin 10)))
+
+(defproto bronze-mace (mace)
+  (brief "a bronze mace")
+  (level 5)
+  (vendor-price '(silver-coin 20)))
+
+(defproto iron-mace (mace)
+  (brief "an iron mace")
+  (level 10)
+  (vendor-price '(silver-coin 40)))
 
 ;;; Two-handed maces are crushing weapons.
 

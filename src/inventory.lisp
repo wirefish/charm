@@ -22,7 +22,7 @@ There are a number of verbs/events that interact with inventory in this way:
 ;;;
 
 (defun find-in-inventory-if (pred avatar)
-  "Returns a list of (slot . item) for the item in the inventory of `avatar` for
+  "Returns a list of (slot . item) for the items in the inventory of `avatar` for
   which `pred` evaluates to t."
   (loop for slot in *inventory-slot-order*
      nconc
@@ -76,6 +76,25 @@ There are a number of verbs/events that interact with inventory in this way:
 
 (defun remove-from-inventory (slot item avatar &key quantity)
   (remove-from-container item (gethash slot (equipment avatar)) :quantity quantity))
+
+(defun remove-type-from-inventory (type avatar &key quantity)
+  "Removes objects of type `type` from the inventory of `avatar`. If `quantity`
+  is not nil, removes at most `quantity` objects. Returns three values: the
+  quantity actually removed, a list of (container . item) for stacks that were
+  removed, and a list of (container . item) for stacks that were reduced in size
+  but not removed."
+  (let ((num-removed 0) removed-stacks reduced-stacks)
+    (loop for slot in *inventory-slot-order*
+       while (or (null quantity) (< num-removed quantity))
+       do
+         (when-let ((container (gethash slot (equipment avatar))))
+           (multiple-value-bind (n removed reduced)
+               (remove-type-from-container type container
+                                           :quantity (and quantity (- quantity num-removed)))
+             (incf num-removed n)
+             (nconcf removed-stacks (mapcar #'(lambda (item) (cons container item)) removed)
+             (nconcf reduced-stacks (mapcar #'(lambda (item) (cons container item)) reduced))))))
+    (values num-removed removed-stacks reduced-stacks)))
 
 ;;;
 

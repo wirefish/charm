@@ -36,6 +36,7 @@ mine.
   (icon 'kobold)
   (level 1)
   (attacks (kobold-claw))
+  (loot '((0.5 (1 4 silver-coin))))
   (respawn-delay '(30 60)))
 
 (defproto kobold-shortsword (one-handed-weapon)
@@ -49,6 +50,7 @@ mine.
   (icon 'kobold)
   (level 2)
   (attacks (kobold-shortsword))
+  (loot '((0.5 (3 6 silver-coin))))
   (respawn-delay '(45 90)))
 
 (defproto kobold-spear (two-handed-weapon)
@@ -62,6 +64,7 @@ mine.
   (icon 'kobold)
   (level 3)
   (attacks (kobold-spear))
+  (loot '((1.0 (5 8 silver-coin))))
   (respawn-delay '(60 120)))
 
 ;;; entry

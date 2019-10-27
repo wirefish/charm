@@ -62,27 +62,29 @@
 
 (defun remove-from-container-if (pred container &key quantity)
   "Removes objects from `container` for which `pred` evaluates to t. If
-  `quantity` is not nil, removes at most `quantity` such objects. Returns two
-  values: the number of objects actually removed and a list of the stacks that
-  were removed, if any."
+  `quantity` is not nil, removes at most `quantity` such objects. Returns three
+  values: the number of objects actually removed, a list of the stacks that were
+  removed, and a list of the stacks that were not removed but had their
+  stack-size reduced."
   (do ((objects (find-in-container-if pred container))
        (num-removed 0)
-       removed-stacks)
+       removed-stacks reduced-stacks)
       ((or (null objects) (eql num-removed quantity))
-       (values num-removed removed-stacks))
+       (values num-removed removed-stacks reduced-stacks))
     (let ((object (pop objects)))
       (multiple-value-bind (n stack-removed)
           (remove-from-container object container
                                  :quantity (and quantity (- quantity num-removed)))
         (incf num-removed n)
-        (print (list n num-removed quantity))
-        (when stack-removed
-          (push object removed-stacks))))))
+        (if stack-removed
+            (push object removed-stacks)
+            (push object reduced-stacks))))))
 
 (defun remove-type-from-container (type container &key quantity)
   "Removes objects of type `type` from container. If `quantity` is not nil,
-  removes at most `quantity` objects. Returns two values: the quantity actually
-  removed and a list of stacks that were removed."
+  removes at most `quantity` objects. Returns three values: the quantity
+  actually removed, a list of stacks that were removed, and a list of stacks
+  that were not removed but had their stack-size reduced."
   (remove-from-container-if #'(lambda (x) (typep x type)) container :quantity quantity))
 
 ;;;

@@ -88,8 +88,5 @@
 (defproto npc (creature)
   (attitude :friendly))
 
-(defproto vendor (npc)
-  (sells nil))
-
 (defproto trainer (npc)
   (teaches nil))

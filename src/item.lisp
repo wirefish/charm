@@ -2,9 +2,10 @@
 
 (defproto item (entity)
   (brief "an item")
-  (unique nil) ;; or max number carried
-  (bound nil) ;; if t, cannot be dropped or given
+  (unique nil) ; or max number carried
+  (bound nil) ; if t, cannot be dropped or given
   (weight 1)
+  (vendor-price nil) ; price to buy as (currency amount)
   (stack-limit 1)
   (stack-size 1 :instance))
 

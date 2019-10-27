@@ -58,6 +58,7 @@
              (:file "talk")
              (:file "gather")
              (:file "craft")
+             (:file "vendor")
              (:file "combat")
              (:file "status")
              (:file "chat")
