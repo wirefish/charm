@@ -67,6 +67,9 @@
 (defmethod match-tokens (tokens (target skill))
   (match-tokens tokens (name target)))
 
+(defmethod describe-brief ((subject skill) &rest args)
+  (name subject))
+
 ;;;
 
 (defun skill-rank-increase (current-rank difficulty &optional (scale 1.0))
