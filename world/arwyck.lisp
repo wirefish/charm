@@ -353,7 +353,11 @@
   (brief "Andalya")
   (pose "is in the center of the room, idly swinging a slender longsword.")
   (full "Andalya is a lean, graying woman who wears loose clothing befitting
-    one who teaches the martial arts."))
+    one who teaches the martial arts.")
+  (teaches '(mace-proficiency two-handed-mace-proficiency
+             sword-proficiency two-handed-sword-proficiency
+             axe-proficiency two-handed-axe-proficiency
+             spear-proficiency)))
 
 (defmethod do-talk (actor (target warrior-guildmaster) subject)
   (declare (ignore subject))
@@ -533,7 +537,8 @@
     practical. Her long black hair is carefully plaited. She seems somewhat
     bored with the scroll in her hands, and her eyes often wander to the nearest
     window.")
-  (teaches '(heavy-limbs magic-missile)))
+  (teaches '(wand-proficiency staff-proficiency
+             heavy-limbs magic-missile)))
 
 (defmethod do-talk (actor (target mage-guildmaster) subject)
   (declare (ignore subject))
