@@ -25,7 +25,7 @@
 ;;;
 
 (defun count-quantity (objects)
-  (reduce #'+ (mapcar #'stack-size objects)))
+  (reduce #'+ objects :key #'stack-size))
 
 (defun find-in-container-if (pred container)
   "Returns a list of objects in `container` for which `pred` evaluates to t."
