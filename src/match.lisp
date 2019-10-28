@@ -4,11 +4,8 @@
 
 (defgeneric match-tokens (tokens target)
   (:documentation "Evaluates a match between `tokens`, which is a sequence of
-    strings, and `target`, which is an arbitrary object. Returns two values. The
-    primary value is nil for no match, :partial for a partial match, and :exact
-    for an exact match. The secondary value can be t if the match preferentially
-    matches multiple instances of `target` in contexts where that makes sense,
-    or nil otherwise.")
+    strings, and `target`, which is an arbitrary object. Returns one of :exact,
+    :partial, or nil to indicate the quality of the match.")
   (:method (tokens target)
     nil))
 
@@ -30,10 +27,9 @@
         :partial)))
 
 (defmethod match-tokens (tokens (target string))
-  "Matches a sequence of strings `tokens` against `target`. Returns a primary
-  value of :exact if the tokens are exact matches for all the words in `target`,
-  :partial if the tokens are prefixes of a subset of the words in `target`, or
-  nil otherwise."
+  "Matches a sequence of strings `tokens` against `target`. Returns :exact if
+  the tokens are exact matches for all the words in `target`, :partial if the
+  tokens are prefixes of a subset of the words in `target`, or nil otherwise."
   (do ((pos 0)
        (match nil))
       ((or (null tokens) (null pos))
@@ -50,48 +46,52 @@
     (when pos
       (setf pos (position-next-word target pos)))))
 
+(defmethod match-tokens (tokens (target noun))
+  "Matches `tokens` against the singular and plural forms of `target`. Returns
+  one of :exact, :partial, or nil depending on the quality of the match."
+  (with-slots (singular plural) target
+    (let ((match (match-tokens tokens singular)))
+      (if (or (null plural) (eq match :exact))
+          match
+          (or (match-tokens tokens plural) match)))))
+
 (defun best-match (&rest matches)
   "Returns the best match quality from `matches`, where :exact is better than
   :partial, which in turn is better than nil."
-  (reduce #'(lambda (a b)
-              (cond
-                ((or (eq a :exact) (eq b :exact)) :exact)
-                ((or (eq a :partial) (eq b :partial)) :partial)))
-          matches))
+  (do (best)
+      ((or (eq best :exact) (null matches)) best)
+    (case (pop matches)
+      (:exact (setf best :exact))
+      (:partial (when (not best) (setf best :partial))))))
 
-(defmethod match-tokens (tokens (target noun))
-  (let ((match (match-tokens tokens (noun-singular target))))
-    (if (eq match :exact)
-        :exact
-        (if-let ((plural (noun-plural target)))
-          (case (match-tokens tokens plural)
-            (:exact (values :exact t))
-            (:partial (values :partial (not match)))
-            (otherwise match))
-          match))))
-
-(defun match-targets (tokens &rest targets)
-  (let ((matches (mapcar #'(lambda (target)
-                             (multiple-value-list (match-tokens tokens target)))
-                         targets)))
-    (values (apply #'best-match (mapcar #'first matches))
-            (some #'(lambda (x) x) (mapcar #'second matches)))))
+(defun match-tokens-any (tokens &rest objects)
+  "Returns the best match quality resulting from matching `tokens` against each
+  element of `objects`."
+  (do (match)
+      ((or (eq match :exact) (null objects)) match)
+    (case (match-tokens tokens (pop objects))
+      (:exact (setf match :exact))
+      (:partial (when (not match) (setf match :partial))))))
 
 (defun match-objects (tokens &rest object-lists)
-  "Returns a list of objects that represent matches between `tokens` and objects
-  in `object-lists`. If any match is exact, only exact matches are returned.
-  Otherwise, all partial matches are returned. If there are matches, the
-  secondary value is t if any match indicated a preferential match to
-  multiple instances of an object, or nil otherwise."
-  (let (matches best match-multiple)
-    (dolist (list object-lists)
-      (dolist (object list)
-        (multiple-value-bind (match multiple)
-            (if tokens (match-tokens tokens object) (values :partial nil))
-          (when match
-            (when multiple (setf match-multiple t))
-            (push (cons object match) matches)
-            (setf best (best-match best match))))))
-    (values
-     (keep-if #'(lambda (x) (when (eq (cdr x) best) (car x))) matches)
-     match-multiple)))
+  "Returns a list of objects that represent the best matches between `tokens`
+  and objects in `object-lists`. If any match is exact, only exact matches are
+  returned. Otherwise, all partial matches are returned. The secondary value
+  indicates the best match quality and is one of :exact, :partial, or nil."
+  (let (exact-matches partial-matches)
+    (dolist (objects object-lists)
+      (dolist (object objects)
+        (case (match-tokens tokens object)
+          (:exact
+           (push object exact-matches))
+          (:partial
+           (when (not exact-matches)
+             (push object partial-matches))))))
+    (values (or exact-matches partial-matches)
+            (cond
+              (exact-matches :exact)
+              (partial-matches :partial)))))
+
+(defun match-objects-if (test tokens &rest object-lists)
+  (apply #'match-objects tokens
+         (mapcar (curry #'remove-if-not test) object-lists)))

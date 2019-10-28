@@ -290,9 +290,9 @@
   "Begin attacking an enemy and make it your default target for special attacks.
   You will enter combat with the enemy and its allies. See `help:combat` for
   details."
-  (let ((matches (match-objects target
-                                (remove-if-not #'(lambda (x) (attackable-p actor x))
-                                               (contents (location actor))))))
+  (let ((matches (match-objects-if (curry #'attackable-p actor)
+                                   target
+                                   (contents (location actor)))))
     (case (length matches)
       (0 (show-text actor "You don't see anything like that to attack."))
       (1
@@ -340,8 +340,9 @@
   "Begin assisting an ally, making it your default target for subsequent helpful
   actions. You will enter combat with any enemies currently attacking your ally.
   See `help:combat` for details."
-  (let ((matches (match-objects target
-                                (keep-if (curry #'assistable-p actor) (contents (location actor))))))
+  (let ((matches (match-objects-if (curry #'assistable-p actor)
+                                   target
+                                   (contents (location actor)))))
     (case (length matches)
       (0 (show-text actor "You don't see anyone matching \"~{~a~^ ~}\" that you can assist." target))
       (1 (set-assist-target actor (first matches)))
@@ -387,8 +388,9 @@
 
 (defcommand (actor "opp" subject)
   (let ((matches (if subject
-                     (match-objects subject (remove-if-not #'(lambda (x) (typep x 'combatant))
-                                                           (contents (location actor))))
+                     (match-objects-if #'(lambda (x) (typep x 'combatant))
+                                       subject
+                                       (contents (location actor)))
                      (list actor))))
     (dolist (entity matches)
       (with-slots (attack-target assist-target opponents) entity

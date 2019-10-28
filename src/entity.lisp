@@ -150,13 +150,20 @@
 
 ;;; Define how entities are matched against user input.
 
+(defun split-id-token (tokens)
+  (let ((last-token (car (last tokens))))
+    (if (starts-with #\# last-token)
+        (values (butlast tokens) (parse-integer last-token :start 1 :junk-allowed t))
+        (values tokens nil))))
+
 (defmethod match-tokens (tokens (target entity))
-  (labels ((find-id-token (tokens)
-             (when-let ((id-token (find-if #'(lambda (x) (starts-with #\# x)) tokens)))
-               (parse-integer id-token :start 1 :junk-allowed t))))
-    (if-let ((id (find-id-token tokens)))
-      (when (= (id target) id) :exact)
-      (apply #'match-targets tokens (brief target) (alts target)))))
+  (multiple-value-bind (tokens id) (split-id-token tokens)
+    (if tokens
+        (let ((match (apply #'match-tokens-any tokens (brief target) (alts target))))
+          (if id
+              (and (= id (id target)) :exact)
+              match))
+        (and id (= id (id target)) :exact))))
 
 ;;;
 
