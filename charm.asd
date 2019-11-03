@@ -47,6 +47,7 @@
              (:file "config")
              (:file "help")
              (:file "tutorial")
+             (:file "calendar")
              (:file "map")
              (:file "accept")
              (:file "quest")
