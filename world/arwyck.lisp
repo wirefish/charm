@@ -665,6 +665,8 @@
 
 (defproto muggers-alley (location)
   (brief "Muggers' Alley")
+  (full "This narrow, muddy lane winds through the least savory section of
+    Arwyck.")
   (domain :outdoor)
   (surface :dirt))
 
@@ -685,8 +687,8 @@
   (brief "Jimmy the Hare")
   (pose "cleans his fingernails with a silver knife.")
   (full "Jimmy is a greasy-haired young man whose eyes dart around nervously,
-    as if he expects someone to leap from the shadows at any moment."))
-;; FIXME: sells [weapons/copper-dagger weapons/bronze-dagger weapons/brass-dagger]]
+    as if he expects someone to leap from the shadows at any moment.")
+  (sells (copper-dagger bronze-dagger iron-dagger)))
 
 (defmethod do-talk (actor (target dagger-vendor) subject)
   (declare (ignore subject))
