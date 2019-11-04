@@ -1,7 +1,14 @@
 (in-package :charm)
 
-;;; A container is a "mix-in" base class that allows an entity to contain other
-;;; entities.
+#|
+
+A container is a "mix-in" base class that allows an entity to contain other
+entities. When entity A is contained within entity C:
+
+- A is a member of (contents C)
+- (location A) is set to C
+
+|#
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defmethod transform-slot-init-form (def-name (slot-name (eql 'contents)) init-form)
