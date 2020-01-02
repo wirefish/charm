@@ -5,7 +5,7 @@
   (unique nil) ; or max number carried
   (bound nil) ; if t, cannot be dropped or given
   (weight 1)
-  (buy-price nil) ; price to purchase from vendor as (currency amount)
+  (vendor-price nil) ; price to purchase from vendor as (currency amount)
   (sell-price t) ; if t, buy-price / 10; nil, cannot sell; otherwise as above
   (stack-limit 1)
   (stack-size 1 :instance))
